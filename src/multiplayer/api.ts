@@ -342,7 +342,6 @@ export type EventoSala =
   | { tipo: 'chat'; mensagem: MensagemChatSala }
   | { tipo: 'musica'; musica: MusicaCompartilhada | null };
 
-const raiz = raizServidorMultiplayer();
 const validarCodigo = (codigo: string) => /^[A-Z2-9]{8}$/.test(codigo);
 export const urlConvite = (codigo: string) => {
   const convite = new URL('/convidado/', window.location.origin);
@@ -352,7 +351,7 @@ export const urlConvite = (codigo: string) => {
   return convite.toString();
 };
 export const urlRaizMultiplayer = () => raizServidorMultiplayer();
-export const urlSala = (codigo: string) => `${raiz}/salas/${encodeURIComponent(codigo)}`;
+export const urlSala = (codigo: string) => `${raizServidorMultiplayer()}/salas/${encodeURIComponent(codigo)}`;
 export const chaveMestre = (campanhaId: string) =>
   `portal-multiplayer-mestre-v1:${campanhaId}${origemServidorMultiplayer() ? `@${origemServidorMultiplayer()}` : ''}`;
 export const chaveConvidado = (codigo: string) =>

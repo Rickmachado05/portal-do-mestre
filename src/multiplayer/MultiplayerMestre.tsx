@@ -141,7 +141,7 @@ export default function MultiplayerMestre({campanhaId,campanha,modo='cabecalho'}
         method:'POST',body:JSON.stringify({campanhaId,campanha}),
       });
       const nova:CredencialSala={codigo:resposta.codigo,token:resposta.token,papel:'mestre'};
-      salvarCredencial(chave,nova);setCredencial(nova);setSala(resposta.sala);window.dispatchEvent(new Event('portal-multiplayer-sala'));
+      salvarCredencial(chaveMestre(campanhaId),nova);setCredencial(nova);setSala(resposta.sala);window.dispatchEvent(new Event('portal-multiplayer-sala'));
     }catch(e){setErro(e instanceof Error?e.message:'Não foi possível criar a sala.');}
     finally{setProcessando(false);}
   }
