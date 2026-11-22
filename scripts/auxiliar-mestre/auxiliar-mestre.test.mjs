@@ -1,0 +1,113 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { mkdtempSync, writeFileSync, chmodSync, rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { createServer as netServer } from 'node:net';
+import {
+  criarAuxiliar, permitirOrigem, hostLocalValido, origemPortalSegura, extrairTunnel, RAIZ,
+} from './auxiliar-mestre.mjs';
+
+const portal = 'https://portal-do-mestre.vercel.app';
+
+async function portaAleatoria() {
+  return new Promise((ok, reject) => {
+    const s = netServer();
+    s.once('error', reject);
+    s.listen(0, '127.0.0.1', () => {
+      const porta = s.address().port;
+      s.close(() => ok(porta));
+    });
+  });
+}
+function pedir(url, metodo = 'GET', origemCabecalho = portal) {
+  return fetch(url, {
+    method: metodo,
+    headers: { Origin: origemCabecalho, ...(metodo === 'POST' ? { 'Content-Type': 'application/json' } : {}) },
+    ...(metodo === 'POST' ? { body: '{}' } : {}),
+  });
+}
+
+test('auxiliar só admite a origem configurada e a sua porta em loopback', () => {
+  assert.equal(origemPortalSegura(portal), portal);
+  assert.equal(origemPortalSegura('https://evil.example/path'), '');
+  assert.equal(origemPortalSegura('http://portal-do-mestre.vercel.app'), '');
+  assert.equal(permitirOrigem(portal, portal), true);
+  assert.equal(permitirOrigem('https://site-estranho.example', portal), false);
+  assert.equal(hostLocalValido('127.0.0.1:8790'), true);
+  assert.equal(hostLocalValido('site-estranho.example:8790'), false);
+  assert.equal(extrairTunnel('Seu Tunnel: https://abc-def.trycloudflare.com'), 'https://abc-def.trycloudflare.com');
+});
+
+test('não permite iniciar servidor por origem não autorizada ou via GET', async () => {
+  const porta = await portaAleatoria();
+  const agente = criarAuxiliar({ portaAuxiliar: porta, portal, cloudflared: () => { throw new Error('não deveria iniciar'); } });
+  await agente.escutar();
+  try {
+    const url = `http://127.0.0.1:${porta}`;
+    const forbidden = await pedir(`${url}/v1/start`, 'POST', 'https://malicioso.example');
+    assert.equal(forbidden.status, 403);
+    const preflight = await fetch(`${url}/v1/start`, { method: 'OPTIONS', headers: { Origin: portal, 'Access-Control-Request-Private-Network': 'true' } });
+    assert.equal(preflight.status, 204);
+    assert.equal(preflight.headers.get('access-control-allow-origin'), portal);
+    assert.equal(preflight.headers.get('access-control-allow-private-network'), 'true');
+    const get = await pedir(`${url}/v1/start`);
+    assert.equal(get.status, 404);
+    const status = await pedir(`${url}/v1/status`);
+    assert.equal((await status.json()).estado, 'parado');
+  } finally { await agente.fechar(); }
+});
+
+test('inicia Node + Cloudflare, detecta link e desliga tudo no mesmo auxiliar', { skip: process.platform === 'win32' ? 'Fixture com shebang POSIX; instalação Windows requer homologação manual' : false }, async () => {
+  const diretorio = mkdtempSync(join(tmpdir(), 'portal-auxiliar-test-'));
+  const fake = join(diretorio, 'cloudflared');
+  const tunnel = 'https://abc-def-ghi.trycloudflare.com';
+  writeFileSync(fake, `#!/usr/bin/env node\nprocess.stderr.write('Quick Tunnel: ${tunnel}\\nRegistered tunnel connection connIndex=0\\n');setInterval(()=>{},1000);\n`);
+  chmodSync(fake, 0o755);
+  const porta = await portaAleatoria();
+  const multiplayer = await portaAleatoria();
+  const agente = criarAuxiliar({ raiz: RAIZ, portaAuxiliar: porta, portaMultiplayer: multiplayer, portal, cloudflared: () => fake });
+  await agente.escutar();
+  try {
+    const url = `http://127.0.0.1:${porta}`;
+    const start = await pedir(`${url}/v1/start`, 'POST');
+    assert.equal(start.status, 200);
+    for (let i = 0; i < 65; i++) {
+      const resposta = await pedir(`${url}/v1/status`);
+      const estado = await resposta.json();
+      if (estado.estado === 'pronto') {
+        assert.equal(estado.tunnel, tunnel);
+        break;
+      }
+      if (estado.estado === 'erro') assert.fail(estado.mensagem);
+      if (i === 64) assert.fail('O auxiliar não encontrou o túnel');
+      await new Promise(r => setTimeout(r, 120));
+    }
+    const stop = await pedir(`${url}/v1/stop`, 'POST');
+    assert.equal((await stop.json()).estado, 'parado');
+    const status = await pedir(`${url}/v1/status`);
+    assert.equal((await status.json()).tunnel, '');
+  } finally {
+    await agente.fechar();
+    rmSync(diretorio, { recursive: true, force: true });
+  }
+});
+
+test('recusa iniciar se o servidor antigo ocupa a porta e preserva o estado controlável', async () => {
+  const porta = await portaAleatoria();
+  const multiplayer = await portaAleatoria();
+  const ocupante = netServer();
+  await new Promise((ok, reject) => { ocupante.once('error', reject); ocupante.listen(multiplayer, '127.0.0.1', ok); });
+  const agente = criarAuxiliar({ raiz: RAIZ, portaAuxiliar: porta, portaMultiplayer: multiplayer, portal, cloudflared: () => { throw new Error('não deve chegar ao tunnel'); } });
+  await agente.escutar();
+  try {
+    const retorno = await agente.iniciar();
+    assert.equal(retorno.estado, 'erro');
+    assert.match(retorno.mensagem, /ocupada/);
+    const desligado = await agente.parar();
+    assert.equal(desligado.estado, 'parado');
+  } finally {
+    await agente.fechar();
+    await new Promise(ok => ocupante.close(ok));
+  }
+});

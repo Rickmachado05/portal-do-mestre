@@ -34,17 +34,18 @@
     "cloudflare:build": "vite build",
     "cloudflare:start": "node scripts/iniciar-cloudflare.mjs",
     "test:musica": "node --test scripts/multiplayer-musica-sessao.test.mjs scripts/multiplayer-musica-websocket.test.mjs",
-    "test:vercel": "node --test scripts/multiplayer-vercel-deploy.test.mjs"
+    "test:vercel": "node --test scripts/multiplayer-vercel-deploy.test.mjs",
+    "test:auxiliar-mestre": "node --test scripts/auxiliar-mestre/auxiliar-mestre.test.mjs"
   },
   "dependencies": {
     "@3d-dice/dice-box": "^1.1.4",
     "@3d-dice/dice-box-threejs": "^0.0.12",
     "cannon-es": "^0.20.0",
-    "fflate": "~0.8.3",
-    "jspdf": "^4.2.1",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
-    "three": "^0.187.0"
+    "three": "^0.187.0",
+    "jspdf": "^4.2.1",
+    "fflate": "~0.8.3"
   },
   "devDependencies": {
     "@types/node": "^24.19.2",

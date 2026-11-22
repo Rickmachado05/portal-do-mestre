@@ -2,7 +2,7 @@
 
 Portal virtual para mesas de RPG, com mesas 2D e 3D, personagens, inventário, fichas, diário, música, chat e multiplayer de convidados.
 
-**Versão de referência:** v29.15.30.23 (integração Vercel + Cloudflare Tunnel). Projeto pessoal de portfólio.
+**Versão de referência:** v29.15.30.25 (auxiliar local para iniciar o multiplayer pelo botão da Vercel). Projeto pessoal de portfólio.
 
 ## Organização
 
@@ -25,6 +25,12 @@ npm run dev
 ```
 
 Para simular o servidor multiplayer na sua rede, use os scripts existentes definidos em `package.json`.
+
+## Iniciar multiplayer pelo Portal (preferencial: v29.15.30.25)
+
+No PC do mestre, execute uma única vez `INSTALAR_AUXILIAR_DO_MESTRE.ps1` conforme as instruções de `GUIA_v29_15_30_25_AUXILIAR_NO_WINDOWS.md`. Isso instala um auxiliar para este usuário do Windows; **o Tunnel não é iniciado automaticamente no login**. Depois, abra o Portal na Vercel e clique em **Iniciar sala multiplayer**. O auxiliar inicia Node, Cloudflare e entrega a URL ao navegador para gerar o convite. Se solicitado, autorize o acesso do site a aplicativos na própria máquina (loopback) no navegador.
+
+O método antigo com `.bat` continua disponível como alternativa. O auxiliar não deve rodar simultaneamente com o servidor iniciado pelo `02` ou pelo iniciador unificado anterior, pois ambos usam a mesma porta 8787.
 
 ## Sessão pública via Cloudflare Tunnel (PC do mestre)
 
@@ -64,6 +70,7 @@ Os comandos de testes estão em `package.json`; por exemplo:
 ```bash
 npm run test:musica
 npm run test:vercel
+npm run test:auxiliar-mestre
 ```
 
 Uma publicação pela Vercel e uma sessão real (mestre + convidados) devem ser verificadas antes de considerar o site publicado e o multiplayer homologados no novo domínio.
