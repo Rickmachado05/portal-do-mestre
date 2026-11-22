@@ -1,0 +1,538 @@
+/* Biblioteca global de GLBs — estética do Portal do Mestre. */
+.gm-modelos-3d {
+  display: grid;
+  gap: 16px;
+  color: #e6d5bb;
+  min-width: 0;
+}
+.gm-modelos-resumo {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+.gm-modelos-resumo > div {
+  background: linear-gradient(145deg, #1a2630, #141e28);
+  border: 1px solid #675a49;
+  border-radius: 12px;
+  padding: 16px;
+  display: grid;
+  gap: 5px;
+}
+.gm-modelos-resumo strong {
+  font:
+    600 19px Georgia,
+    serif;
+  color: #e8c99a;
+}
+.gm-modelos-resumo small {
+  font-size: 11px;
+  color: #aab7bf;
+}
+.gm-modelos-abas {
+  display: flex;
+  gap: 6px;
+  padding: 5px;
+  border: 1px solid #554d42;
+  background: #151d27;
+  border-radius: 12px;
+}
+.gm-modelos-abas button {
+  flex: 1;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  padding: 12px;
+  color: #c9c4bc;
+  font-weight: 700;
+  cursor: pointer;
+}
+.gm-modelos-abas button.ativo {
+  background: #55432f;
+  border-color: #bb995d;
+  color: #fff0d5;
+}
+.gm-modelos-layout {
+  display: grid;
+  grid-template-columns: minmax(260px, 0.8fr) minmax(320px, 1.2fr);
+  gap: 14px;
+  align-items: start;
+}
+.gm-modelos-catalogo,
+.gm-modelos-detalhes,
+.gm-modelos-importacao {
+  border: 1px solid #5c554b;
+  border-radius: 13px;
+  background: linear-gradient(155deg, #1b242e, #121a23);
+  padding: 20px;
+  min-width: 0;
+}
+.gm-modelos-cabecalho {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  align-items: center;
+  margin-bottom: 15px;
+}
+.gm-modelos-cabecalho > strong {
+  font:
+    600 18px Georgia,
+    serif;
+}
+.gm-modelos-cabecalho small {
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  color: #cbb68f;
+}
+.gm-modelos-cabecalho h2 {
+  font:
+    600 21px Georgia,
+    serif;
+  margin: 4px 0 0;
+  color: #f0dec0;
+  overflow-wrap: anywhere;
+}
+.gm-modelos-3d input[type='search'],
+.gm-modelos-3d input[type='text'],
+.gm-modelos-3d input:not([type]) {
+  box-sizing: border-box;
+  width: 100%;
+  background: #0d1720;
+  border: 1px solid #6d6659;
+  border-radius: 9px;
+  color: #f1e9dd;
+  padding: 11px;
+  min-width: 0;
+}
+.gm-modelos-lista {
+  display: grid;
+  gap: 6px;
+  margin-top: 12px;
+  max-height: 560px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+.gm-modelos-item {
+  display: flex;
+  gap: 11px;
+  width: 100%;
+  text-align: left;
+  align-items: center;
+  border: 1px solid #4b5760;
+  border-radius: 10px;
+  background: #1a2933;
+  padding: 11px;
+  color: #e5d6be;
+  cursor: pointer;
+  min-width: 0;
+}
+.gm-modelos-item:hover,
+.gm-modelos-item.ativo {
+  border-color: #c39e66;
+  background: #2d302d;
+}
+.gm-modelos-icone {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  flex: 0 0 38px;
+  background: #3b352d;
+  border-radius: 9px;
+  color: #e1c094;
+  font-size: 23px;
+}
+.gm-modelos-item > span:nth-child(2) {
+  display: grid;
+  min-width: 0;
+  gap: 3px;
+  flex: 1;
+}
+.gm-modelos-item strong {
+  font-size: 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.gm-modelos-item small {
+  font-size: 10px;
+  line-height: 1.5;
+  color: #a5b6be;
+  overflow-wrap: anywhere;
+}
+.gm-modelos-item b {
+  color: #e9bf7d;
+}
+.gm-modelos-vazio {
+  border: 1px dashed #6e6459;
+  border-radius: 9px;
+  padding: 18px;
+  font-size: 12px;
+  color: #b9bec0;
+  text-align: center;
+}
+.gm-modelos-detalhes .m3d-mini-preview {
+  height: 280px;
+  position: relative;
+  overflow: hidden;
+  border-radius: 10px;
+  border: 1px solid #665840;
+  background: radial-gradient(circle at 50% 60%, #383748, #111b25 72%);
+}
+.gm-modelos-detalhes .m3d-mini-preview-error {
+  position: absolute;
+  bottom: 8px;
+  left: 8px;
+  right: 8px;
+  padding: 8px;
+  background: #3a1e24;
+  color: #ffc4c4;
+  border-radius: 8px;
+  font-size: 12px;
+}
+.gm-modelos-tipo {
+  font-size: 11px;
+  color: #dfc18d;
+  border: 1px solid #7e694d;
+  padding: 5px 8px;
+  border-radius: 5px;
+}
+.gm-modelos-dica {
+  font-size: 12px;
+  line-height: 1.65;
+  color: #b0b9bd;
+}
+.gm-modelos-fatos {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin: 15px 0;
+}
+.gm-modelos-fatos span {
+  display: grid;
+  gap: 5px;
+  background: #141e29;
+  border: 1px solid #40505d;
+  padding: 11px 8px;
+  text-align: center;
+  border-radius: 8px;
+  color: #9facb7;
+  font-size: 10px;
+}
+.gm-modelos-fatos strong {
+  font-size: 14px;
+  color: #e7c999;
+}
+.gm-modelos-acoes {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 13px;
+}
+.gm-modelos-acoes button {
+  border: 1px solid #ad8856;
+  border-radius: 8px;
+  background: #5c452f;
+  color: #fff0d6;
+  padding: 10px 14px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 700;
+}
+.gm-modelos-acoes .secundario {
+  background: #1f303b;
+  border-color: #5b6c70;
+}
+.gm-modelos-acoes .excluir {
+  background: #382229;
+  border-color: #a2696b;
+  color: #ffd2d0;
+}
+.gm-modelos-acoes button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.gm-modelos-renomear {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: 8px;
+  width: 100%;
+}
+.gm-modelos-renomear label {
+  flex: 1 1 180px;
+  font-size: 11px;
+  color: #ead4b2;
+  display: grid;
+  gap: 6px;
+}
+.gm-modelos-uso {
+  padding: 12px;
+  background: #362f24;
+  border: 1px solid #8a7353;
+  border-radius: 8px;
+  margin-top: 13px;
+  font-size: 11px;
+  line-height: 1.6;
+}
+.gm-modelos-uso p {
+  margin: 5px 0;
+}
+.gm-modelos-uso ul {
+  margin: 6px 0;
+  padding-left: 19px;
+}
+.gm-modelos-placeholder {
+  display: grid;
+  justify-items: center;
+  text-align: center;
+  gap: 12px;
+  padding: 70px 20px;
+  color: #aeb9bd;
+}
+.gm-modelos-placeholder span {
+  font-size: 68px;
+  color: #b79869;
+}
+.gm-modelos-placeholder strong {
+  color: #dfc7a4;
+  font:
+    600 19px Georgia,
+    serif;
+}
+.gm-modelos-importacao {
+  max-width: 700px;
+  display: grid;
+  gap: 15px;
+}
+.gm-modelos-importacao > p,
+.gm-modelos-importacao > small {
+  margin: 0;
+  line-height: 1.65;
+  font-size: 12px;
+  color: #acb9c0;
+}
+.gm-modelos-toggle {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 13px;
+  border: 1px solid #5c5b58;
+  background: #16222d;
+  border-radius: 9px;
+  cursor: pointer;
+}
+.gm-modelos-toggle input[type='checkbox'] {
+  width: 17px;
+  height: 17px;
+  flex: 0 0 17px;
+  margin: 0;
+  accent-color: #c9a577;
+}
+.gm-modelos-toggle > span {
+  display: grid;
+  gap: 4px;
+}
+.gm-modelos-toggle strong {
+  font-size: 12px;
+  color: #ebd7b8;
+}
+.gm-modelos-toggle small {
+  color: #a8b7c2;
+  font-size: 11px;
+}
+.gm-modelos-arquivo {
+  display: grid;
+  gap: 10px;
+  padding: 17px;
+  border: 1px dashed #897350;
+  border-radius: 10px;
+  background: #17222b;
+  color: #e9d3ac;
+  font-size: 12px;
+  font-weight: 700;
+}
+.gm-modelos-arquivo input {
+  max-width: 100%;
+  font-size: 12px;
+  color: #d3c6b2;
+}
+.gm-modelos-arquivo input::file-selector-button {
+  border: 1px solid #aa895b;
+  background: #3f392f;
+  color: #f1d7a5;
+  padding: 8px 10px;
+  margin-right: 10px;
+  border-radius: 7px;
+  cursor: pointer;
+}
+.gm-modelos-relatorio {
+  padding: 14px;
+  border: 1px solid #7b6c52;
+  border-radius: 9px;
+  background: #22262a;
+  font-size: 12px;
+  line-height: 1.6;
+}
+.gm-modelos-relatorio p {
+  color: #c5c1b6;
+}
+.gm-modelos-relatorio ul {
+  padding-left: 20px;
+}
+.gm-modelos-feedback {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+  padding: 12px 15px;
+  border-left: 3px solid #ccaa72;
+  border-radius: 6px;
+  background: #282721;
+  font-size: 12px;
+  line-height: 1.6;
+  color: #f1dcc0;
+}
+.gm-modelos-feedback button {
+  background: none;
+  border: 0;
+  color: inherit;
+  font-size: 18px;
+  cursor: pointer;
+}
+@media (max-width: 850px) {
+  .gm-modelos-layout {
+    grid-template-columns: 1fr;
+  }
+  .gm-modelos-resumo {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+}
+@media (max-width: 550px) {
+  .gm-modelos-resumo {
+    grid-template-columns: 1fr;
+  }
+  .gm-modelos-catalogo,
+  .gm-modelos-detalhes,
+  .gm-modelos-importacao {
+    padding: 14px;
+  }
+}
+/* v29.15.7: multisseleção segura na biblioteca global, sem interferir na prévia. */
+.gm-modelos-multiselect {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+.gm-modelos-multiselect button {
+  background: #202c36;
+  border: 1px solid #5d6870;
+  color: #e5d8c5;
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.gm-modelos-multiselect button.ativo {
+  background: #52412e;
+  border-color: #bda077;
+  color: #fff0d9;
+}
+.gm-modelos-multiselect button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.gm-modelos-multiselect-status {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 9px;
+  padding: 10px;
+  border: 1px solid #665f4f;
+  background: #20232a;
+  border-radius: 9px;
+  color: #e7d6b8;
+  font-size: 11px;
+}
+.gm-modelos-multiselect-status button {
+  background: #462b30;
+  border: 1px solid #a56f71;
+  color: #ffe4db;
+  border-radius: 7px;
+  padding: 8px 11px;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.gm-modelos-multiselect-status button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.gm-modelos-item-row {
+  display: flex;
+  align-items: stretch;
+  border: 1px solid #4b5760;
+  border-radius: 10px;
+  background: #1a2933;
+  min-width: 0;
+  overflow: hidden;
+}
+.gm-modelos-item-row.ativo,
+.gm-modelos-item-row.marcado {
+  border-color: #c39e66;
+  background: #2d302d;
+}
+.gm-modelos-item-row .gm-modelos-item {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+.gm-modelos-item-row .gm-modelos-item:focus-visible {
+  outline: 2px solid #e7bf79;
+  outline-offset: -3px;
+}
+.gm-modelos-check {
+  display: grid;
+  place-items: center;
+  padding: 0 0 0 10px;
+  cursor: pointer;
+}
+.gm-modelos-check input {
+  width: 17px;
+  height: 17px;
+  accent-color: #d0a971;
+  cursor: pointer;
+}
+
+/* v29.15.8: retorno contextual à mesa, sem abrir outra aba. */
+.gm-modelos-navegacao {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  border: 1px solid #6d604c;
+  background: #171f29;
+  border-radius: 10px;
+  padding: 9px 12px;
+  font-size: 12px;
+  color: #b9c1c4;
+}
+.gm-modelos-navegacao a {
+  color: #f0d4a9;
+  text-decoration: none;
+  font-weight: 750;
+  border: 1px solid #8d724e;
+  border-radius: 7px;
+  padding: 9px 12px;
+  background: #373028;
+}
+.gm-modelos-navegacao a:hover,
+.gm-modelos-navegacao a:focus-visible {
+  background: #55412e;
+  border-color: #d0a771;
+}

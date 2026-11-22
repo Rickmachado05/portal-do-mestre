@@ -1,0 +1,503 @@
+/* As janelas, fichas e dados oficiais vivem na página PAI (/mesa3d/).
+ * Este documento cuida apenas do cenário WebGL, WASD e construção 3D. */
+.m3d-embutido {
+  height: 100dvh !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+  background: #101923 !important;
+}
+.m3d-embutido .cabecalho-mesa,
+.m3d-embutido .m3d-organizador,
+.m3d-embutido .m3d-side-tools,
+.m3d-embutido .m3d-galeria,
+.m3d-embutido .m3d-atalhos-esquerda,
+.m3d-embutido .m3d-sidebar,
+.m3d-embutido .m3d-dice-bar,
+.m3d-embutido .m3d-dice-overlay,
+.m3d-embutido .m3d-dice-host,
+.m3d-embutido .m3d-footer,
+.m3d-embutido .hd-editor-externo,
+.m3d-embutido .m3d-hud,
+.m3d-embutido .m3d-token-strip,
+.m3d-embutido .m3d-zoom-actions,
+.m3d-embutido .m3d-map-tools,
+.m3d-embutido .m3d-table-wasd,
+.m3d-embutido .m3d-scene-info {
+  display: none !important;
+}
+.m3d-embutido .m3d-workspace {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 0 !important;
+}
+.m3d-embutido .m3d-view {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+.m3d-embutido .m3d-canvas {
+  width: 100%;
+  height: 100%;
+}
+.m3d-embutido .m3d-mode-switch {
+  display: none !important;
+} /* A câmera é controlada pela lateral esquerda da página pai. */
+/* O editor de cenário é uma ferramenta dentro da câmera livre do mestre, não outra câmera. */
+.m3d-embutido.m3d-embutido-construcao .m3d-sidebar {
+  display: flex !important;
+  z-index: 25;
+  position: absolute;
+  top: 95px;
+  right: 150px;
+  bottom: 88px;
+  left: auto;
+  width: 360px;
+  max-width: calc(100% - 320px);
+  max-height: calc(100% - 185px);
+  overflow: auto;
+}
+.m3d-embutido.m3d-embutido-construcao .m3d-build-hud {
+  display: none !important;
+}
+.m3d-embutido:not(.m3d-embutido-construcao) .m3d-build-hud {
+  display: none;
+}
+.m3d-embutido .m3d-error {
+  display: block;
+}
+@media (max-width: 900px) {
+  .m3d-embutido.m3d-embutido-construcao .m3d-sidebar {
+    right: 105px;
+    max-width: calc(100% - 220px);
+  }
+}
+/* v1.3.33 — Edição direta com o mouse, visível também na Mesa 3D espelhada. */
+.m3d-selection-hud {
+  position: absolute;
+  z-index: 16;
+  left: 16px;
+  bottom: 18px;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  max-width: min(540px, calc(100% - 32px));
+  padding: 9px;
+  border: 1px solid #ac8c61a8;
+  border-radius: 10px;
+  background: #121a22ef;
+  color: #f1dcb9;
+  box-shadow: 0 9px 28px #0009;
+  font-size: 11px;
+}
+.m3d-selection-hud > span {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 120px;
+  flex: 1;
+}
+.m3d-selection-hud strong {
+  font-family: Georgia, serif;
+  font-size: 13px;
+}
+.m3d-selection-hud small {
+  font-size: 10px;
+  color: #b8b5ac;
+}
+.m3d-selection-hud button {
+  border: 1px solid #8d7555;
+  border-radius: 7px;
+  padding: 8px 10px;
+  background: #2a3540;
+  color: #f1dbc0;
+  cursor: pointer;
+}
+.m3d-selection-hud button:hover {
+  background: #4a4a47;
+}
+.m3d-selection-hud .m3d-delete-selected {
+  border-color: #995d58;
+  color: #ffded6;
+}
+.m3d-embutido .m3d-selection-hud {
+  display: flex !important;
+}
+@media (max-width: 800px) {
+  .m3d-selection-hud {
+    left: 8px;
+    bottom: 8px;
+    padding: 6px;
+  }
+  .m3d-selection-hud small {
+    display: none;
+  }
+}
+
+.m3d-editor-access {
+  position: absolute;
+  z-index: 14;
+  left: 16px;
+  top: 18px;
+  border: 1px solid #947653;
+  border-radius: 8px;
+  padding: 7px 12px;
+  background: #17222bdc;
+  color: #f0d5a8;
+  font-size: 11px;
+  cursor: pointer;
+  box-shadow: 0 7px 19px #0008;
+}
+.m3d-editor-access:hover {
+  background: #3b3f3d;
+  border-color: #d9b87e;
+}
+.m3d-embutido .m3d-editor-access {
+  display: none !important;
+} /* Comando Terreno 3D no menu Sessão da página pai. */
+
+/* v1.3.34 — O editor abre pelo menu Sessão, mantendo toda a lateral esquerda livre. */
+.m3d-terrain-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 7px;
+  margin-top: 8px;
+}
+.m3d-terrain-actions button {
+  min-width: 0;
+  font-size: 10px;
+  line-height: 1.3;
+  min-height: 40px;
+}
+@media (max-width: 560px) {
+  .m3d-terrain-actions {
+    grid-template-columns: 1fr;
+  }
+}
+/* v1.3.37 — espaço suficiente para abas e campos do editor, sem cobrir o menu direito. */
+@media (min-width: 1050px) {
+  .m3d-embutido.m3d-embutido-construcao .m3d-sidebar {
+    width: 410px;
+    max-width: calc(100% - 330px);
+  }
+}
+
+/* Tipos de barreiras configuráveis na visão mestre sem reabrir o Terreno 3D. */
+.m3d-barreira-hud {
+  max-width: min(800px, calc(100% - 32px));
+  gap: 8px;
+}
+.m3d-barreira-hud label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+  color: #e3d5bd;
+}
+.m3d-barreira-hud select {
+  border: 1px solid #8d7555;
+  border-radius: 6px;
+  padding: 7px;
+  background: #25313b;
+  color: #f3dfc0;
+}
+.m3d-barreira-hud input[type='checkbox'] {
+  accent-color: #bf9a62;
+}
+
+/* v1.3.40.5 — painel de edição 3D não ocupa a mesma faixa da barra
+   de rolagens do Portal (renderizada no documento pai do iframe). */
+.m3d-selection-hud,
+.m3d-embutido .m3d-selection-hud {
+  box-sizing: border-box;
+  left: clamp(108px, 9vw, 165px);
+  bottom: 110px;
+  width: max-content;
+  max-width: min(800px, calc(100% - 290px));
+  max-height: min(55dvh, 460px);
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  align-content: center;
+}
+.m3d-selection-hud > span {
+  min-width: 120px;
+}
+@media (max-width: 900px) {
+  .m3d-selection-hud,
+  .m3d-embutido .m3d-selection-hud {
+    left: 85px;
+    bottom: 95px;
+    max-width: calc(100% - 180px);
+  }
+}
+@media (max-width: 600px) {
+  .m3d-selection-hud,
+  .m3d-embutido .m3d-selection-hud {
+    left: 8px;
+    bottom: 85px;
+    max-width: calc(100% - 76px);
+    padding: 7px;
+  }
+}
+
+/* v1.3.40.8 — seleção clara do token, separada do editor de paredes. */
+.m3d-token-selection-hud {
+  gap: 9px;
+  max-width: min(690px, calc(100% - 290px));
+}
+.m3d-token-selection-hud button:disabled {
+  cursor: not-allowed;
+  opacity: 0.48;
+}
+.m3d-token-selection-hud > span {
+  min-width: 160px;
+}
+@media (max-width: 900px) {
+  .m3d-token-selection-hud {
+    max-width: calc(100% - 180px);
+  }
+}
+
+/* v1.3.40.11 — aviso discreto de prévia de visão individual, no iframe e
+   na Mesa 3D independente. Não cobre barra de dados nem menus laterais. */
+.m3d-vision-preview {
+  position: absolute;
+  z-index: 17;
+  left: 50%;
+  bottom: 110px;
+  transform: translateX(-50%);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-sizing: border-box;
+  max-width: min(690px, calc(100% - 320px));
+  padding: 9px 13px;
+  border: 1px solid #b899698f;
+  border-radius: 10px;
+  background: #111a23eb;
+  box-shadow: 0 9px 26px #0009;
+  color: #ecd9b8;
+  font-size: 11px;
+  pointer-events: auto;
+}
+.m3d-vision-preview strong {
+  font-size: 11px;
+  letter-spacing: 0.6px;
+  color: #f6d69d;
+}
+.m3d-vision-preview span {
+  color: #c5cad0;
+}
+.m3d-vision-preview label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.m3d-vision-preview select,
+.m3d-vision-preview button {
+  border: 1px solid #ac8a5d;
+  border-radius: 7px;
+  background: #27323b;
+  color: #f0dcbd;
+  padding: 6px 8px;
+  cursor: pointer;
+}
+@media (max-width: 900px) {
+  .m3d-vision-preview {
+    max-width: calc(100% - 180px);
+    bottom: 95px;
+  }
+}
+@media (max-width: 600px) {
+  .m3d-vision-preview {
+    left: 8px;
+    transform: none;
+    max-width: calc(100% - 80px);
+    bottom: 84px;
+  }
+  .m3d-vision-preview span {
+    display: none;
+  }
+}
+
+/* Fog exploratório: controles compactos e alinhados à barra de ferramentas. */
+.m3d-fog-option {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 5px;
+  color: #ddd0ae;
+  font-size: 10px;
+  white-space: nowrap;
+}
+.m3d-fog-option input[type='range'] {
+  width: 58px;
+  accent-color: #c9a66c;
+}
+.m3d-fog-option select {
+  max-width: 90px;
+  padding: 3px 5px;
+  background: #222b36;
+  color: #e8dcc7;
+  border: 1px solid #96794f;
+  border-radius: 5px;
+  font-size: 10px;
+}
+
+/* v1.3.40.23 — ajuste independente dos standees, sem tocar no mapa ou no GIF. */
+.m3d-token-selection-hud {
+  max-width: min(840px, calc(100% - 290px));
+  align-items: center;
+}
+
+/* v29.8 — mesmo menu compacto da Mesa 2D para paredes e anotações. */
+.m3d-selection-hud.m3d-barreira-editor298,
+.m3d-embutido .m3d-selection-hud.m3d-barreira-editor298 {
+  left: 12px;
+  bottom: 102px;
+  width: 225px;
+  max-width: min(245px, calc(100% - 35px));
+  max-height: 360px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 10px;
+  padding: 11px 12px;
+  box-sizing: border-box;
+  background: #131c26f2;
+  border: 1px solid #af8c57;
+  border-radius: 10px;
+  box-shadow: 0 7px 28px #05080dbb;
+  color: #f1d9b5;
+  font-size: 12px;
+}
+.m3d-barreira-editor298 .m3d-editor298-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.m3d-barreira-editor298 .m3d-editor298-title > button {
+  padding: 3px 8px;
+  min-width: 24px;
+}
+.m3d-barreira-editor298 label {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  white-space: normal;
+}
+.m3d-barreira-editor298 label:has(select) {
+  justify-content: space-between;
+}
+.m3d-barreira-editor298 label input[type='checkbox'] {
+  margin-right: 4px;
+}
+.m3d-barreira-editor298 small {
+  font-size: 10px;
+  color: #bea98d;
+  line-height: 1.45;
+}
+.m3d-barreira-editor298 button {
+  cursor: pointer;
+}
+
+/* v29.8.2 — editor da luz selecionada herda o card compacto da parede 3D. */
+.m3d-luz-editor298 {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+.m3d-luz-editor298 label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  min-width: 0;
+}
+.m3d-luz-campo-nome input {
+  flex: 1;
+  min-width: 0;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 5px;
+  border: 1px solid #8d765a;
+  border-radius: 5px;
+  background: #1c2831;
+  color: #f5e6d1;
+}
+.m3d-luz-editor-linha {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 5px;
+}
+.m3d-luz-editor-linha .m3d-luz-cor input {
+  width: 33px;
+  height: 25px;
+  padding: 0;
+  border: none;
+  background: transparent;
+}
+.m3d-luz-campo-alcance,
+.m3d-luz-posicao label {
+  display: flex !important;
+  flex-direction: column;
+  align-items: stretch !important;
+  gap: 5px;
+}
+.m3d-luz-campo-alcance input,
+.m3d-luz-posicao input {
+  width: 100%;
+  accent-color: #d5ab72;
+}
+.m3d-luz-posicao > summary {
+  cursor: pointer;
+  color: #d1b28e;
+  font-size: 11px;
+  margin-bottom: 5px;
+}
+.m3d-selection-hud.m3d-barreira-editor298:has(.m3d-luz-editor298) {
+  max-height: min(58dvh, 410px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+/* v29.15.30.4 — posicionamento lateral para não sobrepor a galeria do mestre. */
+/* O visualizador 3D é um iframe: a galeria está no documento pai e
+   não pode ser usada como âncora CSS dentro dele. Por isso espelhamos
+   a faixa segura em pixels, inclusive no modo 3D independente. */
+.m3d-embutido,
+.m3d-paridade {
+  --m3d-editor-left-safe: 140px;
+}
+.m3d-selection-hud,
+.m3d-embutido .m3d-selection-hud,
+.m3d-selection-hud.m3d-barreira-editor298,
+.m3d-embutido .m3d-selection-hud.m3d-barreira-editor298 {
+  left: var(--m3d-editor-left-safe, 140px);
+  max-width: calc(100% - var(--m3d-editor-left-safe, 140px) - 18px);
+  box-sizing: border-box;
+}
+/* Mantém o painel compacto de barreira/anotação/luz, mas fora da
+   faixa de retratos mesmo com seis ou mais personagens no grupo. */
+.m3d-selection-hud.m3d-barreira-editor298,
+.m3d-embutido .m3d-selection-hud.m3d-barreira-editor298 {
+  width: min(225px, calc(100% - var(--m3d-editor-left-safe, 140px) - 18px));
+  min-width: 0;
+}
+@media (max-width: 780px) {
+  .m3d-embutido,
+  .m3d-paridade {
+    --m3d-editor-left-safe: 90px;
+  }
+}

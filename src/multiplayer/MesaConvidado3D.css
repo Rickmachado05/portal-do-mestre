@@ -1,0 +1,50 @@
+.pm-player3d {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: #182b30;
+  color: #eee0c4;
+}
+.pm-player3d-tela {
+  position: absolute;
+  inset: 0;
+}
+.pm-player3d-espera {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  padding: 48px 20vw;
+  background: #121f2a;
+  color: #e9d4ae;
+  font-size: 15px;
+  z-index: 2;
+}
+.pm-player3d-ajuda {
+  position: absolute;
+  bottom: 125px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 7px 12px;
+  border-radius: 5px;
+  background: #131a22c9;
+  border: 1px solid #6f5d47;
+  color: #f0d6b0;
+  font-size: 11px;
+  pointer-events: none;
+  text-align: center;
+  max-width: 68vw;
+}
+
+/* v29.15.14: câmeras na barra lateral do jogador, nunca no centro do mapa. */
+.pm-jogo--modo3d .hx-camera-mesa3d {
+  pointer-events: auto;
+}
+@media (max-width: 750px) {
+  .pm-player3d-ajuda {
+    bottom: 145px;
+    font-size: 10px;
+    max-width: 74vw;
+  }
+}

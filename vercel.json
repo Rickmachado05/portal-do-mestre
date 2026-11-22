@@ -1,0 +1,104 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "vite",
+  "buildCommand": "npm run cloudflare:build",
+  "outputDirectory": "dist",
+  "rewrites": [
+    {
+      "source": "/perfil",
+      "destination": "/perfil/index.html"
+    },
+    {
+      "source": "/caderno",
+      "destination": "/caderno/index.html"
+    },
+    {
+      "source": "/mesas",
+      "destination": "/mesas/index.html"
+    },
+    {
+      "source": "/convidado",
+      "destination": "/convidado/index.html"
+    },
+    {
+      "source": "/personagens",
+      "destination": "/personagens/index.html"
+    },
+    {
+      "source": "/dados",
+      "destination": "/dados/index.html"
+    },
+    {
+      "source": "/itens",
+      "destination": "/itens/index.html"
+    },
+    {
+      "source": "/miniaturas",
+      "destination": "/miniaturas/index.html"
+    },
+    {
+      "source": "/mesa",
+      "destination": "/mesa/index.html"
+    },
+    {
+      "source": "/mesa3d",
+      "destination": "/mesa3d/index.html"
+    },
+    {
+      "source": "/mesa3dviewer",
+      "destination": "/mesa3dviewer/index.html"
+    },
+    {
+      "source": "/criador",
+      "destination": "/criador/index.html"
+    },
+    {
+      "source": "/perfil/",
+      "destination": "/perfil/index.html"
+    },
+    {
+      "source": "/caderno/",
+      "destination": "/caderno/index.html"
+    },
+    {
+      "source": "/mesas/",
+      "destination": "/mesas/index.html"
+    },
+    {
+      "source": "/convidado/",
+      "destination": "/convidado/index.html"
+    },
+    {
+      "source": "/personagens/",
+      "destination": "/personagens/index.html"
+    },
+    {
+      "source": "/dados/",
+      "destination": "/dados/index.html"
+    },
+    {
+      "source": "/itens/",
+      "destination": "/itens/index.html"
+    },
+    {
+      "source": "/miniaturas/",
+      "destination": "/miniaturas/index.html"
+    },
+    {
+      "source": "/mesa/",
+      "destination": "/mesa/index.html"
+    },
+    {
+      "source": "/mesa3d/",
+      "destination": "/mesa3d/index.html"
+    },
+    {
+      "source": "/mesa3dviewer/",
+      "destination": "/mesa3dviewer/index.html"
+    },
+    {
+      "source": "/criador/",
+      "destination": "/criador/index.html"
+    }
+  ]
+}

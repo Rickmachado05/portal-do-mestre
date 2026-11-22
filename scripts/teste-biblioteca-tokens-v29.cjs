@@ -1,0 +1,53 @@
+/* V29: comportamento do acervo, retrocompatibilidade, cópia e integração visual. */
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const path=require('node:path');
+const vm=require('node:vm');
+const ts=require('typescript');
+const root=path.resolve(__dirname,'..');
+const ler=p=>fs.readFileSync(path.join(root,p),'utf8');
+let testes=0;
+const ok=(x,n)=>{assert.ok(x,n);testes++;};
+const local=new Map();const arquivos=new Map();
+const storage={getItem:k=>local.get(k)||null,setItem:(k,v)=>local.set(k,String(v))};
+const store={carregarArquivo:async k=>arquivos.get(k)||null,salvarArquivo:async(k,b)=>{arquivos.set(k,b);},excluirArquivo:async k=>{arquivos.delete(k);}};
+const antigo={lerBibliotecaIdle:()=>[{id:'idle-abcdef123456',nome:'Idle anterior',tamanho:100,adicionadoEm:'2026-11-15T00:00:00Z'}],carregarIdleBiblioteca:async()=>new Blob(['a'],{type:'image/gif'}),removerIdleBiblioteca:async id=>{local.set('removido',id);},MAX_IDLES_BIBLIOTECA:40};
+const skins={validarImagemSkin:a=>!['image/png','image/jpeg','image/webp','image/gif'].includes(a.type)?'Tipo inválido':a.size>8_000_000?'Grande demais':null,otimizarImagemSkin:async a=>a};
+let index=0;
+const context={exports:{},require:id=>({'./storage':store,'./bibliotecaIdle':antigo,'./tokenSkins':skins,'./tokenIdleGif.mjs':{decodificarGifIdle:()=>({quadros:[{}]})}}[id]||(()=>{throw Error(id)})()),
+ localStorage:storage,crypto:{randomUUID:()=>String(++index).padStart(8,'0')},Blob,File,Date,JSON,Math,Number,Object,Array,Set,Error,String,Boolean};
+const fonte=ler('src/lib/bibliotecaTokens.ts');
+const compiled=ts.transpileModule(fonte,{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}});
+vm.runInNewContext(compiled.outputText,context,{filename:'bibliotecaTokens.ts'});
+const lib=context.exports;
+(async()=>{
+  ok(lib.lerBibliotecaTokens(storage).length===1,'migração sem perda dos idles anteriores');
+  const png=new File([new Blob(['png_data'],{type:'image/png'})],'guarda.png',{type:'image/png'});
+  const novo=await lib.adicionarTokenBiblioteca(png,'Guarda Estático');
+  ok(novo.animado===false && novo.mime==='image/png','arquivo estático catalogado');
+  ok(lib.lerBibliotecaTokens(storage).length===2,'mistura idles antigos e tokens estáticos');
+  const encontrado=await lib.carregarTokenBiblioteca(novo);
+  ok(encontrado===png,'arquivo salvo no indexedDB sem reimportar');
+  ok(lib.lerBibliotecaTokens(storage).some(x=>x.legado&&x.id==='idle-abcdef123456'),'legacy continua reconhecido');
+  await store.salvarArquivo(lib.chaveTokenFicha('ficha1'),png);
+  const copiado=await lib.copiarTokenDaFicha('ficha1','guarda-1');
+  ok(copiado===png && arquivos.get('token:guarda-1')===png,'cópia do padrão para unidade');
+  await lib.copiarTokenDaFicha('ficha1','guarda-2','campanha:test:token:guarda-2');
+  ok(arquivos.has('campanha:test:token:guarda-2'),'duas unidades mantêm token próprio e respeitam namespace da campanha');
+  await lib.removerTokenBiblioteca(novo.id);
+  ok(lib.lerBibliotecaTokens(storage).length===1,'índice remove item sem afetar legado');
+  ok(arquivos.get('token:guarda-1')===png&&arquivos.get(lib.chaveTokenFicha('ficha1'))===png,'exclusão global não afeta ficha nem unidade');
+  await lib.removerTokenBiblioteca('idle-abcdef123456');
+  ok(local.get('removido')==='idle-abcdef123456','exclusão dos idles antigos preservada');
+  const rejeitado=new File([new Blob(['x'],{type:'text/plain'})],'x.txt',{type:'text/plain'});
+  await assert.rejects(()=>lib.adicionarTokenBiblioteca(rejeitado,'X'),/formato|imagem|invalido|inválido|Error|/i);testes++;
+  const arquivosCodigo=['src/lib/bibliotecaTokens.ts','src/lib/PainelBibliotecaTokens.tsx','src/lib/TokenPadraoFicha.tsx','src/hexatombe/fichasLibrary.ts','src/portal/GestaoPersonagens.tsx','src/portal/EditorPersonagemMestre.tsx','src/portal/Portal.tsx','src/App.tsx','src/lib/TokenIdle.tsx','src/mesa3d/roomScene.ts','src/mesa3d/Mesa3DPrototipo.tsx','src/criador/App.tsx'];
+  for(const nome of arquivosCodigo){const p=ts.createSourceFile(nome,ler(nome),ts.ScriptTarget.Latest,true,nome.endsWith('tsx')?ts.ScriptKind.TSX:ts.ScriptKind.TS);ok(!p.parseDiagnostics.length,'sintaxe '+nome);}
+  const app=ler('src/App.tsx'),modal=ler('src/portal/GestaoPersonagens.tsx'),nav=ler('src/portal/Portal.tsx');
+  ok(app.includes('aplicarTokenPadraoDaFicha')&&app.includes('copiarTokenDaFicha'),'vínculo com a mesa');
+  ok(modal.includes("['token','Token']")&&modal.includes('TokenPadraoFicha'),'aba token em toda ficha');
+  ok(ler('src/mesa3d/Mesa3DPrototipo.tsx').includes('copiarTokenDaFicha')&&ler('src/criador/App.tsx').includes('TokenPadraoFicha'),'entrada direta 3D e criador de jogador');
+  ok(nav.includes('/tokens/')&&nav.includes('<BibliotecaTokens'),'acervo global no menu');
+  ok(ler('src/portal/backupMestre.ts').includes("hexatombe-mesa-arquivos")&&lib.CHAVE_BIBLIOTECA_TOKENS.startsWith('portal-mestre-'),'backup automático por index e Blob');
+  console.log('OK — '+testes+' verificações v29: PNG/GIF, retrocompatibilidade, cópias, UI e backup');
+})().catch(e=>{console.error(e);process.exitCode=1;});

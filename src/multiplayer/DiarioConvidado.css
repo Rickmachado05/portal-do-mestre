@@ -1,0 +1,115 @@
+.pm-bib-jogador {
+  min-width: 0;
+  width: 100%;
+  min-height: 0;
+  color: #ead8b6;
+}
+.pm-bib-jogador .pm-bib-pestanas {
+  display: flex;
+  padding: 0;
+  margin-bottom: 8px;
+}
+.pm-bib-pestana-leitura {
+  font:
+    700 12px Cinzel,
+    Georgia,
+    serif;
+  color: #efcca1;
+  padding: 8px 4px;
+}
+.pm-bib-intro-jogador {
+  color: #baac9a;
+  font-size: 11px;
+  line-height: 1.5;
+  padding: 2px 6px 9px;
+  margin: 0;
+}
+.pm-bib-jogador .pm-bib-rodape small {
+  font-size: 10px;
+  color: #bba384;
+}
+.pm-jogo-diario-sobreposicao {
+  position: fixed;
+  inset: 0;
+  background: #05070ac9;
+  backdrop-filter: blur(4px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 99999;
+  padding: 22px;
+}
+.pm-jogo-diario-documento.pm-bib-documento {
+  position: relative !important;
+  left: auto !important;
+  top: auto !important;
+  transform: none !important;
+  display: flex;
+  flex-direction: column;
+  width: min(850px, 96vw);
+  height: min(690px, 88vh);
+  min-width: 0;
+  max-width: 100%;
+  min-height: 0;
+  overflow: hidden;
+  margin: 0;
+  box-shadow: 0 22px 80px #000e;
+}
+.pm-jogo-diario-documento .pm-bib-documento-barra {
+  flex-shrink: 0;
+}
+.pm-jogo-diario-documento .pm-bib-documento-barra button {
+  margin-left: auto;
+}
+.pm-jogo-diario-documento .pm-bib-documento-tabs {
+  flex-shrink: 0;
+  padding: 10px 16px;
+  color: #d7b783;
+}
+.pm-jogo-diario-documento .pm-bib-documento-conteudo {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+}
+.pm-jogo-diario-documento .pm-bib-documento-rodape {
+  flex-shrink: 0;
+}
+.pm-jogo-diario-documento .pm-bib-imagem-leitura {
+  display: block;
+  max-width: 100%;
+  width: auto;
+  height: auto;
+  max-height: none;
+  margin: 10px auto 18px;
+  object-fit: contain;
+}
+@media (max-width: 620px) {
+  .pm-jogo-diario-sobreposicao {
+    padding: 7px;
+  }
+  .pm-jogo-diario-documento.pm-bib-documento {
+    width: 100%;
+    height: 94dvh;
+  }
+}
+
+/* Seções do diário do jogador usam o mesmo editor da biblioteca do mestre. */
+.pm-bib-jogador .pm-bib-pestanas {
+  margin-bottom: 12px;
+}
+.pm-bib-jogador > .pm-bib.pm-bib-compacto {
+  border: none;
+  background: transparent;
+  padding: 0;
+  box-shadow: none;
+  width: 100%;
+  max-width: none;
+}
+.pm-bib-jogador > .pm-bib .pm-bib-pestanas {
+  display: none;
+}
+.pm-bib-jogador .pm-bib-local {
+  display: block;
+  padding: 8px 4px;
+  line-height: 1.4;
+}

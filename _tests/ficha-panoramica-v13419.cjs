@@ -1,0 +1,23 @@
+const assert = require('node:assert/strict');
+const fs=require('node:fs');
+function read(f){return fs.readFileSync(f,'utf8')}
+const app=read('src/App.tsx');
+const ficha=read('src/fichaAbas.css');
+const skills=read('src/hexatombe/AcoesDaFicha.tsx');
+const icons=read('src/criador/IconeHabilidadeEditor.tsx');
+const cssIcons=read('src/criador/IconeHabilidadeEditor.css');
+assert.match(app,/recursos: .*largura: Math\.min\(760/);
+assert.match(app,/ampliarFicha = key === 'recursos'/);
+assert.match(app,/<details className="hx-recurso-detalhes">/);
+assert.match(app,/alterarRecurso\(tipo,-10\)/);
+assert.match(app,/definirRecurso\(tipo\)/);
+assert.match(ficha,/\.hx-ficha-atributos>\.recurso-hp\{grid-column:1;grid-row:2\}/);
+assert.match(ficha,/\.hx-ficha-atributos>\.recurso-mana\{grid-column:2;grid-row:2\}/);
+assert.match(ficha,/\.hx-acoes-grade\{display:grid;grid-template-columns:repeat\(2/);
+assert.match(skills,/className="hx-acoes-grade"/);
+assert.match(ficha,/\.hx-acoes-toolbar \.hx-filtro-categoria select/);
+assert.match(icons,/aria-pressed=\{escolhido===opcao.valor\}/);
+assert.match(icons,/carregarArquivo\(e.target.files\?\.\[0\]\)/);
+assert.match(cssIcons,/\.hx-icone-editor-grade \.hx-icone-opcao\.ativo/);
+assert.match(skills,/precisaTesteContraCA\(acao.categoria\)/);
+console.log('13 verificações da ficha panorâmica aprovadas');

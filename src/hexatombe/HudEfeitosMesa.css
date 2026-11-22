@@ -1,0 +1,83 @@
+/* HUD de combate do documento principal: idêntica nas mesas 2D e 3D. */
+.hx-hud-efeitos-mesa {
+  position: absolute;
+  z-index: 19;
+  width: min(286px, calc(100vw - 16px));
+  max-height: min(38dvh, 350px);
+  display: flex;
+  flex-direction: column;
+  padding: 10px 10px 9px;
+  border: 1px solid #ab865a;
+  border-radius: 8px;
+  background: #14151df2;
+  color: #eadcc7;
+  box-shadow: 0 8px 28px #000a;
+  box-sizing: border-box;
+  pointer-events: auto;
+}
+.hx-hud-efeitos-titulo {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  align-items: center;
+  min-height: 29px;
+  margin-bottom: 7px;
+  cursor: move;
+  touch-action: none;
+  user-select: none;
+  font-size: 10px;
+  letter-spacing: 0.4px;
+  color: #d6b88d;
+}
+.hx-hud-efeitos-titulo strong {
+  font-size: 10px;
+  color: #ffe3ba;
+  white-space: nowrap;
+}
+.hx-hud-efeitos-nome {
+  flex: 1;
+  min-width: 35px;
+  max-width: 92px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: right;
+}
+.hx-hud-efeitos-dica {
+  flex-basis: 100%;
+  font-size: 9px;
+  color: #a99b89;
+  order: 2;
+}
+.hx-hud-efeitos-titulo button {
+  margin-left: auto;
+  border: 1px solid #90724a;
+  border-radius: 5px;
+  background: #2b2930;
+  color: #f0d4a9;
+  min-width: 25px;
+  min-height: 25px;
+  cursor: pointer;
+  font-size: 16px;
+}
+.hx-hud-efeitos-titulo button:hover {
+  background: #504030;
+}
+.hx-hud-efeitos-conteudo {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  min-height: 0;
+  scrollbar-width: thin;
+}
+.hx-hud-efeitos-mesa .hx-efeitos-lista--compacta {
+  grid-template-columns: 1fr;
+}
+@media (max-width: 650px) {
+  .hx-hud-efeitos-mesa {
+    width: min(245px, calc(100vw - 16px));
+    max-height: 30dvh;
+  }
+  .hx-hud-efeitos-nome {
+    max-width: 65px;
+  }
+}

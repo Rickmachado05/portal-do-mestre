@@ -1,0 +1,26 @@
+import fs from 'node:fs';
+import vm from 'node:vm';
+import ts from '/opt/nvm/versions/node/v22.16.0/lib/node_modules/typescript/lib/typescript.js';
+const src=fs.readFileSync('src/hexatombe/campaignLibrary.ts','utf8');
+const compiled=ts.transpileModule(src,{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText;
+const store=new Map();
+const localStorage={getItem:k=>store.get(k)??null,setItem:(k,v)=>store.set(k,String(v)),removeItem:k=>store.delete(k)};
+const events=[];
+const ctx={exports:{},window:{dispatchEvent:e=>events.push(e.type)},localStorage,Event:class Event{constructor(type){this.type=type;}},crypto:{randomUUID:()=>`mock-${store.size}`},Date,Math,JSON,String,Boolean,Number,Array,Error};
+vm.createContext(ctx);
+vm.runInContext(compiled,ctx);
+const lib=ctx.exports;
+if(lib.listarCampanhas().length!==0)throw Error('initial');
+const alice=lib.criarCampanha({titulo:'Crônicas de Aço',descricao:'Campanha de fantasia original',sistema:'Sistema próprio',tema:'espiritual',fichaIds:['a']});
+if(lib.listarCampanhas()[0].sistema!=='Sistema próprio')throw Error('campo sistema não persistiu');
+lib.atualizarCampanha(alice.id,{sistema:'Outro sistema',titulo:'Crônicas de Aço II'});
+if(lib.obterCampanha(alice.id).sistema!=='Outro sistema')throw Error('update falhou');
+localStorage.setItem(`rpg-painel-mestre-preparacao-v1:${alice.id}`,JSON.stringify({titulo:'Sessão 1'}));
+localStorage.setItem(lib.chaveEstadoCampanha(alice.id),'{"cenas":[1]}');
+lib.removerCampanha(alice.id);
+if(localStorage.getItem(`rpg-painel-mestre-preparacao-v1:${alice.id}`)!==null)throw Error('notas órfãs');
+if(localStorage.getItem(lib.chaveEstadoCampanha(alice.id))!==null)throw Error('campanha órfã');
+// Registros antigos do índice não traziam sistema, e precisam continuar válidos.
+store.set('hexatombe-campanhas-v1',JSON.stringify({schemaVersion:1,items:[{id:'principal',titulo:'Campanha anterior',descricao:'',tema:'agua',fichaIds:[],arquivada:false}]}));
+if(lib.listarCampanhas()[0].titulo!=='Campanha anterior')throw Error('migração inválida');
+console.log('OK: criar, editar, excluir, limpar notas, ler registros antigos, eventos='+events.length);

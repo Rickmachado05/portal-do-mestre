@@ -1,0 +1,1552 @@
+/* Etapa 8 — Mesa 2D do convidado: mesmos recursos multiplayer em janelas da mesa.
+   O convidado não monta App.tsx do mestre nem recebe armazenamento/campanha privados. */
+.pm-jogo {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  color: #eaddc6;
+  font:
+    13px Inter,
+    system-ui,
+    sans-serif;
+  background: #1a2e31;
+  isolation: isolate;
+}
+.pm-jogo * {
+  box-sizing: border-box;
+}
+.pm-jogo button {
+  cursor: pointer;
+  font: inherit;
+}
+.pm-jogo button:disabled {
+  cursor: not-allowed;
+  opacity: 0.52;
+}
+.pm-jogo-cabecalho {
+  position: absolute;
+  z-index: 8;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 65px;
+  background: linear-gradient(95deg, #101217, #131820 65%, #17171d);
+  border-bottom: 1px solid #9c764e66;
+  display: flex;
+  align-items: center;
+  padding: 8px 18px;
+  gap: 16px;
+  justify-content: space-between;
+}
+.pm-jogo-marca {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  white-space: nowrap;
+  font-family: Georgia, serif;
+  letter-spacing: 0.08em;
+}
+.pm-jogo-sigilo {
+  font-size: 20px;
+  color: #e2b67a;
+  border: 1px solid #886643;
+  border-radius: 50%;
+  padding: 4px 8px;
+}
+.pm-jogo-marca strong {
+  display: block;
+  font-size: 15px;
+  color: #efd5b1;
+}
+.pm-jogo-marca strong em {
+  font-style: normal;
+  color: #e5b67c;
+}
+.pm-jogo-marca small {
+  display: block;
+  font:
+    700 9px Inter,
+    system-ui,
+    sans-serif;
+  letter-spacing: 0.2em;
+  color: #b09d8d;
+  margin-top: 3px;
+}
+.pm-jogo-centro {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  min-width: 0;
+  color: #c3aa7e;
+  font-size: 12px;
+  white-space: nowrap;
+  overflow: hidden;
+}
+.pm-jogo-centro span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.pm-jogo-centro b {
+  color: #f2e3cc;
+  border-left: 1px solid #84633e;
+  padding-left: 15px;
+  text-transform: uppercase;
+}
+.pm-jogo-superior-acoes {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+.pm-jogo-superior-acoes button {
+  border: 1px solid #8b7456;
+  background: #211e21;
+  color: #f1d9ad;
+  border-radius: 5px;
+  padding: 8px 10px;
+  font-size: 11px;
+  font-weight: 700;
+}
+.pm-jogo-superior-acoes .pm-jogo-sair {
+  background: #35262b;
+  border-color: #98676d;
+  color: #f2d5cf;
+}
+.pm-jogo-conexao {
+  font-size: 11px;
+  color: #d0a9a1;
+  white-space: nowrap;
+}
+.pm-jogo-conexao.online {
+  color: #98d7b5;
+}
+.pm-jogo-tabuleiro {
+  position: absolute;
+  inset: 65px 0 0 0;
+  overflow: hidden;
+  touch-action: none;
+  cursor: grab;
+  background: radial-gradient(ellipse at 45% 47%, #57725e 0, #2e4948 46%, #162c32 100%);
+  user-select: none;
+}
+.pm-jogo-tabuleiro:active {
+  cursor: grabbing;
+}
+.pm-jogo-palco {
+  position: absolute;
+  width: min(100%, calc((100dvh - 160px) * var(--pm-aspecto)));
+  aspect-ratio: var(--pm-aspecto);
+  height: auto;
+  max-height: 100%;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%) translate(var(--pm-pan-x), var(--pm-pan-y)) scale(var(--pm-zoom));
+  transform-origin: 50% 50%;
+  overflow: visible;
+  background:
+    repeating-linear-gradient(0deg, #1329381a 0 45px, #d1d5d41d 46px 47px),
+    repeating-linear-gradient(90deg, #172f33 0 45px, #d1d5d41d 46px 47px), #25333a;
+  border: 2px solid #9f835e;
+  box-shadow: 0 20px 85px #0009;
+}
+.pm-jogo-mapa-imagem {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  inset: 0;
+  object-fit: fill;
+  pointer-events: none;
+}
+.pm-jogo-oculto {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  text-align: center;
+  padding: 45px;
+  background: radial-gradient(ellipse, #1d3241, #080f1b);
+  pointer-events: none;
+}
+.pm-jogo-oculto strong {
+  font-family: Georgia, serif;
+  color: #f1d4a3;
+  font-size: 19px;
+}
+.pm-jogo-oculto p {
+  color: #b6becb;
+  max-width: 300px;
+  font-size: 12px;
+  line-height: 1.5;
+}
+.pm-jogo-token {
+  max-width: 120px;
+}
+.pm-jogo-token > .token-rosto {
+  width: clamp(32px, 5vw, 54px);
+  height: clamp(32px, 5vw, 54px);
+  overflow: hidden;
+  border-width: 3px;
+  font-size: 18px;
+}
+.pm-jogo-token > .token-rosto img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+}
+.pm-jogo-token.meu {
+  z-index: 5;
+}
+.pm-jogo-token.meu > .token-rosto {
+  box-shadow:
+    0 0 0 4px #cda76c77,
+    0 4px 12px #000a;
+}
+.pm-jogo-token small {
+  max-width: 130px;
+}
+.pm-jogo-token.pm-mp-token-controlavel {
+  cursor: grab;
+}
+.pm-jogo-personagens {
+  position: absolute;
+  z-index: 5;
+  top: 86px;
+  left: 15px;
+  width: 102px;
+  max-height: calc(100dvh - 175px);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  scrollbar-width: thin;
+}
+.pm-jogo-personagens h2 {
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  color: #e3c493;
+  margin: 0;
+  text-align: center;
+  text-shadow: 0 1px 3px #000;
+}
+.pm-jogo-personagens h2 small {
+  color: #f5d391;
+}
+.pm-jogo-retrato {
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+  border: 1px solid #826b4b;
+  border-radius: 6px;
+  background: #101820de;
+  padding: 6px;
+  color: #f5deb9;
+  min-width: 0;
+}
+.pm-jogo-retrato.meu {
+  outline: 2px solid #d4b47d;
+}
+.pm-jogo-retrato-imagem {
+  width: 72px;
+  height: 72px;
+  display: grid;
+  place-items: center;
+  border: 2px solid #bd9468;
+  border-radius: 4px;
+  overflow: hidden;
+  background: #213040;
+  font:
+    28px Georgia,
+    serif;
+}
+.pm-jogo-retrato img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.pm-jogo-retrato strong {
+  font:
+    700 11px Georgia,
+    serif;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 85px;
+}
+.pm-jogo-retrato small {
+  font-size: 9px;
+  color: #c1b8b1;
+  max-width: 90px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.pm-jogo-aguardo {
+  font-size: 11px;
+  color: #d3c3a5;
+}
+.pm-jogo-lateral {
+  position: absolute;
+  z-index: 6;
+  top: 86px;
+  right: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  max-width: 122px;
+  padding: 8px;
+  background: #141b25ed;
+  border: 1px solid #6d5945;
+  border-radius: 8px;
+  box-shadow: 0 9px 28px #0007;
+}
+.pm-jogo-lateral > span {
+  font-size: 9px;
+  color: #d6ad6b;
+  letter-spacing: 0.1em;
+  padding: 3px 4px;
+  font-weight: 800;
+}
+.pm-jogo-lateral button {
+  border: 1px solid #565e68;
+  border-radius: 5px;
+  background: #242934;
+  color: #efdfc8;
+  min-height: 34px;
+  padding: 6px;
+  font-size: 11px;
+  text-align: left;
+  font-weight: 700;
+}
+.pm-jogo-lateral button.ativo,
+.pm-jogo-lateral button:hover {
+  background: #574128;
+  border-color: #caa46e;
+}
+.pm-jogo-lateral .pm-jogo-presenca {
+  color: #96d4ab;
+  font-size: 10px;
+  line-height: 1.5;
+  letter-spacing: 0;
+}
+.pm-jogo-zoom {
+  position: absolute;
+  z-index: 6;
+  bottom: 83px;
+  right: 18px;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  border: 1px solid #927449;
+  border-radius: 7px;
+  padding: 4px;
+  background: #131a24dd;
+}
+.pm-jogo-zoom button {
+  padding: 6px 11px;
+  background: #2e2c30;
+  color: #f7dfc5;
+  border: 1px solid #675545;
+  border-radius: 5px;
+  font-weight: 700;
+  font-size: 17px;
+}
+.pm-jogo-zoom span {
+  font-size: 11px;
+  min-width: 43px;
+  text-align: center;
+}
+.pm-jogo-info {
+  position: absolute;
+  z-index: 3;
+  bottom: 97px;
+  left: 135px;
+  max-width: min(450px, 50vw);
+  background: #14212bdc;
+  border: 1px solid #927449;
+  border-radius: 6px;
+  padding: 9px 14px;
+  display: grid;
+  gap: 5px;
+  pointer-events: none;
+  box-shadow: 0 8px 24px #0006;
+}
+.pm-jogo-info strong {
+  color: #f4dcae;
+  font:
+    700 15px Georgia,
+    serif;
+}
+.pm-jogo-info small {
+  font-size: 10px;
+  color: #c0c8c9;
+}
+.pm-jogo-sem-cena {
+  position: absolute;
+  top: 45%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 22px 28px;
+  border: 1px solid #b79666;
+  background: #162333c9;
+  max-width: 320px;
+  text-align: center;
+  border-radius: 9px;
+  color: #f2dfc4;
+}
+.pm-jogo-erro {
+  position: absolute;
+  z-index: 7;
+  bottom: 150px;
+  left: 50%;
+  transform: translateX(-50%);
+  max-width: min(430px, 90vw);
+  border: 1px solid #bd6c72;
+  background: #42242de8;
+  color: #ffdddc;
+  padding: 10px;
+  border-radius: 8px;
+}
+.pm-jogo-dados-barra {
+  position: absolute;
+  z-index: 5;
+  bottom: 15px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #111822ed;
+  border: 1px solid #957048;
+  border-radius: 9px;
+  padding: 8px 13px;
+  box-shadow: 0 7px 25px #0008;
+  max-width: calc(100vw - 32px);
+}
+.pm-jogo-dados-barra > span {
+  font-size: 10px;
+  font-weight: 800;
+  color: #eec58a;
+  white-space: nowrap;
+}
+.pm-jogo-dados-barra form {
+  display: flex;
+  gap: 5px;
+  min-width: 0;
+}
+.pm-jogo-dados-barra input {
+  width: 95px;
+  min-width: 0;
+  padding: 8px;
+  color: #f1e2c7;
+  background: #0e141e;
+  border: 1px solid #706150;
+  border-radius: 4px;
+}
+.pm-jogo-dados-barra button {
+  border: 1px solid #a78354;
+  background: #352b2b;
+  color: #eed9bb;
+  border-radius: 5px;
+  padding: 9px 12px;
+  white-space: nowrap;
+  font-size: 10px;
+  font-weight: 800;
+}
+.pm-jogo-dados-barra button[type='submit'] {
+  background: #aa8454;
+  color: #151a21;
+}
+.pm-jogo-janela {
+  position: fixed;
+  z-index: 20;
+  width: min(510px, calc(100vw - 24px));
+  height: auto;
+  max-height: calc(100dvh - 100px);
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #a18a69;
+  border-radius: 7px;
+  overflow: hidden;
+  box-shadow: 0 18px 55px #000c;
+  background: linear-gradient(155deg, #1d2632, #11151e);
+  color: #f1debe;
+}
+.pm-jogo-janela-chat {
+  width: min(415px, calc(100vw - 24px));
+}
+.pm-jogo-janela-inventario {
+  width: min(550px, calc(100vw - 24px));
+}
+.pm-jogo-janela-titulo {
+  height: 36px;
+  min-height: 36px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #2b2327;
+  border-bottom: 1px solid #8f7553;
+  padding: 0 8px;
+  cursor: move;
+  user-select: none;
+  touch-action: none;
+}
+.pm-jogo-janela-titulo strong {
+  color: #f7dbad;
+  font:
+    700 12px Georgia,
+    serif;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.pm-jogo-janela-titulo span {
+  font-size: 8px;
+  letter-spacing: 0.08em;
+  color: #9a9393;
+}
+.pm-jogo-janela-titulo button {
+  flex-shrink: 0;
+  min-width: 25px;
+  height: 25px;
+  background: #1e252e;
+  border: 1px solid #797080;
+  border-radius: 4px;
+  color: #f6d6ad;
+  font-size: 15px;
+}
+.pm-jogo-janela-corpo {
+  padding: 12px;
+  overflow: auto;
+  min-height: 0;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  max-height: calc(100dvh - 145px);
+}
+.pm-jogo-janela-corpo :is(textarea, input, select) {
+  max-width: 100%;
+  box-sizing: border-box;
+}
+.pm-jogo-janela .pm-mp-ficha,
+.pm-jogo-janela .pm-mp-inventario {
+  padding-top: 2px;
+}
+.pm-jogo-janela .pm-mp-ficha-cabecalho h2 {
+  font-size: 23px;
+}
+.pm-jogo-janela.minimizada {
+  max-height: 36px;
+}
+.pm-jogo-janela .pm-chat-painel {
+  max-width: 100%;
+  width: 100%;
+  box-sizing: border-box;
+}
+@media (max-width: 920px) {
+  .pm-jogo-centro {
+    display: none;
+  }
+  .pm-jogo-lateral {
+    right: 8px;
+    top: 73px;
+  }
+  .pm-jogo-personagens {
+    left: 8px;
+    top: 75px;
+    width: 80px;
+  }
+  .pm-jogo-retrato-imagem {
+    width: 58px;
+    height: 58px;
+  }
+  .pm-jogo-info {
+    left: 96px;
+    bottom: 82px;
+  }
+  .pm-jogo-janela-titulo span {
+    display: none;
+  }
+}
+@media (max-width: 620px) {
+  .pm-jogo-cabecalho {
+    padding: 6px 8px;
+    height: 62px;
+  }
+  .pm-jogo-marca strong {
+    font-size: 12px;
+  }
+  .pm-jogo-marca small {
+    font-size: 7px;
+  }
+  .pm-jogo-superior-acoes button {
+    padding: 7px;
+    font-size: 10px;
+  }
+  .pm-jogo-conexao {
+    display: none;
+  }
+  .pm-jogo-marca .pm-jogo-sigilo {
+    display: none;
+  }
+  .pm-jogo-tabuleiro {
+    top: 62px;
+  }
+  .pm-jogo-personagens {
+    width: 66px;
+  }
+  .pm-jogo-retrato {
+    padding: 3px;
+  }
+  .pm-jogo-retrato-imagem {
+    width: 50px;
+    height: 50px;
+  }
+  .pm-jogo-retrato strong {
+    font-size: 9px;
+  }
+  .pm-jogo-lateral {
+    max-width: 104px;
+  }
+  .pm-jogo-lateral button {
+    font-size: 10px;
+  }
+  .pm-jogo-zoom {
+    right: 10px;
+    bottom: 75px;
+  }
+  .pm-jogo-info {
+    left: 80px;
+    bottom: 74px;
+    max-width: 55vw;
+  }
+  .pm-jogo-dados-barra {
+    gap: 5px;
+    padding: 6px;
+  }
+  .pm-jogo-dados-barra button {
+    padding: 7px;
+    font-size: 9px;
+  }
+  .pm-jogo-dados-barra input {
+    width: 65px;
+  }
+  .pm-jogo-janela {
+    left: 8px !important;
+    top: 75px !important;
+    max-height: calc(100dvh - 85px);
+  }
+  .pm-jogo-janela-corpo {
+    max-height: calc(100dvh - 125px);
+  }
+}
+
+/* v1.3.40.56.1 — Reaproveita a linguagem visual dos componentes da mesa do mestre. */
+.pm-jogo .pm-jogo-personagens {
+  top: 73px;
+  bottom: 90px;
+  left: 12px;
+  width: 112px;
+  max-height: none;
+  overflow: visible;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  pointer-events: none;
+}
+.pm-jogo-personagens .galeria-titulo {
+  font-size: 9px;
+  letter-spacing: 1.1px;
+  margin-bottom: 12px;
+}
+.pm-jogo-personagens .galeria-rolagem {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 3px 0 15px;
+  pointer-events: auto;
+}
+.pm-jogo .pm-jogo-personagens .cartao-retrato {
+  width: 98px;
+  min-width: 0;
+  display: flex;
+  gap: 0;
+  flex-direction: column;
+  align-items: center;
+  padding: 4px 4px 0;
+  border-radius: 4px;
+}
+.pm-jogo-personagens .borda-retrato {
+  height: 100px;
+  width: 100%;
+  border: 1px solid #a2855e;
+  border-radius: 0;
+  overflow: hidden;
+}
+.pm-jogo-personagens .borda-retrato img {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+}
+.pm-jogo-personagens .cartao-nome {
+  max-width: 100%;
+  margin-top: -25px;
+  color: #eee2ce;
+  font-size: 10px;
+}
+.pm-jogo-personagens .cartao-status {
+  padding: 5px 2px;
+  font-size: 9px;
+  color: #b9b1aa;
+  white-space: nowrap;
+}
+.pm-jogo-personagens .cartao-retrato:not(.selecionado) {
+  cursor: default;
+}
+.pm-jogo .pm-jogo-lateral {
+  z-index: 18;
+  top: 80px;
+  right: 12px;
+  width: 119px;
+  max-width: none;
+  max-height: calc(100dvh - 190px);
+  overflow-y: auto;
+  padding: 0;
+  gap: 8px;
+  background: none;
+  border: none;
+  box-shadow: none;
+}
+.pm-jogo-lateral .hx-dock-grupo {
+  display: grid;
+  gap: 8px;
+  background: #171921eb;
+  border: 1px solid #6d5945;
+  padding: 8px;
+  border-radius: 6px;
+}
+.pm-jogo-lateral .pm-jogo-lateral-titulo {
+  font-size: 9px;
+  letter-spacing: 1px;
+  font-weight: 800;
+  color: #e6bd82;
+}
+.pm-jogo .pm-jogo-lateral button {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  text-align: left;
+  gap: 7px;
+  min-height: 37px;
+  padding: 8px 6px;
+  font-size: 10px;
+  background: #191b23;
+  border: 1px solid #5f5549;
+  border-radius: 4px;
+  color: #e9dcc7;
+  box-shadow: 0 2px 12px #0007;
+}
+.pm-jogo-lateral button > span {
+  font-size: 15px;
+  min-width: 17px;
+  text-align: center;
+  color: #e4c08c;
+}
+.pm-jogo-lateral button > strong {
+  font-size: 10px;
+  line-height: 1.1;
+  min-width: 0;
+  white-space: normal;
+}
+.pm-jogo .pm-jogo-lateral button.ativo {
+  background: #4b392d;
+  border-color: #c9a16a;
+}
+.pm-jogo-lateral .pm-jogo-presenca {
+  background: #171921ed;
+  border: 1px solid #6d5945;
+  border-radius: 5px;
+  padding: 8px 5px;
+  line-height: 1.4;
+  color: #90cdb0;
+}
+.pm-jogo .pm-jogo-dados-barra {
+  z-index: 19;
+  bottom: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: max-content;
+  max-width: calc(100vw - 240px);
+  gap: 5px;
+  padding: 8px 10px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  background: linear-gradient(180deg, #23252ce8, #111318f5);
+  border: 1px solid #8b7053;
+  scrollbar-width: thin;
+}
+.pm-jogo .pm-jogo-dados-barra > .barra-dados-titulo {
+  font-size: 10px;
+  padding: 0 10px;
+  letter-spacing: 1px;
+  white-space: nowrap;
+  color: #e4c68e;
+}
+.pm-jogo .pm-jogo-dados-barra > button {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  min-width: 45px;
+  height: 50px;
+  padding: 5px;
+  background: #27242b;
+  border: 1px solid #895f51;
+  border-radius: 5px;
+  color: #e7ceac;
+}
+.pm-jogo .pm-jogo-dados-barra > button > span {
+  font-size: 21px;
+  line-height: 1;
+  color: #e7ceac;
+}
+.pm-jogo .pm-jogo-dados-barra > button > strong {
+  font-size: 10px;
+  color: #c8a98a;
+}
+.pm-jogo .pm-jogo-dados-barra > button.d20 {
+  border-color: #d09a5c;
+}
+.pm-jogo .pm-jogo-dados-barra > .dados-form {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+  flex-shrink: 0;
+  margin: 0 0 0 6px;
+}
+.pm-jogo .pm-jogo-dados-barra > .dados-form input {
+  width: 90px;
+  min-width: 0;
+  max-width: 100%;
+  background: #0c0e14;
+  color: #f1e2c7;
+  border: 1px solid #76634e;
+  border-radius: 4px;
+  padding: 7px;
+}
+.pm-jogo .pm-jogo-dados-barra > .dados-form button {
+  flex-shrink: 0;
+  white-space: nowrap;
+  height: 42px;
+  background: #a77e4f;
+  color: #211a14;
+  border-color: #cfa16a;
+  font-weight: 750;
+  padding: 8px 11px;
+}
+.pm-jogo .pm-jogo-janela.janela-flutuante {
+  position: fixed;
+  z-index: 30;
+  min-width: 260px;
+  min-height: 41px;
+  max-width: calc(100vw - 24px);
+  max-height: calc(100dvh - 96px);
+  height: auto;
+  width: min(535px, calc(100vw - 24px));
+  resize: both;
+  overflow: hidden;
+  background: rgba(19, 20, 25, 0.97);
+  border: 1px solid #8e7960;
+  border-radius: 7px;
+  box-shadow:
+    0 7px 32px #000c,
+    0 0 0 1px #b184522a;
+}
+.pm-jogo .pm-jogo-janela.janela-recursos {
+  width: min(366px, calc(100vw - 24px));
+  height: auto;
+  min-height: 190px;
+  max-height: min(690px, calc(100dvh - 132px));
+  container-type: normal;
+}
+.pm-jogo .pm-jogo-janela.pm-jogo-janela-inventario {
+  width: min(615px, calc(100vw - 24px));
+  height: min(575px, calc(100dvh - 115px));
+}
+.pm-jogo .pm-jogo-janela.pm-jogo-janela-chat {
+  width: min(415px, calc(100vw - 24px));
+  height: min(580px, calc(100dvh - 115px));
+}
+.pm-jogo .pm-jogo-janela.pm-jogo-janela-dados {
+  width: min(525px, calc(100vw - 24px));
+  height: min(560px, calc(100dvh - 115px));
+}
+.pm-jogo .pm-jogo-janela.minimizada {
+  min-height: 41px;
+  height: 41px !important;
+  resize: none;
+}
+.pm-jogo-janela .janela-barra {
+  height: 41px;
+  min-height: 41px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: linear-gradient(90deg, #33282a, #26232a 58%, #1a1b22);
+  padding: 0 9px 0 12px;
+  border-bottom: 1px solid #a27a555e;
+}
+.pm-jogo-janela .janela-barra strong {
+  font-family: Cinzel, Georgia, serif;
+  color: #e6d2b0;
+  flex: 0 1 auto;
+  white-space: nowrap;
+  font-size: 12px;
+}
+.pm-jogo-janela .janela-icone {
+  font-size: 19px;
+}
+.pm-jogo-janela .janela-barra-ajuda {
+  font-size: 8px;
+  margin-left: auto;
+}
+.pm-jogo-janela .janela-barra button {
+  min-width: 26px;
+  min-height: 25px;
+  height: 25px;
+  flex-shrink: 0;
+  padding: 0;
+  background: #191922;
+  border: 1px solid #6d5a4c;
+  border-radius: 3px;
+  color: #bca790;
+  font-size: 17px;
+  line-height: 1;
+}
+.pm-jogo-janela .pm-jogo-janela-corpo {
+  padding: 14px;
+  overflow: auto;
+  max-height: none;
+  min-height: 0;
+  flex: 1;
+  overscroll-behavior: contain;
+}
+.pm-jogo-janela.janela-recursos .pm-jogo-janela-corpo {
+  display: flex;
+  flex-direction: column;
+  padding: 12px 15px 14px;
+}
+.pm-jogo-janela .pm-chat-painel {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+/* Ficha de jogador: mesmas abas e cartões da ficha do mestre, sem controles administrativos. */
+.pm-jogo-ficha-mestre {
+  width: 100%;
+  min-width: 0;
+  color: #e8dcc8;
+}
+.pm-jogo-ficha-mestre .cabecalho-ficha {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  position: static;
+  top: auto;
+  padding: 4px 3px 8px;
+  flex-shrink: 0;
+}
+.pm-jogo-ficha-mestre .avatar-ficha {
+  width: 44px;
+  height: 48px;
+  flex-shrink: 0;
+  overflow: hidden;
+  border: 2px solid #bf9a6b;
+  border-radius: 4px;
+  display: grid;
+  place-items: center;
+}
+.pm-jogo-ficha-mestre .avatar-ficha img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.pm-jogo-ficha-mestre .cabecalho-ficha .hx-ficha-identidade {
+  flex: 1;
+  min-width: 0;
+}
+.pm-jogo-ficha-mestre .cabecalho-ficha .hx-ficha-identidade small {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.pm-jogo-ficha-mestre .hx-ficha-abas {
+  position: sticky;
+  top: 0;
+  display: flex;
+  gap: 7px;
+  flex-shrink: 0;
+  margin: 0 0 10px;
+  padding: 7px 1px 9px;
+  z-index: 3;
+}
+.pm-jogo-ficha-mestre .hx-ficha-corpo {
+  min-height: 0;
+}
+.pm-jogo-ficha-mestre .hx-ficha-atributos {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 9px 12px;
+}
+.pm-jogo-ficha-mestre .hx-ficha-atributos .hx-ficha-ca-controle {
+  grid-column: 1/-1;
+  min-height: 34px;
+}
+.pm-jogo-ficha-mestre .hx-ficha-atributos .recurso {
+  min-width: 0;
+  margin: 0;
+  padding: 10px 11px 9px;
+  border: 1px solid #c3a06d61;
+  border-radius: 9px;
+  background: linear-gradient(140deg, #2e262aea, #16171fdb);
+}
+.pm-jogo-ficha-mestre .hx-ficha-atributos .imp-escudo {
+  grid-column: 1/-1;
+}
+.pm-jogo-ficha-mestre .hx-ficha-atributos .imp-dano-info {
+  grid-column: 1/-1;
+}
+.pm-jogo-ficha-leitura {
+  font-size: 10px;
+  color: #bcae97;
+}
+.pm-jogo-ficha-mestre .recurso-cabecalho strong {
+  font-size: 19px;
+  color: #f3dfb9;
+}
+.pm-jogo-ficha-mestre .barra-recurso {
+  height: 4px;
+  margin: 7px 0;
+  background: #10131b;
+}
+.pm-jogo-ficha-mestre .hx-acoes-da-ficha {
+  max-width: 100%;
+  padding: 10px;
+}
+.pm-jogo-ficha-mestre .hx-acoes-grade {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+.pm-jogo-ficha-mestre .hx-acao-ficha {
+  padding: 10px;
+  min-width: 0;
+  background: linear-gradient(145deg, #232027db, #0f141cdb);
+  border-color: #cfad7a52;
+}
+.pm-jogo-ficha-mestre .hx-acao-ficha-botoes button {
+  min-height: 30px;
+}
+.pm-jogo-acao-descricao {
+  margin-top: 7px;
+  border-top: 1px solid #bba1783d;
+  padding-top: 8px;
+  font-size: 11px;
+}
+.pm-jogo-acao-descricao summary {
+  cursor: pointer;
+  color: #e4bb85;
+}
+.pm-jogo-acao-descricao p {
+  white-space: pre-wrap;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+/* Inventário do convidado: cartões do inventário do mestre, apenas ações permitidas. */
+.pm-jogo .pm-mp-inventario.imp-inventario {
+  display: grid;
+  gap: 12px;
+  padding: 0;
+  color: #ebdfc9;
+}
+.pm-jogo .pm-mp-inventario .pm-mp-itens.imp-itens-lista {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+  max-height: none;
+  overflow: visible;
+  margin: 0;
+}
+.pm-jogo .pm-mp-inventario .pm-mp-item.imp-item-cartao {
+  background: #141821;
+  border: 1px solid #5b5044;
+  border-radius: 7px;
+  padding: 12px;
+}
+.pm-jogo .pm-mp-item-cabecalho.imp-item-cabecalho-visual {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+.pm-jogo .pm-mp-item-cabecalho .pm-item-thumb {
+  width: 68px;
+  height: 68px;
+  flex-shrink: 0;
+}
+.pm-jogo .pm-mp-item-cabecalho > div {
+  align-self: start;
+}
+.pm-jogo .pm-mp-inventario-filtro.imp-inventario-filtros {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 11px;
+}
+.pm-jogo .pm-mp-item-acoes.imp-item-controles {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+.pm-jogo .pm-mp-item-transferencia.imp-item-transferencia {
+  margin-top: 11px;
+  padding: 11px;
+  background: #22242b;
+  border-color: #98754a;
+}
+@media (max-width: 920px) {
+  .pm-jogo .pm-jogo-personagens {
+    left: 5px;
+    top: 73px;
+    width: 80px;
+  }
+  .pm-jogo .pm-jogo-personagens .cartao-retrato {
+    width: 74px;
+  }
+  .pm-jogo-personagens .borda-retrato {
+    height: 75px;
+  }
+  .pm-jogo .pm-jogo-lateral {
+    right: 8px;
+    top: 73px;
+    width: 90px;
+  }
+  .pm-jogo .pm-jogo-lateral button > strong {
+    display: block;
+    font-size: 9px;
+  }
+  .pm-jogo .pm-jogo-dados-barra {
+    max-width: calc(100vw - 115px);
+  }
+  .pm-jogo-ficha-mestre .hx-acoes-grade {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 620px) {
+  .pm-jogo .pm-jogo-personagens {
+    width: 66px;
+    left: 5px;
+    top: 75px;
+  }
+  .pm-jogo .pm-jogo-personagens .cartao-retrato {
+    width: 60px;
+  }
+  .pm-jogo-personagens .borda-retrato {
+    height: 61px;
+  }
+  .pm-jogo-personagens .cartao-nome {
+    font-size: 9px;
+  }
+  .pm-jogo .pm-jogo-lateral {
+    right: 5px;
+    top: 73px;
+    width: 78px;
+  }
+  .pm-jogo .pm-jogo-lateral button {
+    padding: 6px 4px;
+    min-height: 32px;
+  }
+  .pm-jogo .pm-jogo-dados-barra {
+    max-width: calc(100vw - 15px);
+    bottom: 4px;
+    padding: 5px;
+  }
+  .pm-jogo .pm-jogo-dados-barra > button {
+    min-width: 34px;
+    height: 44px;
+  }
+  .pm-jogo .pm-jogo-dados-barra > .barra-dados-titulo {
+    display: none;
+  }
+  .pm-jogo .pm-jogo-dados-barra > .dados-form input {
+    width: 65px;
+  }
+  .pm-jogo .pm-jogo-janela.janela-flutuante {
+    left: 8px !important;
+    top: 75px !important;
+    max-height: calc(100dvh - 85px);
+  }
+  .pm-jogo-ficha-mestre .hx-ficha-atributos {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .pm-jogo-ficha-mestre .hx-ficha-atributos .imp-escudo,
+  .pm-jogo-ficha-mestre .hx-ficha-atributos .imp-dano-info {
+    grid-column: 1;
+  }
+  .pm-jogo-ficha-mestre .hx-ficha-abas {
+    gap: 4px;
+  }
+  .pm-jogo-ficha-mestre .hx-ficha-abas > button {
+    font-size: 10px !important;
+    padding: 6px 7px !important;
+  }
+}
+.pm-jogo-historico {
+  margin: 12px 0 4px;
+}
+.pm-jogo-historico .janela-linha-acoes {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 8px 0 12px;
+  gap: 10px;
+}
+.pm-jogo-historico .lista-eventos {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  max-height: none;
+  overflow: visible;
+}
+.pm-jogo-historico .registro {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 9px 10px;
+  background: #202127;
+  border: 1px solid #826344;
+  border-radius: 5px;
+}
+.pm-jogo-historico .registro p {
+  flex: 1;
+  min-width: 0;
+  display: grid;
+  gap: 4px;
+  margin: 0;
+  font-size: 11px;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+.pm-jogo-historico .registro p strong {
+  font-size: 11px;
+  color: #efd6ab;
+}
+.pm-jogo-historico .registro p small {
+  font-size: 10px;
+  color: #bbaea0;
+}
+.pm-jogo-historico .registro .pm-jogo-historico-total {
+  font-size: 19px;
+  color: #f0c889;
+  font-variant-numeric: tabular-nums;
+}
+.pm-jogo-historico .registro time {
+  font-size: 9px;
+  color: #9e9080;
+  white-space: nowrap;
+}
+
+/* v1.3.40.56.2 — paridade real com o visual dos painéis do mestre.
+   Janelas, dock e cabeçalho reutilizam as mesmas classes e folhas de estilo,
+   mantendo a lógica de permissões do convidado em componentes próprios. */
+.pm-jogo .pm-jogo-cabecalho.cabecalho-mesa {
+  z-index: 22;
+  height: 62px;
+  padding: 0 22px;
+  background: linear-gradient(180deg, rgba(13, 14, 18, 0.96), rgba(13, 14, 18, 0.78));
+  box-shadow: 0 6px 35px #0007;
+}
+.pm-jogo .pm-jogo-marca.identidade-mesa {
+  min-width: 180px;
+  gap: 11px;
+  letter-spacing: normal;
+}
+.pm-jogo .pm-jogo-sigilo.sigilo-mesa {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  flex: none;
+  font-size: 27px;
+}
+.pm-jogo .pm-jogo-marca strong {
+  font-family: Cinzel, Georgia, serif;
+  letter-spacing: 1.2px;
+  font-size: 15px;
+}
+.pm-jogo .pm-jogo-marca small {
+  font-size: 9px;
+  letter-spacing: 2px;
+}
+.pm-jogo .pm-jogo-centro.cabecalho-centro {
+  gap: 12px;
+  color: #bdb17e;
+}
+.pm-jogo .pm-jogo-centro .estado-sessao {
+  letter-spacing: 1px;
+  font-size: 10px;
+  color: #bdb17e;
+}
+.pm-jogo .pm-jogo-centro .divisor-vertical {
+  padding: 0;
+  border-left: 1px solid #77705e;
+}
+.pm-jogo .pm-jogo-centro b {
+  font:
+    700 12px Cinzel,
+    Georgia,
+    serif;
+  color: #f2e3cc;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.pm-jogo .pm-jogo-superior-acoes.cabecalho-acoes button {
+  font-size: 11px;
+  background: #24252d;
+  border: 1px solid #706450;
+  color: #e3d8c4;
+}
+.pm-jogo .pm-jogo-superior-acoes .pm-jogo-sair {
+  background: #35262b !important;
+  border-color: #98676d !important;
+  color: #f2d5cf !important;
+}
+.pm-jogo .pm-jogo-tabuleiro {
+  top: 62px;
+}
+.pm-jogo .pm-jogo-janela.janela-flutuante {
+  background: var(--vidro);
+  backdrop-filter: blur(17px);
+  border: 1px solid #8e7960;
+}
+.pm-jogo .pm-jogo-janela .janela-barra {
+  background: linear-gradient(90deg, #33282a, #26232a 58%, #1a1b22);
+  touch-action: none;
+}
+.pm-jogo .pm-jogo-janela .pm-jogo-janela-corpo.janela-conteudo {
+  font-size: 12px;
+  scrollbar-width: thin;
+  scrollbar-color: #7b6955 #15161b;
+}
+.pm-jogo .janela-recursos .hx-ficha-abas {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+  overflow: visible;
+}
+.pm-jogo .janela-recursos .hx-ficha-abas > button {
+  min-width: 0;
+  min-height: 36px;
+  white-space: normal;
+  justify-content: center;
+  font-size: 12px !important;
+  line-height: 1.25;
+}
+.pm-jogo .janela-recursos .cabecalho-ficha > .hx-ficha-resumo {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.pm-jogo .janela-recursos .cabecalho-ficha > .selo-ca {
+  flex: none;
+}
+.pm-jogo-ficha-mestre .hx-ficha-ca-controle input[readonly] {
+  cursor: default;
+  opacity: 0.9;
+  pointer-events: none;
+}
+.pm-jogo-ficha-mestre .avatar-ficha img,
+.pm-jogo-personagens .borda-retrato img {
+  transform: translate(var(--ajuste-x, 0%), var(--ajuste-y, 0%)) scale(var(--ajuste-zoom, 1));
+  transform-origin: center;
+  object-fit: cover;
+}
+.pm-jogo-personagens .borda-retrato img {
+  display: block;
+}
+@media (max-width: 780px) {
+  .pm-jogo .pm-jogo-cabecalho.cabecalho-mesa {
+    height: 57px;
+    padding: 0 11px;
+  }
+  .pm-jogo .pm-jogo-tabuleiro {
+    top: 57px;
+  }
+  .pm-jogo .pm-jogo-marca.identidade-mesa {
+    min-width: 0;
+  }
+}
+@media (max-width: 620px) {
+  .pm-jogo .pm-jogo-janela.janela-recursos {
+    width: min(366px, calc(100vw - 24px));
+  }
+  .pm-jogo .janela-recursos .hx-ficha-abas > button {
+    font-size: 10px !important;
+  }
+}
+
+/* v29.14.1: pincel do convidado, no mesmo acabamento visual da mesa do mestre. */
+.pm-jogo-desenho-barra {
+  position: absolute;
+  z-index: 9;
+  bottom: 150px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 7px 9px;
+  background: rgba(20, 20, 27, 0.95);
+  border: 1px solid #8c6948;
+  border-radius: 6px;
+  box-shadow: 0 7px 18px #0008;
+  max-width: calc(100vw - 230px);
+}
+.pm-jogo-desenho-barra button {
+  border: 1px solid #80674f;
+  background: #222029;
+  color: #e6d2b1;
+  border-radius: 4px;
+  padding: 6px 10px;
+  white-space: nowrap;
+}
+.pm-jogo-desenho-barra button.ativo {
+  background: #684c32;
+  border-color: #d2a26c;
+  color: #fff2dc;
+}
+.pm-jogo-desenho-barra label {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+  font-size: 11px;
+  color: #dfc8a6;
+}
+.pm-jogo-desenho-barra input[type='color'] {
+  width: 29px;
+  height: 25px;
+  padding: 1px;
+  background: #1e2028;
+  border: 1px solid #85654b;
+}
+.pm-jogo-desenho-barra input[type='range'] {
+  width: 68px;
+  accent-color: #c99b67;
+}
+.pm-jogo-desenho-barra small {
+  color: #d4c3a9;
+  font-size: 10px;
+  max-width: 210px;
+}
+.pm-jogo-desenho-preview {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 7;
+}
+.pm-jogo--modo2d.pm-jogo--desenhando .pm-jogo-tabuleiro {
+  cursor: crosshair;
+}
+@media (max-width: 800px) {
+  .pm-jogo-desenho-barra {
+    bottom: 125px;
+    left: 96px;
+    right: 96px;
+    transform: none;
+    max-width: none;
+    max-height: 75px;
+    overflow: auto;
+  }
+}
+
+/* v29.14.2: reenvio em caso de servidor antigo, sem perder a linha desenhada. */
+.pm-jogo-desenho-reenvio {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.pm-jogo-desenho-reenvio button {
+  font-size: 10px;
+  background: #533a2c;
+  border-color: #db9b69;
+}
+.pm-jogo-desenho-barra:has(.pm-jogo-desenho-reenvio) {
+  max-width: min(96vw, 1100px);
+  flex-wrap: wrap;
+}
+
+/* v29.15.30.22 — Clima local, na mesma janela flutuante da mesa do mestre. */
+.pm-jogo-clima-painel {
+  display: grid;
+  gap: 12px;
+  color: #e8dfd2;
+  font-size: 12px;
+  line-height: 1.5;
+}
+.pm-jogo-clima-painel .aviso-pequeno {
+  margin: 0;
+  color: #bdb2a2;
+}
+.pm-jogo-clima-tipo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 12px;
+  border: 1px solid #71604b;
+  border-radius: 7px;
+  background: #1b2028;
+}
+.pm-jogo-clima-tipo strong {
+  color: #e5c18e;
+}
+.pm-jogo-clima-pausar {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 10px;
+  border: 1px solid #71604b;
+  border-radius: 7px;
+  cursor: pointer;
+}
+.pm-jogo-clima-pausar input {
+  width: auto;
+  accent-color: #b99161;
+}
+.pm-jogo-clima-alternar {
+  min-height: 36px;
+  border: 1px solid #a38665;
+  border-radius: 6px;
+  color: #ead6b6;
+  background: #302b29;
+  cursor: pointer;
+}
+.pm-jogo-clima-alternar:hover {
+  background: #483a2b;
+}

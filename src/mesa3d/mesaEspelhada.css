@@ -1,0 +1,241 @@
+/* O App original renderiza o cabeçalho, as janelas, os retratos e os dados.
+   Somente o palco central vira o visualizador 3D: não existe cópia da UI do mestre. */
+.mesa-app-3d .mapa-viewport-3d {
+  overflow: hidden;
+  background: #101a23;
+  touch-action: auto;
+}
+.mesa-app-3d .mesa-3d-visualizador {
+  width: 100%;
+  height: 100%;
+  display: block;
+  border: 0;
+  background: #101a23;
+}
+.mesa-app-3d .mapa-viewport-3d:focus-within {
+  outline: 0;
+}
+.mesa-app-3d .dicas-mapa {
+  display: none;
+}
+.mesa-app-3d .barra-ferramentas-mapa {
+  z-index: 22;
+}
+.mesa-app-3d .janela-flutuante {
+  z-index: 28;
+}
+.mesa-app-3d .cabecalho-mesa {
+  z-index: 40;
+}
+.mesa-app-3d .galeria-personagens,
+.mesa-app-3d .atalhos-direita {
+  z-index: 15;
+}
+/* A câmera trabalha abaixo da barra de ferramentas original. */
+@media (max-width: 780px) {
+  .mesa-app-3d .mesa-3d-visualizador {
+    min-height: 100%;
+  }
+}
+
+/* v1.3.30 — seletor de câmera integrado aos atalhos originais da esquerda.
+   Não existe seletor central ou botão de "modo construção". */
+:is(.mesa-app-3d, .pm-jogo--modo3d) .atalhos-esquerda {
+  gap: 7px;
+  z-index: 24;
+}
+:is(.mesa-app-3d, .pm-jogo--modo3d) .hx-camera-mesa3d {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px 7px 8px;
+  border: 1px solid rgba(172, 140, 96, 0.47);
+  border-radius: 8px;
+  background: rgba(14, 19, 26, 0.94);
+  box-shadow: 0 7px 24px #0008;
+  width: 150px;
+  margin-top: 11px;
+}
+:is(.mesa-app-3d, .pm-jogo--modo3d) .hx-camera-titulo {
+  font-size: 9px;
+  letter-spacing: 1.4px;
+  color: #c5a677;
+  font-weight: 800;
+  padding: 0 4px 3px;
+  white-space: nowrap;
+}
+:is(.mesa-app-3d, .pm-jogo--modo3d) .hx-camera-mesa3d button {
+  min-width: 0;
+  width: 100%;
+  text-align: left;
+  line-height: 1.25;
+  font-size: 11px;
+  padding: 10px 8px;
+  background: #24252d;
+  border: 1px solid #615441;
+  border-radius: 5px;
+  color: #e3d8c4;
+}
+:is(.mesa-app-3d, .pm-jogo--modo3d) .hx-camera-mesa3d button.ativo,
+:is(.mesa-app-3d, .pm-jogo--modo3d) .hx-camera-mesa3d button[aria-pressed='true'] {
+  background: linear-gradient(110deg, #896a46, #594835);
+  border-color: #d7b477;
+  color: #fff3d9;
+  box-shadow: inset 3px 0 #d9ba82;
+}
+:is(.mesa-app-3d, .pm-jogo--modo3d) .hx-camera-mesa3d button:hover,
+:is(.mesa-app-3d, .pm-jogo--modo3d) .hx-camera-mesa3d button:focus-visible {
+  border-color: #e0be85;
+  background: #4b3c32;
+}
+:is(.mesa-app-3d, .pm-jogo--modo3d) .hx-camera-mesa3d button:focus-visible {
+  outline: 2px solid #d9b376;
+  outline-offset: 2px;
+}
+@media (max-width: 780px) {
+  :is(.mesa-app-3d, .pm-jogo--modo3d) .hx-camera-mesa3d {
+    width: 128px;
+    padding: 8px 5px;
+  }
+  :is(.mesa-app-3d, .pm-jogo--modo3d) .hx-camera-titulo {
+    font-size: 8px;
+  }
+  :is(.mesa-app-3d, .pm-jogo--modo3d) .hx-camera-mesa3d button {
+    font-size: 10px;
+    padding: 8px 6px;
+  }
+}
+@media (max-height: 650px) {
+  :is(.mesa-app-3d, .pm-jogo--modo3d) .hx-camera-mesa3d {
+    margin-top: 4px;
+  }
+  :is(.mesa-app-3d, .pm-jogo--modo3d) .hx-camera-mesa3d button {
+    padding-top: 6px;
+    padding-bottom: 6px;
+  }
+}
+
+/* Vinheta exclusiva do palco 3D; o mapa 2D mantém a arte e a névoa próprias. */
+.mesa-app-3d .mapa-viewport-3d::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse 85% 80% at 50% 49%,
+    transparent 62%,
+    rgba(7, 12, 17, 0.21) 100%
+  );
+}
+
+/* v1.3.40.6 — seleção do token acompanhado sem sobreposição com a HUD 3D. */
+:is(.mesa-app-3d, .pm-jogo--modo3d) .hx-camera-mesa3d button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+:is(.mesa-app-3d, .pm-jogo--modo3d) .hx-camera-personagem {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 7px 3px 2px;
+  color: #d9bd91;
+  font-size: 10px;
+  line-height: 1.25;
+}
+:is(.mesa-app-3d, .pm-jogo--modo3d) .hx-camera-personagem select {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  padding: 7px 5px;
+  background: #171d25;
+  color: #f0e0c9;
+  border: 1px solid #98774c;
+  border-radius: 5px;
+  font-size: 11px;
+  text-overflow: ellipsis;
+}
+:is(.mesa-app-3d, .pm-jogo--modo3d) .hx-camera-personagem select:focus-visible {
+  outline: 2px solid #d9b376;
+  outline-offset: 2px;
+}
+
+/* v1.3.40.24 — controle compacto da câmera tática, sem poluir a barra do mestre. */
+:is(.mesa-app-3d, .pm-jogo--modo3d) .hx-camera-zoom-tatico {
+  display: grid;
+  gap: 7px;
+  margin-top: 5px;
+  padding: 10px 5px 3px;
+  border-top: 1px solid #a886594d;
+  color: #d9bd91;
+  min-width: 0;
+}
+:is(.mesa-app-3d, .pm-jogo--modo3d) .hx-camera-zoom-tatico-topo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 10px;
+  gap: 4px;
+}
+:is(.mesa-app-3d, .pm-jogo--modo3d) .hx-camera-zoom-tatico-topo strong {
+  color: #f1d7a8;
+  font-size: 10px;
+}
+:is(.mesa-app-3d, .pm-jogo--modo3d) .hx-camera-zoom-tatico-controles {
+  display: grid;
+  grid-template-columns: 25px minmax(0, 1fr) 25px;
+  gap: 5px;
+  align-items: center;
+  min-width: 0;
+}
+:is(.mesa-app-3d, .pm-jogo--modo3d) .hx-camera-zoom-tatico-controles input {
+  width: 100%;
+  min-width: 0;
+  accent-color: #c49e68;
+  cursor: pointer;
+}
+:is(.mesa-app-3d, .pm-jogo--modo3d) .hx-camera-mesa3d .hx-camera-zoom-tatico-controles button {
+  padding: 3px !important;
+  min-height: 28px;
+  font-size: 15px;
+  text-align: center;
+}
+:is(.mesa-app-3d, .pm-jogo--modo3d) .hx-camera-mesa3d button.hx-camera-reenquadrar {
+  width: 100%;
+  padding: 7px 4px;
+  min-height: 30px;
+  font-size: 10px;
+  text-align: center;
+  background: #323036;
+}
+:is(.mesa-app-3d, .pm-jogo--modo3d) .hx-camera-zoom-tatico small {
+  font-size: 9px;
+  color: #ab9b84;
+  line-height: 1.3;
+}
+
+/* v1.3.40.32 — câmera de personagem sem painel de ações redundante. */
+:is(.mesa-app-3d, .pm-jogo--modo3d) .hx-camera-personagem-dica {
+  display: grid;
+  gap: 7px;
+  padding: 8px 4px 4px;
+  border-top: 1px solid #aa885341;
+}
+:is(.mesa-app-3d, .pm-jogo--modo3d) .hx-camera-personagem-dica small {
+  color: #c2ac8c;
+  font-size: 10px;
+  line-height: 1.4;
+}
+:is(.mesa-app-3d, .pm-jogo--modo3d) .hx-camera-personagem-dica button {
+  min-height: 30px;
+  border: 1px solid #947449;
+  border-radius: 5px;
+  background: linear-gradient(110deg, #343037, #222833);
+  color: #ebd5b3;
+  cursor: pointer;
+  font-size: 10px;
+  font-weight: 650;
+}
+:is(.mesa-app-3d, .pm-jogo--modo3d) .hx-camera-personagem-dica button:hover {
+  background: #493a32;
+}

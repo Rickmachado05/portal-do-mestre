@@ -1,0 +1,239 @@
+/* Complementos locais para fichas Ímpeto A01 (Mesa 2D e Mesa 3D). */
+.impeto-ca-temporaria {
+  display: grid;
+  gap: 10px;
+  padding: 12px;
+  margin: 12px 0;
+  border: 1px solid rgba(207, 173, 118, 0.38);
+  border-radius: 9px;
+  background: rgba(18, 27, 44, 0.6);
+}
+.impeto-ca-temporaria > strong {
+  color: #e8ce9e;
+}
+.impeto-ca-temporaria > div:not(.impeto-c02-acoes) {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+.impeto-ca-temporaria label {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  font-size: 0.84rem;
+}
+.impeto-ca-temporaria input {
+  width: 100%;
+  max-width: 120px;
+  box-sizing: border-box;
+  padding: 7px;
+}
+.impeto-ca-temporaria small {
+  line-height: 1.4;
+  color: #b9c5d4;
+}
+.impeto-c02-acoes {
+  display: flex;
+  gap: 7px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.impeto-c02-acoes button {
+  min-height: 35px;
+  padding: 6px 9px;
+}
+.impeto-a01-expandir {
+  margin: 12px 0;
+  padding: 10px;
+  border: 1px solid rgba(199, 161, 105, 0.35);
+  border-radius: 9px;
+}
+.impeto-a01-expandir > summary {
+  cursor: pointer;
+  color: #e6d1a6;
+  font-weight: 650;
+  line-height: 1.5;
+}
+.impeto-a01-expandir[open] > summary {
+  margin-bottom: 12px;
+}
+@media (max-width: 700px) {
+  .impeto-ca-temporaria > div:not(.impeto-c02-acoes) {
+    grid-template-columns: 1fr;
+  }
+}
+/* v1.3.4.56.17 — rolagem consistente com painéis de couro, carvão e ouro da mesa. */
+.impeto-a01-testes {
+  display: grid;
+  gap: 13px;
+  min-width: 0;
+  container-type: inline-size;
+  padding: 14px;
+  margin: 14px 0;
+  border: 1px solid rgba(196, 157, 103, 0.46);
+  border-radius: 11px;
+  background: linear-gradient(155deg, #29252a 0%, #1d1d24 60%, #161920 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(250, 222, 167, 0.07),
+    0 10px 25px rgba(0, 0, 0, 0.14);
+  color: #eadac1;
+}
+.impeto-a01-testes-cabecalho {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  min-width: 0;
+}
+.impeto-a01-testes-icone {
+  display: grid;
+  place-items: center;
+  flex: 0 0 37px;
+  width: 37px;
+  height: 37px;
+  border: 1px solid #8c7150;
+  border-radius: 8px;
+  background: #453629;
+  color: #f0d2a1;
+  font-size: 23px;
+}
+.impeto-a01-testes-cabecalho > div {
+  flex: 1;
+  min-width: 0;
+}
+.impeto-a01-testes h3 {
+  margin: 0 0 4px;
+  color: #f1d9ae;
+  font:
+    700 15px Cinzel,
+    Georgia,
+    serif;
+}
+.impeto-a01-testes p {
+  margin: 0;
+  color: #c6bdb2;
+  line-height: 1.5;
+  font-size: 12px;
+}
+.impeto-a01-testes-campos {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 9px;
+  min-width: 0;
+}
+.impeto-a01-testes-campos label {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+  font-size: 11px;
+  font-weight: 750;
+  color: #e2ccaa;
+}
+.impeto-a01-testes-campos select {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  height: 40px;
+  padding: 8px 9px;
+  box-sizing: border-box;
+  border: 1px solid #77654b;
+  border-radius: 8px;
+  background: #25232a;
+  color: #f6e7ce;
+  font-size: 12px;
+}
+.impeto-a01-testes-campos select:focus-visible {
+  outline: 2px solid #e0b47d;
+  outline-offset: 2px;
+}
+.impeto-a01-testes-resultado {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 3px 8px;
+  border: 1px solid rgba(202, 163, 109, 0.3);
+  border-radius: 8px;
+  background: rgba(19, 19, 25, 0.75);
+  padding: 10px 12px;
+}
+.impeto-a01-testes-resultado > span {
+  color: #c9bba9;
+  font-size: 11px;
+  font-weight: 650;
+}
+.impeto-a01-testes-resultado > strong {
+  grid-column: 2;
+  grid-row: 1/3;
+  color: #ffe0aa;
+  font:
+    700 24px Georgia,
+    serif;
+}
+.impeto-a01-testes-resultado > small {
+  color: #acadae;
+  font-size: 11px;
+  line-height: 1.5;
+}
+.impeto-a01-testes button.impeto-a01-testes-rolar {
+  display: block;
+  width: 100%;
+  max-width: none;
+  min-height: 44px;
+  border: 1px solid #cca471;
+  border-radius: 8px;
+  background: linear-gradient(120deg, #785338, #523b30);
+  color: #ffebcb;
+  font-size: 13px;
+  font-weight: 750;
+  cursor: pointer;
+}
+.impeto-a01-testes-rolar:hover {
+  filter: brightness(1.12);
+}
+.impeto-a01-testes-rolar:focus-visible {
+  outline: 2px solid #e0b47d;
+  outline-offset: 2px;
+}
+.impeto-a01-testes-dificuldades {
+  padding-top: 11px;
+  border-top: 1px solid rgba(197, 157, 105, 0.24);
+  min-width: 0;
+}
+.impeto-a01-testes-dificuldades > strong {
+  display: block;
+  margin-bottom: 9px;
+  font-size: 11px;
+  color: #ddc49f;
+}
+.impeto-a01-testes-cds {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+  gap: 6px;
+}
+.impeto-a01-cd {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  min-width: 0;
+  padding: 8px 5px;
+  border: 1px solid rgba(173, 143, 102, 0.31);
+  border-radius: 7px;
+  background: #252228;
+  text-align: center;
+}
+.impeto-a01-cd b {
+  font-size: 11px;
+  font-weight: 750;
+  color: #f1d8ae;
+}
+.impeto-a01-cd small {
+  font-size: 10px;
+  line-height: 1.25;
+  color: #bdb3a6;
+  overflow-wrap: anywhere;
+}
+@container (max-width:350px) {
+  .impeto-a01-testes-campos {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

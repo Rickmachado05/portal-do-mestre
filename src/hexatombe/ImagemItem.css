@@ -1,0 +1,28 @@
+.pm-item-thumb {
+  display: inline-flex;
+  flex: none;
+  width: 76px;
+  height: 76px;
+  max-width: 100%;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: 11px;
+  border: 1px solid #82694c;
+  background: radial-gradient(circle at 45% 25%, #4b433c, #191e26 76%);
+  box-shadow: inset 0 0 20px #0005;
+}
+.pm-item-thumb img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.pm-item-thumb-fallback {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  line-height: 1;
+  filter: drop-shadow(0 2px 3px #0007);
+}

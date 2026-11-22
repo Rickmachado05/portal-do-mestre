@@ -1,0 +1,25 @@
+/* Interface v29.15.5 — três tarefas separadas com seleção e persistência anteriores. */
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const ts = require('typescript');
+const component = fs.readFileSync('src/mesa3d/Mesa3DPrototipo.tsx','utf8');
+const css = fs.readFileSync('src/mesa3d/Mesa3DPrototipo.css','utf8');
+const parsed = ts.transpileModule(component, {fileName:'Mesa3DPrototipo.tsx',reportDiagnostics:true,compilerOptions:{jsx:ts.JsxEmit.ReactJSX,target:ts.ScriptTarget.ES2022,module:ts.ModuleKind.ESNext}});
+assert.equal(parsed.diagnostics?.filter(d=>d.category===ts.DiagnosticCategory.Error).length,0,'Sintaxe JSX');
+assert.match(component,/abaMiniaturas.*useState<'biblioteca'\|'cena'\|'importar'>/);
+assert.match(component,/role="tablist" aria-label="Seções de miniaturas"/);
+assert.match(component,/role="tabpanel"/);
+assert.match(component,/type="search" aria-label="Buscar modelos 3D"/);
+assert.match(component,/type="search" aria-label="Buscar miniaturas nesta cena"/);
+assert.match(component,/onClick=\{vincularModeloSelecionado\}/);
+assert.match(component,/Posicionar no mapa/);
+assert.match(component,/Remover miniatura da cena/);
+assert.match(component,/Animação idle \(opcional\)/);
+assert.match(component,/Miniaturas nesta cena/);
+assert.match(component,/setAbaMiniaturas\('cena'\)/);
+assert.match(component,/backup completo v29\.15\.4 suporta arquivos de até 2 GB/);
+assert.doesNotMatch(component,/o exportador de backup completo atual aceita até 420 MB/);
+assert.match(css,/\.m3d-mini-tabs/);
+assert.match(css,/\.m3d-mini-list-item/);
+assert.match(css,/focus-visible/);
+console.log('v29.15.5: 16 verificações da nova interface aprovadas.');

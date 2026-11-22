@@ -1,0 +1,331 @@
+.player-musica {
+  display: grid;
+  gap: 12px;
+  color: #e9ddc5;
+  padding: 2px 0 7px;
+  font-family: inherit;
+}
+.musica-status {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 10px;
+  border: 1px solid #8d6b46a8;
+  background: linear-gradient(120deg, #302520, #161922);
+  border-radius: 8px;
+}
+.musica-selo {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 40px;
+  height: 40px;
+  border: 1px solid #bd9565;
+  border-radius: 9px;
+  background: #7a452d;
+  color: #ffe4a9;
+  font-size: 25px;
+}
+.musica-status div {
+  min-width: 0;
+  display: grid;
+  gap: 3px;
+}
+.musica-status small {
+  letter-spacing: 1px;
+  color: #caa979;
+  font-size: 9px;
+  font-weight: 700;
+}
+.musica-status strong {
+  font-size: 13px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.musica-progresso {
+  display: grid;
+  gap: 4px;
+}
+.musica-progresso input {
+  width: 100%;
+  accent-color: #ca9158;
+}
+.musica-progresso > div {
+  display: flex;
+  justify-content: space-between;
+  color: #b8a890;
+  font-size: 10px;
+  font-variant-numeric: tabular-nums;
+}
+.musica-controles {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.musica-controles > button {
+  min-width: 38px;
+  min-height: 36px;
+  padding: 6px 8px;
+  font-size: 16px;
+}
+.musica-controles .musica-reproduzir {
+  background: #97673b;
+  color: #fff4d9;
+  min-width: 48px;
+  border-color: #ddad70;
+}
+.musica-controles > button.musica-ativado {
+  background: #60452d;
+  color: #fff6cd;
+  border-color: #f0c077;
+}
+.musica-volume {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 10px;
+  color: #d3c0a0;
+  flex: 1;
+  min-width: 130px;
+}
+.musica-volume input {
+  min-width: 42px;
+  width: 100%;
+  accent-color: #c99d67;
+}
+.musica-biblioteca-topo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 1px solid #7b62508a;
+  padding-bottom: 7px;
+}
+.musica-biblioteca-topo strong {
+  font-size: 12px;
+}
+.musica-biblioteca-topo small {
+  font-size: 10px;
+  color: #aa9b85;
+}
+.musica-biblioteca-topo button {
+  font-size: 11px;
+  padding: 7px 9px;
+}
+.musica-lista {
+  display: grid;
+  gap: 5px;
+  max-height: 210px;
+  overflow-y: auto;
+  scrollbar-color: #866b4c transparent;
+}
+.musica-faixa {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  border: 1px solid #52463f;
+  background: #1b1c24;
+  border-radius: 6px;
+  min-width: 0;
+}
+.musica-faixa.atual {
+  border-color: #c69858;
+  background: #342b29;
+}
+.musica-faixa-selecionar {
+  min-width: 0;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 7px !important;
+  border: 0 !important;
+  background: transparent !important;
+  text-align: left;
+}
+.musica-faixa-selecionar > span {
+  color: #d7a771;
+  font-size: 11px;
+  font-weight: 700;
+}
+.musica-faixa-selecionar > strong {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 11px;
+}
+.musica-faixa-selecionar > small {
+  font-size: 9px;
+  color: #a89a84;
+}
+.musica-faixa .musica-excluir {
+  border: 0 !important;
+  padding: 5px 9px !important;
+  background: transparent !important;
+  color: #d79f91 !important;
+  font-size: 18px;
+}
+.musica-vazia,
+.musica-rodape {
+  font-size: 11px;
+  line-height: 1.5;
+  color: #b4a48b;
+}
+.musica-vazia {
+  padding: 12px 8px;
+  text-align: center;
+  border: 1px dashed #756451;
+  border-radius: 6px;
+}
+.musica-link {
+  border-top: 1px solid #76594388;
+  padding-top: 10px;
+}
+.musica-link summary {
+  font-size: 11px;
+  color: #d6b98d;
+  cursor: pointer;
+  font-weight: 700;
+}
+.musica-link form {
+  display: grid;
+  gap: 6px;
+  margin-top: 10px;
+}
+.musica-link input {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  padding: 8px;
+  background: #151820;
+  color: #f2e5d2;
+  border: 1px solid #8f7258;
+  border-radius: 5px;
+}
+.musica-link button {
+  justify-self: start;
+  padding: 8px 12px;
+}
+.musica-link p {
+  font-size: 10px;
+  color: #b5a68e;
+  line-height: 1.5;
+}
+.musica-aviso {
+  background: #3d3126;
+  border: 1px solid #b7955c;
+  border-radius: 6px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 10px;
+  font-size: 10px;
+  line-height: 1.45;
+}
+.musica-aviso button {
+  padding: 0 5px !important;
+  border: 0 !important;
+  background: transparent !important;
+  color: #f1d4a8 !important;
+}
+.musica-rodape {
+  margin: 0;
+  border-top: 1px solid #55483e;
+  padding-top: 8px;
+}
+
+/* Playlists por cena · v1.3.40.48 */
+.musica-playlists {
+  display: grid;
+  gap: 9px;
+  margin: 12px 0;
+  padding: 11px;
+  border-radius: 10px;
+  border: 1px solid rgba(194, 164, 112, 0.35);
+  background: rgba(13, 18, 28, 0.66);
+}
+.musica-playlists > label {
+  display: grid;
+  gap: 6px;
+  font-weight: 600;
+  font-size: 12px;
+  color: #e6d8bf;
+}
+.musica-playlists select,
+.musica-edicao-faixa input {
+  background: #171d27;
+  color: #f6e9d8;
+  border: 1px solid #686052;
+  border-radius: 6px;
+  padding: 8px;
+  min-width: 0;
+  max-width: 100%;
+  width: 100%;
+}
+.musica-playlist-botoes {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+}
+.musica-playlist-botoes button {
+  padding: 6px 8px;
+  border: 1px solid #645a49;
+  border-radius: 6px;
+  background: #222732;
+  color: #f3e3c6;
+  cursor: pointer;
+}
+.musica-playlist-botoes button:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+.musica-playlist-edicao {
+  border: 1px solid #454857;
+  border-radius: 7px;
+  padding: 8px;
+}
+.musica-playlist-edicao summary {
+  cursor: pointer;
+  color: #e7d6b5;
+}
+.musica-playlist-edicao label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 7px;
+  font-size: 12px;
+}
+.musica-playlist-edicao input {
+  accent-color: #c1a17a;
+}
+.musica-playlists > small {
+  font-size: 11px;
+  line-height: 1.4;
+  color: #aab0b9;
+}
+.musica-renomear {
+  border: 0;
+  background: transparent;
+  color: #d9c9ab;
+  cursor: pointer;
+  padding: 5px;
+}
+.musica-edicao-faixa {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  max-width: 100%;
+}
+.musica-edicao-faixa input {
+  flex: 1 1 105px;
+  width: auto;
+}
+.musica-edicao-faixa button {
+  font-size: 11px;
+}

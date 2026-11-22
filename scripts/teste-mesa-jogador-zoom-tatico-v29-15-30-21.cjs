@@ -1,0 +1,18 @@
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const path=require('node:path');
+const dir=path.join(__dirname,'..','src','multiplayer');
+const tsx=fs.readFileSync(path.join(dir,'MesaConvidado2D.tsx'),'utf8');
+const css=fs.readFileSync(path.join(dir,'MesaConvidado2DParity.css'),'utf8');
+const esperado="{visualizacao==='2d'?'▣ Mesa 3D':'▧ Mesa 2D'}";
+assert.ok(tsx.includes(esperado),'O botão mostra o destino, não a mesa atual');
+assert.match(tsx,/onClick=\{\(\)=>setVisualizacao\(atual=>atual==='2d'\?'3d':'2d'\)\}/);
+assert.match(tsx,/aria-label=\{visualizacao==='2d'\?'Ir para a Mesa 3D':'Ir para a Mesa 2D'\}/);
+assert.match(tsx,/cameraJogador3D==='tatica'&&<div className="hx-camera-zoom-tatico"/);
+assert.match(tsx,/aria-label="Aproximar câmera tática"/);
+assert.match(tsx,/aria-label="Afastar câmera tática"/);
+assert.match(css,/\.pm-jogo\.pm-jogo--modo3d \.pm-jogo-atalhos-esquerda \.hx-camera-zoom-tatico-controles > button/);
+assert.match(css,/grid-template-columns:28px minmax\(0,1fr\) 28px/);
+assert.match(css,/width:28px;min-width:0;max-width:28px;height:28px;min-height:28px/);
+assert.match(css,/\.hx-camera-zoom-tatico-controles > input\[type="range"\]/);
+console.log('OK: botão 2D/3D indica o destino; câmera tática tem zoom delimitado para o jogador.');

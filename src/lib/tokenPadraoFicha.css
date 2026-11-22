@@ -1,0 +1,175 @@
+.token-padrao-ficha {
+  display: grid;
+  gap: 12px;
+  padding: 15px;
+  border: 1px solid #5a5044;
+  border-radius: 9px;
+  background: #1b1c21;
+  color: #e2dcd1;
+}
+.token-padrao-ficha header {
+  display: grid;
+  gap: 5px;
+}
+.token-padrao-ficha header strong {
+  font-size: 14px;
+  color: #ddcbb4;
+}
+.token-padrao-ficha header small {
+  font-size: 12px;
+  color: #a9a4a0;
+}
+.token-padrao-corpo {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.token-padrao-preview {
+  width: 132px;
+  height: 152px;
+  border-radius: 8px;
+  border: 1px solid #575146;
+  display: grid;
+  place-items: center;
+  background: #111319;
+  overflow: hidden;
+}
+.token-padrao-preview img,
+.token-padrao-preview canvas {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.token-padrao-preview span {
+  font-size: 11px;
+  color: #9c9ba0;
+  text-align: center;
+}
+.token-padrao-acoes {
+  display: grid;
+  gap: 8px;
+  flex: 1;
+  min-width: 190px;
+}
+.token-padrao-acoes button {
+  font-size: 12px;
+  padding: 8px 10px;
+  text-align: left;
+  border-radius: 6px;
+}
+.token-padrao-ficha .biblioteca-tokens-mestre {
+  max-height: 490px;
+  overflow: auto;
+}
+
+/* v29.2 — controles no mesmo tema carvão/cobre da ficha, sem brancos do browser. */
+.token-padrao-ficha,
+.biblioteca-tokens-mestre {
+  color-scheme: dark;
+}
+.token-padrao-ficha .token-padrao-acoes button,
+.token-padrao-ficha .biblioteca-tokens-mestre button {
+  appearance: none !important;
+  background: #302b2b !important;
+  color: #e5d6bf !important;
+  border: 1px solid #75634f !important;
+  border-radius: 7px !important;
+  padding: 10px 12px !important;
+  min-height: 37px !important;
+  font:
+    600 12px/1.4 system-ui,
+    sans-serif !important;
+  cursor: pointer;
+  box-shadow: none !important;
+  transition:
+    background 0.15s,
+    border-color 0.15s;
+}
+.token-padrao-ficha .token-padrao-acoes button:hover:not(:disabled),
+.token-padrao-ficha .biblioteca-tokens-mestre button:hover:not(:disabled) {
+  background: #40352f !important;
+  border-color: #a18a70 !important;
+}
+.token-padrao-ficha .token-padrao-acoes button:disabled,
+.token-padrao-ficha .biblioteca-tokens-mestre button:disabled {
+  opacity: 0.48;
+  cursor: not-allowed;
+}
+.token-padrao-ficha button:focus-visible,
+.biblioteca-tokens-mestre :is(input, select, button):focus-visible {
+  outline: 2px solid #d1af7d !important;
+  outline-offset: 2px;
+}
+.token-padrao-ficha .token-padrao-acoes button:first-child {
+  background: #4b3c32 !important;
+  border-color: #a38966 !important;
+  color: #f2dfc2 !important;
+}
+.token-padrao-ficha
+  .biblioteca-tokens-mestre
+  :is(input:not([type='checkbox']):not([type='file']), select) {
+  appearance: none !important;
+  background: #15171b !important;
+  color: #e6ddd0 !important;
+  border: 1px solid #685b4b !important;
+  border-radius: 7px !important;
+  padding: 9px 11px !important;
+  font:
+    500 12px/1.4 system-ui,
+    sans-serif !important;
+  min-height: 36px !important;
+  box-shadow: none !important;
+}
+.token-padrao-ficha .biblioteca-tokens-mestre input::placeholder {
+  color: #948e87 !important;
+  opacity: 1;
+}
+.token-padrao-ficha .biblioteca-tokens-mestre input[type='checkbox'] {
+  appearance: auto;
+  accent-color: #b99973;
+  width: 15px;
+  height: 15px;
+}
+.token-padrao-ficha .biblioteca-tokens-mestre select {
+  padding-right: 24px !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='m1 1 5 5 5-5' stroke='%23dac6a6' stroke-width='1.7' fill='none'/%3E%3C/svg%3E") !important;
+  background-position: right 9px center !important;
+  background-repeat: no-repeat !important;
+}
+.token-padrao-ficha .biblioteca-idle-nome {
+  min-width: 0;
+}
+.token-padrao-ficha .biblioteca-idle-nome input {
+  width: 100%;
+  box-sizing: border-box;
+}
+.token-padrao-ficha .biblioteca-idle-acoes button {
+  flex: 0 0 auto;
+}
+.token-padrao-ficha .biblioteca-idle-config {
+  align-items: center;
+  row-gap: 8px;
+}
+.token-padrao-ficha .biblioteca-idle-config label {
+  color: #c9b9a5;
+  flex-wrap: wrap;
+}
+.token-padrao-ficha .biblioteca-idle-cartao .biblioteca-idle-excluir {
+  color: #e6afaa !important;
+  border-color: #775654 !important;
+  background: #342626 !important;
+}
+@media (max-width: 550px) {
+  .token-padrao-corpo {
+    align-items: stretch;
+  }
+  .token-padrao-acoes {
+    min-width: 0;
+    width: 100%;
+  }
+  .token-padrao-ficha .biblioteca-idle-acoes {
+    align-items: stretch;
+    flex-direction: column;
+  }
+}

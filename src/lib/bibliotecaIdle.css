@@ -1,0 +1,130 @@
+.biblioteca-idle-mestre {
+  display: grid;
+  gap: 10px;
+  margin-top: 15px;
+  padding: 13px;
+  background: #16171b;
+  border: 1px solid #625342;
+  border-radius: 8px;
+  color: #e8ddd0;
+}
+.biblioteca-idle-cabecalho {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: flex-start;
+}
+.biblioteca-idle-cabecalho div {
+  display: grid;
+  gap: 4px;
+}
+.biblioteca-idle-cabecalho strong {
+  color: #d9c4a6;
+  font-size: 13px;
+}
+.biblioteca-idle-cabecalho small {
+  color: #b2aaa0;
+  line-height: 1.4;
+}
+.biblioteca-idle-cabecalho > span {
+  color: #a9a3a0;
+  white-space: nowrap;
+  font-size: 11px;
+}
+.biblioteca-idle-acoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  align-items: end;
+}
+.biblioteca-idle-nome {
+  display: grid;
+  gap: 5px;
+  flex: 1 1 180px;
+  color: #bcb2a6;
+  font-size: 11px;
+}
+.biblioteca-idle-acoes button {
+  min-height: 33px;
+}
+.biblioteca-idle-config {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+  color: #c7b8a7;
+  font-size: 11px;
+}
+.biblioteca-idle-config label {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.biblioteca-idle-config select {
+  padding: 5px !important;
+  min-width: 70px;
+}
+.biblioteca-idle-lista {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(125px, 1fr));
+  gap: 10px;
+  max-height: 390px;
+  overflow: auto;
+}
+.biblioteca-idle-cartao {
+  display: grid;
+  gap: 6px;
+  padding: 9px;
+  background: #202127;
+  border: 1px solid #51493f;
+  border-radius: 7px;
+  min-width: 0;
+}
+.biblioteca-idle-cartao strong {
+  font-size: 11px;
+  overflow-wrap: anywhere;
+}
+.biblioteca-idle-cartao small {
+  color: #adaba6;
+  font-size: 10px;
+}
+.biblioteca-idle-cartao button {
+  font-size: 10px;
+  white-space: normal;
+}
+.biblioteca-idle-preview {
+  height: 105px;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background: #111319;
+  border-radius: 5px;
+}
+.biblioteca-idle-preview img,
+.biblioteca-idle-preview canvas {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.biblioteca-idle-preview span {
+  font-size: 10px;
+  color: #b3ada1;
+}
+.biblioteca-idle-excluir {
+  color: #d4aaa0 !important;
+}
+.biblioteca-idle-erro {
+  color: #f1a8a8;
+  font-size: 11px;
+}
+
+.biblioteca-idle-abrir {
+  margin-top: 12px;
+  width: 100%;
+  text-align: left;
+  border: 1px solid #71604b !important;
+  background: #1c1c22 !important;
+  color: #d2bfa5 !important;
+  padding: 10px 12px !important;
+  border-radius: 6px;
+}

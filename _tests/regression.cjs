@@ -1,0 +1,27 @@
+const assert=require('node:assert/strict');
+const data=new Map();
+global.localStorage={getItem:k=>data.has(k)?data.get(k):null,setItem:(k,v)=>data.set(k,String(v)),removeItem:k=>data.delete(k)};
+global.window={dispatchEvent:()=>{}};
+global.Event=class Event{constructor(n){this.type=n}};
+const s=require('./sistemasRpg.js');const c=require('./campaignLibrary.js');
+const old={id:'principal',titulo:'Hexatombe',descricao:'',tema:'espiritual',criadaEm:'2026-01-01',atualizadaEm:'2026-01-01',arquivada:false,fichaIds:['a'],sistema:'Hexatombe: Avatar'};
+assert.equal(s.sistemaDaCampanha(old),'impeto');
+assert.equal(s.sistemaDaCampanha({...old,id:'camp-other',sistema:'D&D 5e'}),null);
+assert.equal(s.sistemaDaCampanha({...old,id:'camp-other',sistema:'',fichaIds:['a']}),'impeto');
+assert.equal(s.sistemaDaCampanha({...old,id:'camp-other',sistemaId:''}),null);
+assert.equal(s.sistemaDaFicha({}),'impeto');
+assert.equal(s.fichaCompativel({dados:{}},old),true);
+assert.equal(s.fichaCompativel({dados:{}},{...old,sistemaId:''}),false);
+assert.equal(s.fichaCompativel({dados:{sistemaId:'outro'}},old),false);
+// existing campaign data remains under same key
+localStorage.setItem('hexatombe-campanhas-v1',JSON.stringify({schemaVersion:1,items:[old]}));
+const before=c.listarCampanhas();assert.equal(before.length,1);assert.equal(before[0].sistema,'Hexatombe: Avatar');
+const added=c.criarCampanha({titulo:'Nova Ímpeto',descricao:'',tema:'fogo',fichaIds:['a'],sistemaId:'impeto',cenario:'Avatar'});
+assert.equal(c.obterCampanha(added.id).sistemaId,'impeto');
+assert.equal(c.obterCampanha(added.id).cenario,'Avatar');
+assert.equal(c.chaveEstadoCampanha('principal'),'hexatombe-mesa-v1');
+assert.notEqual(c.chaveEstadoCampanha(added.id),c.chaveEstadoCampanha('principal'));
+const edited=c.atualizarCampanha(added.id,{sistemaId:'',fichaIds:[]});
+assert.equal(s.sistemaDaCampanha(edited),null);assert.equal(edited.fichaIds.length,0);
+assert.equal(c.obterCampanha('principal').fichaIds[0],'a');
+console.log('REGRESSIONS_OK: legacy recognition, no cross-system linking, new schema, old campaign isolated');

@@ -1,0 +1,1092 @@
+/* v1.3.40.37 — HUD cinemática com lista e descrição laterais.
+ * Ações, itens e integração com iniciativa preservados.
+ */
+.hx-combate-imersivo {
+  --hx-creme: #fff2dc;
+  --hx-ouro: #f6c58f;
+  --hx-rubi: #bc3346;
+  position: fixed;
+  z-index: 33;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  width: min(244px, calc(100vw - 18px));
+  max-height: min(358px, calc(100dvh - 160px));
+  box-sizing: border-box;
+  padding: 0 2px 4px;
+  color: var(--hx-creme);
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  filter: drop-shadow(2px 7px 8px rgba(8, 5, 10, 0.7));
+  transition:
+    left 0.13s ease-out,
+    top 0.13s ease-out;
+}
+/* Aura, em vez de um retângulo escuro envolvendo tudo. */
+.hx-combate-imersivo::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  top: 38px;
+  left: -18px;
+  width: 120px;
+  height: 190px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(214, 31, 57, 0.26), transparent 72%);
+  filter: blur(17px);
+  pointer-events: none;
+}
+/* Traço entre a interface e o personagem na cena. */
+.hx-combate-imersivo::after {
+  content: '';
+  position: absolute;
+  top: 94px;
+  width: 27px;
+  height: 2px;
+  background: linear-gradient(90deg, #f7b987, #c8474d);
+  box-shadow: 0 0 8px #ed5c60a6;
+  pointer-events: none;
+}
+.hx-combate-lado-direito::after {
+  right: 100%;
+  transform: rotate(-15deg);
+  transform-origin: right;
+}
+.hx-combate-lado-esquerdo::after {
+  left: 100%;
+  transform: rotate(15deg);
+  transform-origin: left;
+}
+.hx-combate-imersivo button,
+.hx-combate-submenu button,
+.hx-combate-detalhe button {
+  font-family: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+.hx-combate-submenu button:focus-visible,
+.hx-combate-detalhe button:focus-visible {
+  outline: 2px solid #fff3d5;
+  outline-offset: -2px;
+}
+.hx-combate-imersivo button:focus-visible,
+.hx-combate-recolhido button:focus-visible {
+  outline: 2px solid #fff3d5;
+  outline-offset: 2px;
+}
+
+/* Plaqueta de identidade — pequena, oblíqua e com hierarquia tipográfica forte. */
+.hx-combate-topo {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 7px 9px 7px 12px;
+  margin-right: 9px;
+  min-width: 0;
+  background: linear-gradient(
+    112deg,
+    rgba(41, 15, 28, 0.97),
+    rgba(36, 20, 31, 0.93) 63%,
+    rgba(12, 15, 23, 0.94)
+  );
+  border-left: 3px solid #f17e6c;
+  clip-path: polygon(0 0, 100% 0, 96% 100%, 3% 100%);
+}
+.hx-combate-topo > div {
+  min-width: 0;
+  display: grid;
+  gap: 1px;
+  flex: 1;
+}
+.hx-combate-topo small {
+  font-size: 8px;
+  font-weight: 900;
+  letter-spacing: 1.15px;
+  line-height: 1.1;
+  color: #efa88e;
+  text-transform: uppercase;
+}
+.hx-combate-topo strong {
+  font:
+    900 17px/1.08 Georgia,
+    'Times New Roman',
+    serif;
+  text-transform: uppercase;
+  letter-spacing: 0.35px;
+  text-shadow: 1px 2px 0 #110b17;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.hx-combate-identidade {
+  font-size: 9px;
+  line-height: 1.1;
+  color: #debbab;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.hx-combate-ca {
+  align-self: center;
+  flex: none;
+  display: grid;
+  justify-items: center;
+  gap: 1px;
+  min-width: 25px;
+  padding: 3px 4px;
+  background: rgba(255, 239, 211, 0.08);
+  border-left: 1px solid #ad795b;
+  font-size: 8px;
+  font-weight: 900;
+  line-height: 1;
+  color: #e2b998;
+}
+.hx-combate-ca b {
+  font-size: 13px;
+  line-height: 1.1;
+  color: #fff0d6;
+}
+.hx-combate-minimizar {
+  flex: none;
+  align-self: flex-start;
+  display: grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  border: 1px solid rgba(247, 196, 149, 0.34);
+  border-radius: 50%;
+  background: rgba(11, 13, 20, 0.45);
+  font-size: 12px;
+  line-height: 1;
+}
+.hx-combate-minimizar:hover {
+  background: #783343;
+}
+
+/* Recursos são pequenas linhas de status, não outra caixa de interface. */
+.hx-combate-recursos {
+  display: grid;
+  gap: 3px;
+  margin: -1px 20px 5px 6px;
+  padding: 6px 12px 7px 10px;
+  background: linear-gradient(110deg, rgba(20, 17, 27, 0.93), rgba(34, 19, 28, 0.88));
+  border-bottom: 1px solid rgba(241, 161, 128, 0.35);
+  clip-path: polygon(0 0, 100% 0, 96% 100%, 4% 100%);
+}
+.hx-combate-medidor {
+  display: grid;
+  grid-template-columns: 37px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 5px;
+  min-width: 0;
+  font-size: 9px;
+  line-height: 1;
+  white-space: nowrap;
+}
+.hx-combate-medidor > span {
+  font-weight: 900;
+  color: #f8d9bb;
+}
+.hx-combate-medidor > b {
+  font-size: 9px;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  color: #fff0dd;
+}
+.hx-combate-trilha {
+  height: 5px;
+  border: 1px solid rgba(250, 224, 194, 0.22);
+  background: #110f1a;
+  overflow: hidden;
+  transform: skewX(-12deg);
+}
+.hx-combate-trilha i {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, #9d2439, #f36f78);
+  box-shadow: 0 0 4px #ff7885;
+  transition: width 0.2s;
+}
+.hx-combate-mana .hx-combate-trilha i {
+  background: linear-gradient(90deg, #3c83b1, #8ce0de);
+  box-shadow: 0 0 4px #7ce0e2;
+}
+
+/* Faixas independentes, inspiradas nos menus dramáticos da referência.
+   O conteúdo é contra-inclinado para continuar perfeitamente legível. */
+.hx-combate-categorias {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 3px 12px 4px 3px;
+  margin: 0;
+}
+.hx-combate-categorias button {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: none;
+  width: calc(100% - 19px);
+  min-height: 29px;
+  padding: 3px 14px;
+  text-align: left;
+  border: none;
+  border-radius: 0;
+  color: #341822;
+  background: linear-gradient(105deg, #fff3df 0%, #e9d8c7 76%, #d2aea6 100%);
+  transform: skewX(-9deg);
+  clip-path: polygon(0 12%, 96% 0, 100% 78%, 6% 100%);
+  font-size: 12px;
+  font-weight: 950;
+  letter-spacing: 0.55px;
+  line-height: 1.1;
+  text-transform: uppercase;
+  text-shadow: none;
+  transition:
+    background 0.15s,
+    transform 0.15s,
+    filter 0.15s;
+}
+.hx-combate-categorias button::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    160deg,
+    transparent 0 32px,
+    rgba(116, 35, 53, 0.05) 33px 34px
+  );
+  pointer-events: none;
+}
+.hx-combate-categorias button::after {
+  content: '';
+  position: absolute;
+  top: 21%;
+  left: 5px;
+  width: 3px;
+  height: 52%;
+  background: #9f3343;
+  transform: skewX(-17deg);
+  pointer-events: none;
+}
+.hx-combate-categorias button > span {
+  display: inline-grid;
+  place-items: center;
+  width: 16px;
+  flex: none;
+  font-size: 15px;
+  transform: skewX(9deg);
+}
+.hx-combate-categorias button > strong {
+  display: block;
+  flex: 1;
+  font: inherit;
+  transform: skewX(9deg);
+}
+.hx-combate-categorias button:nth-child(2) {
+  margin-left: 6px;
+}
+.hx-combate-categorias button:nth-child(3) {
+  margin-left: 13px;
+}
+.hx-combate-categorias button:nth-child(4) {
+  margin-left: 20px;
+}
+.hx-combate-categorias button.ativo {
+  background: linear-gradient(104deg, #b92e44 0%, #7c2838 75%, #4b192c 100%);
+  color: #fff5e8;
+  filter: drop-shadow(0 0 5px rgba(241, 61, 81, 0.35));
+  transform: skewX(-9deg) translateX(4px);
+  text-shadow: 0 1px 1px #330d19;
+}
+.hx-combate-categorias button.ativo::after {
+  background: #ffe2ad;
+}
+.hx-combate-categorias button:hover:not(.ativo) {
+  background: linear-gradient(105deg, #fffefa, #f4c0bb 85%);
+  transform: skewX(-9deg) translateX(3px);
+}
+
+/* Coluna lateral independente. Nenhuma habilidade empurra as faixas para baixo. */
+.hx-combate-submenu {
+  position: fixed;
+  z-index: 34;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  box-sizing: border-box;
+  overflow: hidden;
+  padding: 0 0 6px;
+  color: #fff2dc;
+  background: linear-gradient(112deg, rgba(18, 17, 28, 0.96), rgba(49, 24, 36, 0.94));
+  border: 1px solid rgba(245, 186, 146, 0.46);
+  border-left: 3px solid #dd5b62;
+  box-shadow:
+    4px 10px 25px #05050ac9,
+    0 0 15px rgba(199, 48, 73, 0.2);
+  backdrop-filter: blur(8px);
+  animation: hx-menu-abrir 0.18s ease-out;
+}
+.hx-combate-submenu-topo {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 11px 7px;
+  background: linear-gradient(110deg, #a92e44, #4c2236);
+  border-bottom: 1px solid #d28b72;
+  font:
+    900 10px/1.15 Georgia,
+    serif;
+  text-transform: uppercase;
+  letter-spacing: 0.7px;
+}
+.hx-combate-submenu-topo b {
+  color: #f9d0a8;
+  font-size: 10px;
+}
+.hx-combate-lista {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  gap: 4px;
+  min-height: 0;
+  margin: 0;
+  padding: 8px 7px 3px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #bc7078 rgba(10, 11, 19, 0.36);
+}
+.hx-combate-habilidade {
+  display: block;
+  flex: none;
+  width: 100%;
+  min-height: 30px;
+  padding: 0;
+  border: 0;
+  border-left: 3px solid rgba(237, 181, 149, 0.35);
+  border-radius: 0;
+  background: linear-gradient(100deg, rgba(65, 42, 50, 0.97), rgba(32, 29, 41, 0.86));
+  text-align: left;
+  clip-path: polygon(0 0, 100% 0, 96% 100%, 0 100%);
+  transition:
+    background 0.14s,
+    filter 0.14s;
+}
+.hx-combate-habilidade:hover {
+  background: linear-gradient(95deg, #87505b, #40303c);
+}
+.hx-combate-habilidade.ativa {
+  background: linear-gradient(100deg, #ba4653, #743240 73%, #4e2838);
+  border-left-color: #ffe1ac;
+}
+.hx-combate-habilidade-interior {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 7px;
+}
+.hx-combate-ordem {
+  font-size: 9px;
+  font-weight: 900;
+  color: #ffd6ab;
+}
+.hx-combate-icone {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 18px;
+  height: 18px;
+  font-size: 14px;
+}
+.hx-combate-icone .hx-icone-acao {
+  width: 18px;
+  height: 18px;
+}
+.hx-combate-item-imagem {
+  flex: none;
+  width: 18px !important;
+  height: 18px !important;
+}
+.hx-combate-item-imagem img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.hx-combate-habilidade-titulo {
+  display: grid;
+  gap: 1px;
+  min-width: 0;
+  flex: 1;
+}
+.hx-combate-habilidade-titulo strong {
+  font-size: 10px;
+  line-height: 1.1;
+  overflow-wrap: anywhere;
+}
+.hx-combate-habilidade-titulo small {
+  font-size: 9px;
+  color: #efd8ce;
+}
+.hx-combate-custo {
+  flex: none;
+  font-size: 9px;
+  font-weight: 800;
+  color: #ffdfad;
+  white-space: nowrap;
+}
+.hx-combate-vazio {
+  margin: 5px 2px;
+  font-size: 10px;
+  color: #e0c4b4;
+}
+.hx-combate-efeito {
+  display: flex;
+  justify-content: space-between;
+  gap: 7px;
+  padding: 5px;
+  background: rgba(73, 51, 61, 0.88);
+  border-left: 3px solid #d6a575;
+  font-size: 10px;
+}
+/* Terceira coluna: leitura da descrição sem cobrir os itens nem o menu. */
+.hx-combate-detalhe {
+  position: fixed;
+  z-index: 35;
+  box-sizing: border-box;
+  min-height: 92px;
+  overflow-y: auto;
+  padding: 11px 12px 12px;
+  color: #fff2dc;
+  background: linear-gradient(119deg, rgba(20, 20, 30, 0.97), rgba(53, 26, 39, 0.95));
+  border: 1px solid rgba(249, 195, 150, 0.45);
+  border-top: 3px solid #d85663;
+  box-shadow:
+    4px 11px 27px #05050acc,
+    0 0 13px rgba(204, 54, 69, 0.18);
+  backdrop-filter: blur(9px);
+  font-size: 11px;
+  line-height: 1.4;
+  scrollbar-width: thin;
+  scrollbar-color: #a76267 transparent;
+  animation: hx-menu-abrir 0.18s ease-out;
+}
+.hx-combate-detalhe::before {
+  content: 'AÇÃO EM FOCO';
+  display: block;
+  margin-bottom: 8px;
+  font:
+    900 8px/1.1 Arial,
+    sans-serif;
+  color: #f8bda3;
+  letter-spacing: 1.1px;
+}
+.hx-combate-expansao-esquerda.hx-combate-submenu {
+  border-left: 1px solid rgba(245, 186, 146, 0.46);
+  border-right: 3px solid #dd5b62;
+}
+.hx-combate-expansao-esquerda.hx-combate-detalhe {
+  border-left: 3px solid #d85663;
+}
+.hx-combate-layout-duplo.hx-combate-detalhe {
+  border-top-color: #f0ad83;
+}
+@keyframes hx-menu-abrir {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+.hx-combate-detalhe-cabecalho {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 7px;
+}
+.hx-combate-detalhe-cabecalho strong {
+  font:
+    800 14px/1.2 Georgia,
+    serif;
+  text-transform: uppercase;
+  overflow-wrap: anywhere;
+}
+.hx-combate-detalhe-cabecalho button {
+  border: 0;
+  background: transparent;
+  font-size: 16px;
+  line-height: 1;
+  padding: 0 2px;
+}
+.hx-combate-detalhe p {
+  margin: 9px 0;
+  color: #eee1d3;
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+}
+.hx-combate-detalhe small {
+  font-size: 10px;
+  color: #e8bba3;
+  overflow-wrap: anywhere;
+}
+.hx-combate-rolagens {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 6px;
+}
+.hx-combate-rolagens button,
+.hx-combate-acao {
+  border: 1px solid rgba(251, 201, 160, 0.58);
+  border-radius: 0;
+  padding: 5px 7px;
+  font-size: 10px;
+  font-weight: 800;
+  background: #583644;
+  clip-path: polygon(0 0, 100% 0, 94% 100%, 0 100%);
+}
+.hx-combate-rolagens button.principal,
+.hx-combate-acao {
+  background: #a6384b;
+}
+.hx-combate-rolagens button:hover,
+.hx-combate-acao:hover {
+  background: #cf5963;
+}
+.hx-combate-acao {
+  margin-top: 7px;
+}
+/* Acesso secundário discreto: os itens permanecem no próprio menu. */
+.hx-combate-rodape {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin: 6px 13px 0 11px;
+  padding-top: 4px;
+  border-top: 1px solid rgba(253, 196, 155, 0.32);
+}
+.hx-combate-rodape button {
+  padding: 2px 0;
+  border: 0;
+  background: transparent;
+  font-size: 9px;
+  font-weight: 750;
+  color: #f5d1b6;
+  opacity: 0.84;
+}
+.hx-combate-rodape button::before {
+  content: '✦ ';
+  color: #e6a070;
+}
+.hx-combate-rodape button:hover {
+  color: #fff5e2;
+  opacity: 1;
+  text-decoration: underline;
+}
+.hx-combate-recolhido {
+  position: fixed;
+  z-index: 33;
+}
+.hx-combate-recolhido button {
+  padding: 8px 13px;
+  border: 0;
+  border-left: 3px solid #ffe0b1;
+  clip-path: polygon(0 0, 100% 0, 95% 100%, 4% 100%);
+  background: linear-gradient(100deg, #b13546, #42212f);
+  color: #ffefda;
+  font-size: 10px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.45px;
+  box-shadow: 0 7px 16px #0009;
+  cursor: pointer;
+}
+@media (max-width: 600px) {
+  .hx-combate-imersivo {
+    width: min(220px, calc(100vw - 18px));
+    max-height: calc(100dvh - 153px);
+  }
+  .hx-combate-categorias button {
+    min-height: 26px;
+    padding: 3px 9px;
+    font-size: 11px;
+  }
+  .hx-combate-topo strong {
+    font-size: 15px;
+  }
+}
+@media (max-height: 610px) {
+  .hx-combate-imersivo {
+    max-height: calc(100dvh - 145px);
+  }
+  .hx-combate-categorias button {
+    min-height: 25px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hx-combate-imersivo,
+  .hx-combate-categorias button,
+  .hx-combate-habilidade,
+  .hx-combate-trilha i {
+    transition: none;
+  }
+  .hx-combate-submenu,
+  .hx-combate-detalhe {
+    animation: none;
+  }
+}
+
+/* v1.3.40.38 — identificação visual por personagem e editor de aparência.
+ * Utiliza variáveis independentes nas três colunas fixas (não são descendentes). */
+.hx-combate-imersivo,
+.hx-combate-submenu,
+.hx-combate-detalhe,
+.hx-combate-recolhido {
+  --hx-hud-acento: #ba344b;
+  --hx-hud-brilho: 0.65;
+}
+.hx-combate-imersivo::before {
+  background: radial-gradient(
+    ellipse,
+    color-mix(in srgb, var(--hx-hud-acento) 32%, transparent),
+    transparent 72%
+  );
+  opacity: calc(0.25 + var(--hx-hud-brilho) * 0.85);
+}
+.hx-combate-imersivo::after {
+  background: linear-gradient(90deg, #f7d9ad, var(--hx-hud-acento));
+  box-shadow: 0 0 8px var(--hx-hud-acento);
+  opacity: calc(0.3 + var(--hx-hud-brilho) * 0.7);
+}
+.hx-combate-topo {
+  background: linear-gradient(
+    112deg,
+    color-mix(in srgb, var(--hx-hud-acento) 23%, #15131c),
+    color-mix(in srgb, var(--hx-hud-acento) 10%, #181521) 68%,
+    #0b0f19
+  );
+  border-left-color: var(--hx-hud-acento);
+}
+.hx-combate-recursos {
+  border-bottom-color: color-mix(in srgb, var(--hx-hud-acento) 48%, #d6a779);
+}
+.hx-combate-topo small {
+  color: color-mix(in srgb, var(--hx-hud-acento) 40%, #ffe6c3);
+}
+.hx-combate-categorias button::after {
+  background: var(--hx-hud-acento);
+}
+.hx-combate-categorias button.ativo {
+  background: linear-gradient(
+    104deg,
+    color-mix(in srgb, var(--hx-hud-acento) 88%, #dba1a1),
+    color-mix(in srgb, var(--hx-hud-acento) 60%, #16121d) 74%,
+    color-mix(in srgb, var(--hx-hud-acento) 32%, #10121a)
+  );
+  filter: drop-shadow(0 0 5px color-mix(in srgb, var(--hx-hud-acento) 40%, transparent));
+}
+.hx-combate-habilidade.ativa {
+  background: linear-gradient(
+    100deg,
+    color-mix(in srgb, var(--hx-hud-acento) 75%, #a27877),
+    color-mix(in srgb, var(--hx-hud-acento) 56%, #17141f) 75%,
+    #24202a
+  );
+}
+.hx-combate-submenu {
+  background: linear-gradient(
+    112deg,
+    rgba(18, 17, 28, 0.97),
+    color-mix(in srgb, var(--hx-hud-acento) 19%, #1d1b29)
+  );
+  border-left-color: var(--hx-hud-acento);
+  box-shadow:
+    4px 10px 25px #05050ac9,
+    0 0 15px color-mix(in srgb, var(--hx-hud-acento) 23%, transparent);
+}
+.hx-combate-submenu-topo {
+  background: linear-gradient(
+    110deg,
+    var(--hx-hud-acento),
+    color-mix(in srgb, var(--hx-hud-acento) 34%, #151a26)
+  );
+}
+.hx-combate-detalhe {
+  background: linear-gradient(
+    119deg,
+    rgba(20, 20, 30, 0.97),
+    color-mix(in srgb, var(--hx-hud-acento) 18%, #201d2a)
+  );
+  border-top-color: var(--hx-hud-acento);
+  box-shadow:
+    4px 11px 27px #05050acc,
+    0 0 13px color-mix(in srgb, var(--hx-hud-acento) 25%, transparent);
+}
+.hx-combate-expansao-esquerda.hx-combate-submenu {
+  border-right-color: var(--hx-hud-acento);
+}
+.hx-combate-expansao-esquerda.hx-combate-detalhe {
+  border-left-color: var(--hx-hud-acento);
+}
+.hx-combate-layout-duplo.hx-combate-detalhe {
+  border-top-color: var(--hx-hud-acento);
+}
+.hx-combate-rolagens button.principal,
+.hx-combate-acao {
+  background: var(--hx-hud-acento);
+}
+.hx-combate-rolagens button:hover,
+.hx-combate-acao:hover {
+  background: color-mix(in srgb, var(--hx-hud-acento) 75%, white);
+}
+.hx-combate-recolhido button {
+  background: linear-gradient(100deg, var(--hx-hud-acento), #25202f);
+}
+.hx-combate-personalizar {
+  flex: none;
+  align-self: flex-start;
+  display: grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  border: 1px solid rgba(247, 196, 149, 0.34);
+  border-radius: 50%;
+  background: rgba(11, 13, 20, 0.55);
+  color: #ffe2c2;
+  font-size: 12px;
+  line-height: 1;
+}
+.hx-combate-personalizar:hover,
+.hx-combate-personalizar[aria-expanded='true'] {
+  background: var(--hx-hud-acento);
+}
+
+/* Editor temporário fora do menu: nunca é adicionado dentro de uma faixa. */
+.hx-combate-editor {
+  --hx-hud-acento: #ba344b;
+  position: fixed;
+  z-index: 44;
+  width: min(290px, calc(100vw - 16px));
+  max-height: min(430px, calc(100dvh - 104px));
+  overflow: auto;
+  box-sizing: border-box;
+  padding: 0 13px 13px;
+  background: linear-gradient(135deg, #191823, #2e232f);
+  border: 1px solid color-mix(in srgb, var(--hx-hud-acento) 55%, #d7b990);
+  border-top: 3px solid var(--hx-hud-acento);
+  box-shadow: 0 16px 36px #000d;
+  color: #f8e9d4;
+  font:
+    11px/1.4 Arial,
+    sans-serif;
+  scrollbar-width: thin;
+}
+.hx-combate-editor-topo {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  gap: 10px;
+  margin: 0 -13px;
+  padding: 11px 13px 8px;
+  background: color-mix(in srgb, var(--hx-hud-acento) 20%, #171924);
+}
+.hx-combate-editor-topo div {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+.hx-combate-editor-topo small {
+  color: #ebae89;
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+.hx-combate-editor-topo strong {
+  font:
+    900 14px Georgia,
+    serif;
+  overflow-wrap: anywhere;
+}
+.hx-combate-editor button {
+  cursor: pointer;
+}
+.hx-combate-editor-topo button {
+  background: transparent;
+  border: 0;
+  padding: 0 3px;
+  font-size: 21px;
+  color: #fff0d9;
+}
+.hx-combate-editor > p {
+  margin: 10px 0;
+  font-size: 10px;
+  color: #ddcbbc;
+}
+.hx-combate-editor-temas {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 5px;
+  margin-bottom: 10px;
+}
+.hx-combate-editor-temas button {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 7px;
+  background: #242331;
+  border: 1px solid #5b4850;
+  border-radius: 3px;
+  color: #e8ddd2;
+  text-align: left;
+  font-size: 10px;
+}
+.hx-combate-editor-temas button.selecionado {
+  border-color: #f3d0a6;
+  background: color-mix(in srgb, var(--hx-hud-acento) 30%, #181b27);
+  color: #fff7e8;
+}
+.hx-combate-editor-temas button > span {
+  width: 12px;
+  height: 12px;
+  flex: none;
+  border-radius: 50%;
+  border: 1px solid #fff8;
+}
+.hx-combate-editor-linha {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: center;
+  margin: 7px 0;
+  font-size: 10px;
+  font-weight: 700;
+}
+.hx-combate-editor-linha input[type='color'] {
+  width: 58px;
+  height: 27px;
+  padding: 2px;
+  background: #161620;
+  border: 1px solid #746472;
+  cursor: pointer;
+}
+.hx-combate-editor-linha select {
+  color: #fff0dc;
+  background: #292430;
+  border: 1px solid #665462;
+  border-radius: 3px;
+  font-size: 10px;
+  padding: 5px;
+}
+.hx-combate-editor-slider {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 1px 8px;
+  margin: 8px 0;
+  font-weight: 700;
+  font-size: 10px;
+}
+.hx-combate-editor-slider output {
+  color: #f5caa5;
+  font-variant-numeric: tabular-nums;
+}
+.hx-combate-editor-slider input {
+  grid-column: 1/-1;
+  width: 100%;
+  accent-color: var(--hx-hud-acento);
+  cursor: pointer;
+}
+.hx-combate-editor-rodape {
+  display: flex;
+  gap: 8px;
+  justify-content: space-between;
+  margin-top: 11px;
+  padding-top: 9px;
+  border-top: 1px solid #ffffff2c;
+}
+.hx-combate-editor-rodape button {
+  padding: 6px 8px;
+  border: 1px solid #7a6874;
+  background: #282331;
+  color: #f3dfca;
+  font-size: 10px;
+}
+.hx-combate-editor-rodape .hx-combate-editor-ok {
+  border-color: #e5c4ad;
+  background: var(--hx-hud-acento);
+  color: white;
+  font-weight: 900;
+}
+@media (max-width: 540px) {
+  .hx-combate-editor {
+    max-height: calc(100dvh - 82px);
+  }
+}
+
+/* v1.3.40.39 — contraste automático para paletas claras e scrollbar universal.
+ * Manter legíveis botões e seleções até mesmo com branco puro (#ffffff). */
+.hx-combate-categorias button.ativo {
+  color: var(--hx-hud-texto-ativo, #fff6ed);
+  text-shadow: none;
+}
+.hx-combate-categorias button.ativo::after {
+  background: var(--hx-hud-texto-ativo, #fff6ed);
+  opacity: 0.83;
+}
+.hx-combate-habilidade.ativa {
+  background: linear-gradient(
+    100deg,
+    color-mix(in srgb, var(--hx-hud-acento) 85%, #d6afbb),
+    color-mix(in srgb, var(--hx-hud-acento) 80%, #c6acbd) 76%,
+    color-mix(in srgb, var(--hx-hud-acento) 70%, #c9aab9)
+  );
+  color: var(--hx-hud-texto-ativo, #fff6ed);
+}
+.hx-combate-habilidade.ativa .hx-combate-habilidade-titulo small,
+.hx-combate-habilidade.ativa .hx-combate-custo,
+.hx-combate-habilidade.ativa .hx-combate-ordem {
+  color: inherit;
+}
+.hx-combate-submenu-topo {
+  /* O título permanece claro sobre um cabeçalho escuro, qualquer que seja o acento. */
+  background: linear-gradient(
+    110deg,
+    color-mix(in srgb, var(--hx-hud-acento) 43%, #131521),
+    color-mix(in srgb, var(--hx-hud-acento) 17%, #151823)
+  );
+  color: #fff2e3;
+  text-shadow: 0 1px 1px #0008;
+}
+.hx-combate-submenu-topo b {
+  color: #ffdda9;
+}
+.hx-combate-rolagens button.principal,
+.hx-combate-acao,
+.hx-combate-editor-rodape .hx-combate-editor-ok {
+  color: var(--hx-hud-texto-ativo, #fff6ed);
+  text-shadow: none;
+}
+.hx-combate-rolagens button.principal:hover,
+.hx-combate-acao:hover {
+  color: #fff8ed;
+  background: color-mix(in srgb, var(--hx-hud-acento) 58%, #22212c);
+}
+.hx-combate-personalizar[aria-expanded='true'],
+.hx-combate-personalizar:hover {
+  color: var(--hx-hud-texto-ativo, #fff6ed);
+}
+.hx-combate-editor-slider input {
+  accent-color: #828793;
+}
+.hx-combate-editor-aviso {
+  border-left: 2px solid #9a9da5;
+  background: #242735;
+  padding: 6px 8px;
+  color: #eee4d9 !important;
+}
+
+/* Scrollbars neutras: sempre grafite, sem copiar a paleta do personagem. */
+.hx-combate-lista,
+.hx-combate-detalhe,
+.hx-combate-editor {
+  scrollbar-width: thin;
+  scrollbar-color: #555b68 #14161e;
+}
+.hx-combate-lista::-webkit-scrollbar,
+.hx-combate-detalhe::-webkit-scrollbar,
+.hx-combate-editor::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+.hx-combate-lista::-webkit-scrollbar-track,
+.hx-combate-detalhe::-webkit-scrollbar-track,
+.hx-combate-editor::-webkit-scrollbar-track {
+  background: #14161e;
+}
+.hx-combate-lista::-webkit-scrollbar-thumb,
+.hx-combate-detalhe::-webkit-scrollbar-thumb,
+.hx-combate-editor::-webkit-scrollbar-thumb {
+  background: #555b68;
+  border: 1px solid #242935;
+  border-radius: 10px;
+}
+.hx-combate-lista::-webkit-scrollbar-thumb:hover,
+.hx-combate-detalhe::-webkit-scrollbar-thumb:hover,
+.hx-combate-editor::-webkit-scrollbar-thumb:hover {
+  background: #747b87;
+}
+
+/* v1.3.40.40 — o editor é uma janela arrastável, com posição escolhida pelo mestre. */
+.hx-combate-editor-arrastar {
+  display: grid;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+  cursor: grab;
+  user-select: none;
+  touch-action: none;
+  -webkit-user-select: none;
+}
+.hx-combate-editor-arrastar:active {
+  cursor: grabbing;
+}
+.hx-combate-editor-arrastar:focus-visible {
+  outline: 2px solid #f2c48c;
+  outline-offset: 2px;
+}
+.hx-combate-editor-topo .hx-combate-editor-topo-acoes {
+  display: flex;
+  flex: none;
+  flex-direction: row;
+  gap: 5px;
+  align-items: flex-start;
+}
+.hx-combate-editor-topo-acoes button {
+  display: grid;
+  place-items: center;
+  width: 23px;
+  height: 23px;
+  border-radius: 3px;
+}
+.hx-combate-editor-topo-acoes button:hover {
+  background: #ffffff24;
+}
+
+/* v1.3.40.46 */
+.hx-combate-acoes-item {
+  display: flex;
+  gap: 7px;
+  flex-wrap: wrap;
+  margin-top: 9px;
+}
+
+/* Ímpeto A01 — seções funcionais agrupadas; itens vêm depois de Status. */
+.hx-combate-entrada {
+  display: contents;
+}
+.hx-combate-grupo-titulo {
+  display: block;
+  padding: 8px 9px 4px;
+  margin: 3px 0 0;
+  color: #f3d7af;
+  font:
+    bold 9px/1.25 system-ui,
+    sans-serif;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border-bottom: 1px solid #b6816655;
+  background: #160f1c66;
+}
+.hx-combate-escudo .hx-combate-trilha i {
+  background: linear-gradient(90deg, #a08bce, #e4c6ff);
+}
+.hx-combate-escudo > span {
+  color: #ead6fd;
+}

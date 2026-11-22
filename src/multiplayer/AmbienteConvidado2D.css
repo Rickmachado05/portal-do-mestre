@@ -1,0 +1,54 @@
+/* v29.14 — camadas ambientais passivas e alinhadas ao palco (zoom/pan juntos). */
+.pm-jogo-ambiente-desenhos {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: visible;
+  display: block;
+}
+.pm-jogo-ambiente-desenhos {
+  z-index: 2;
+}
+.pm-jogo-ambiente-marcador {
+  position: absolute;
+  z-index: 2;
+  pointer-events: none;
+  transform: translate(-12px, -50%);
+  display: flex;
+  gap: 5px;
+  align-items: center;
+  max-width: 220px;
+  color: #f4d9a4;
+  text-shadow:
+    0 1px 3px #000,
+    0 0 5px #000;
+  font-size: 12px;
+}
+.pm-jogo-ambiente-marcador b {
+  font-size: 18px;
+  color: #f0bf73;
+}
+.pm-jogo-ambiente-marcador small {
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.pm-jogo-palco > .clima-camada {
+  z-index: 4;
+  pointer-events: none;
+}
+.pm-jogo-palco > .pm-mp-token {
+  z-index: 5;
+}
+.pm-jogo-palco > .pm-mp-token.meu {
+  z-index: 6;
+}
+@media (prefers-reduced-motion: reduce) {
+  .pm-jogo-palco > .clima-camada {
+    opacity: 0.7;
+  }
+}

@@ -1,0 +1,191 @@
+/* Ações compactas: descrição é exibida uma única vez, somente quando solicitada. */
+.hx-acoes-da-ficha {
+  margin: 0;
+  padding: 8px;
+  border: 1px solid rgba(207, 173, 122, 0.34);
+  background: rgba(21, 20, 27, 0.26);
+  border-radius: 9px;
+  display: grid;
+  gap: 8px;
+}
+.hx-acoes-da-ficha .aviso-pequeno {
+  margin: 3px 0;
+  font-size: 10px;
+}
+.hx-acoes-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.hx-acoes-toolbar > strong {
+  font-size: 12px;
+  color: #e5cda0;
+}
+.hx-acoes-toolbar label {
+  display: grid;
+  gap: 3px;
+  font-size: 10px;
+  color: #d5c7ae;
+}
+.hx-acoes-toolbar select {
+  padding: 6px;
+  min-height: 32px;
+  max-width: 185px;
+  font-size: 11px;
+}
+.hx-acao-ficha {
+  padding: 9px;
+  border-radius: 7px;
+  border: 1px solid rgba(213, 185, 143, 0.24);
+  background: rgba(12, 17, 23, 0.35);
+  display: grid;
+  gap: 7px;
+}
+.hx-acao-ficha-cabecalho {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 8px;
+  justify-content: space-between;
+  align-items: center;
+}
+.hx-acao-ficha-identidade {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+.hx-acao-ficha-identidade > div {
+  min-width: 0;
+  display: grid;
+  gap: 2px;
+}
+.hx-acao-ficha-identidade strong {
+  font-size: 12px;
+  color: #eee0c6;
+  overflow-wrap: anywhere;
+}
+.hx-acao-ficha-identidade span:not(.hx-icone-acao):not(.hx-icone-ausente) {
+  font-size: 10px;
+  color: #ccb68f;
+}
+.hx-acao-icone-local {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+}
+.hx-icone-ausente {
+  width: 31px;
+  height: 31px;
+  display: inline-grid;
+  place-items: center;
+  border: 1px dashed rgba(207, 173, 122, 0.5);
+  border-radius: 7px;
+  color: #a89475;
+  font-size: 17px;
+}
+.hx-acao-ficha-valor {
+  color: #eac78d;
+  font-weight: 700;
+  font-size: 12px;
+}
+.hx-acao-descricao {
+  padding: 9px;
+  background: rgba(18, 22, 30, 0.6);
+  border-left: 2px solid #b99460;
+  border-radius: 4px;
+  display: grid;
+  gap: 6px;
+}
+.hx-acao-ficha-texto {
+  margin: 0;
+  color: #ddd3c5;
+  font-size: 11px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.hx-acao-ficha-restricoes {
+  opacity: 0.85;
+}
+.hx-acao-ficha-botoes {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 2px;
+}
+.hx-acao-ficha-botoes button {
+  font-size: 10px;
+  min-height: 28px;
+  padding: 4px 7px;
+}
+.hx-acao-ficha-botoes .hx-acao-mais {
+  margin-left: auto;
+  background: transparent;
+  border: 1px solid rgba(207, 173, 122, 0.22);
+  color: #dfcda9;
+}
+.hx-acao-ficha-botoes .hx-acao-editar-icone {
+  background: rgba(116, 91, 62, 0.19);
+  border: 1px solid rgba(207, 173, 122, 0.25);
+  color: #eacda4;
+}
+.hx-acao-editor-icone {
+  border-top: 1px solid rgba(204, 174, 124, 0.24);
+  padding-top: 8px;
+}
+.hx-acao-editor-icone .hx-icone-editor {
+  margin: 0;
+}
+.hx-acao-editor-icone > small {
+  display: block;
+  font-size: 10px;
+  color: #b9ae9c;
+}
+
+/* v1.3.4.56.20 — separar Combate/Exploração sem mudar o menu imersivo. */
+.hx-acoes-subtabs {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+  padding: 5px;
+  border: 1px solid rgba(207, 173, 122, 0.35);
+  border-radius: 9px;
+  background: rgba(27, 24, 28, 0.93);
+}
+.hx-acoes-subtabs button {
+  min-width: 0;
+  min-height: 38px;
+  padding: 8px 9px;
+  border: 1px solid transparent;
+  border-radius: 7px;
+  background: transparent;
+  color: #cdbda7;
+  font-size: 11px;
+  font-weight: 750;
+  cursor: pointer;
+}
+.hx-acoes-subtabs button[aria-selected='true'] {
+  border-color: rgba(221, 179, 116, 0.47);
+  background: rgba(113, 79, 45, 0.4);
+  color: #ffe2b5;
+  box-shadow: inset 0 -2px #cda36d;
+}
+.hx-acoes-subtabs button:focus-visible {
+  outline: 2px solid #e5b879;
+  outline-offset: 2px;
+}
+.hx-acoes-subtabs button small {
+  margin-left: 5px;
+  font-size: 10px;
+  color: inherit;
+  opacity: 0.8;
+}
+.hx-acoes-conteudo {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+}

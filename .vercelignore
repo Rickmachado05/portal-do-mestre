@@ -1,0 +1,12 @@
+# Não publicar estados privados nem persistência de sessões locais.
+.portal-multiplayer-sessoes/
+.portal-vercel-origem.local
+.env*
+*.local
+*.zip
+node_modules/
+dist/
+.vercel/
+.git/
+scripts/
+logs/

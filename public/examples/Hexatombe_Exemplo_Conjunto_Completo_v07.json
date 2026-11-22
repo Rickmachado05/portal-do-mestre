@@ -1,0 +1,343 @@
+{
+  "format": "hexatombe-dice-collection",
+  "version": 1,
+  "name": "Ritual dos Elementos · Exemplo",
+  "dice": {
+    "4": {
+      "format": "hexatombe-dice-art",
+      "version": 3,
+      "name": "Chamas da Nação do Fogo",
+      "type": 4,
+      "material": "obsidiana",
+      "baseColor": "#5d2529",
+      "border": {
+        "style": "metal",
+        "color": "#e7a455",
+        "width": 15
+      },
+      "brushColor": "#e7a455",
+      "showNumbers": true,
+      "numbering": {
+        "style": "padrao",
+        "font": "cerimonial",
+        "color": "#ffeaca",
+        "size": 100,
+        "realValueHint": true,
+        "overrides": {}
+      },
+      "faceValues": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "faceLabels": [
+        "1",
+        "2",
+        "3",
+        "4"
+      ],
+      "artworkPNG": {}
+    },
+    "6": {
+      "format": "hexatombe-dice-art",
+      "version": 3,
+      "name": "Maré da Tribo da Água",
+      "type": 6,
+      "material": "metal",
+      "baseColor": "#2a526d",
+      "border": {
+        "style": "dupla",
+        "color": "#a9e0fa",
+        "width": 15
+      },
+      "brushColor": "#a9e0fa",
+      "showNumbers": true,
+      "numbering": {
+        "style": "padrao",
+        "font": "cerimonial",
+        "color": "#ffeaca",
+        "size": 100,
+        "realValueHint": true,
+        "overrides": {}
+      },
+      "faceValues": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "faceLabels": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6"
+      ],
+      "artworkPNG": {}
+    },
+    "8": {
+      "format": "hexatombe-dice-art",
+      "version": 3,
+      "name": "Raízes do Reino da Terra",
+      "type": 8,
+      "material": "pedra",
+      "baseColor": "#375440",
+      "border": {
+        "style": "fissura",
+        "color": "#dcc88c",
+        "width": 15
+      },
+      "brushColor": "#dcc88c",
+      "showNumbers": true,
+      "numbering": {
+        "style": "padrao",
+        "font": "cerimonial",
+        "color": "#ffeaca",
+        "size": 100,
+        "realValueHint": true,
+        "overrides": {}
+      },
+      "faceValues": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "faceLabels": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8"
+      ],
+      "artworkPNG": {}
+    },
+    "10": {
+      "format": "hexatombe-dice-art",
+      "version": 3,
+      "name": "Ventos dos Nômades do Ar",
+      "type": 10,
+      "material": "pergaminho",
+      "baseColor": "#86775f",
+      "border": {
+        "style": "runa",
+        "color": "#e0ebc8",
+        "width": 15
+      },
+      "brushColor": "#e0ebc8",
+      "showNumbers": true,
+      "numbering": {
+        "style": "padrao",
+        "font": "cerimonial",
+        "color": "#ffeaca",
+        "size": 100,
+        "realValueHint": true,
+        "overrides": {}
+      },
+      "faceValues": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ],
+      "faceLabels": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10"
+      ],
+      "artworkPNG": {}
+    },
+    "12": {
+      "format": "hexatombe-dice-art",
+      "version": 3,
+      "name": "Pedra Espiritual",
+      "type": 12,
+      "material": "pedra",
+      "baseColor": "#473957",
+      "border": {
+        "style": "dupla",
+        "color": "#cbb0ea",
+        "width": 15
+      },
+      "brushColor": "#cbb0ea",
+      "showNumbers": true,
+      "numbering": {
+        "style": "padrao",
+        "font": "cerimonial",
+        "color": "#ffeaca",
+        "size": 100,
+        "realValueHint": true,
+        "overrides": {}
+      },
+      "faceValues": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "faceLabels": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12"
+      ],
+      "artworkPNG": {}
+    },
+    "20": {
+      "format": "hexatombe-dice-art",
+      "version": 3,
+      "name": "Julgamento dos Espíritos",
+      "type": 20,
+      "material": "obsidiana",
+      "baseColor": "#34233d",
+      "border": {
+        "style": "runa",
+        "color": "#dccb9a",
+        "width": 15
+      },
+      "brushColor": "#dccb9a",
+      "showNumbers": true,
+      "numbering": {
+        "style": "padrao",
+        "font": "cerimonial",
+        "color": "#ffeaca",
+        "size": 100,
+        "realValueHint": true,
+        "overrides": {}
+      },
+      "faceValues": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20
+      ],
+      "faceLabels": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16",
+        "17",
+        "18",
+        "19",
+        "20"
+      ],
+      "artworkPNG": {}
+    },
+    "100": {
+      "format": "hexatombe-dice-art",
+      "version": 3,
+      "name": "Destino do Ritual",
+      "type": 100,
+      "material": "sangue",
+      "baseColor": "#542d37",
+      "border": {
+        "style": "metal",
+        "color": "#e39d79",
+        "width": 15
+      },
+      "brushColor": "#e39d79",
+      "showNumbers": true,
+      "numbering": {
+        "style": "padrao",
+        "font": "cerimonial",
+        "color": "#ffeaca",
+        "size": 100,
+        "realValueHint": true,
+        "overrides": {}
+      },
+      "faceValues": [
+        10,
+        20,
+        30,
+        40,
+        50,
+        60,
+        70,
+        80,
+        90,
+        0
+      ],
+      "faceLabels": [
+        "10",
+        "20",
+        "30",
+        "40",
+        "50",
+        "60",
+        "70",
+        "80",
+        "90",
+        "00"
+      ],
+      "artworkPNG": {}
+    }
+  }
+}

@@ -1,0 +1,167 @@
+/* Mesmo desenho e classes da janela "Ordem de turnos" do mestre (App.css).
+   O jogador recebe apenas os participantes autorizados e não tem controles de edição. */
+.pm-iniciativa-leitura {
+  width: 100%;
+  min-width: 0;
+  color: #e7d5bd;
+  font:
+    12px Inter,
+    system-ui,
+    sans-serif;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.pm-iniciativa-leitura .janela-linha-acoes {
+  margin-bottom: 7px;
+  flex-wrap: wrap;
+}
+.pm-iniciativa-leitura .mini-titulo {
+  font-size: 9px;
+  letter-spacing: 1px;
+  color: #d0aa76;
+  font-weight: 750;
+}
+.pm-iniciativa-leitura .iniciativa-acoes-cabecalho {
+  margin-left: auto;
+}
+.pm-iniciativa-leitura .contador-participantes {
+  font-size: 10px;
+  color: #e7c390;
+  font-weight: 700;
+}
+.pm-iniciativa-leitura .aviso-pequeno {
+  font-size: 10px;
+  line-height: 1.55;
+  margin: 8px 0 12px;
+}
+.pm-iniciativa-leitura .lista-iniciativa {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.pm-iniciativa-leitura .linha-iniciativa {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  padding: 5px;
+  border: 1px solid #645946aa;
+  border-radius: 5px;
+  background: #202127;
+  min-width: 0;
+}
+.pm-iniciativa-leitura .linha-iniciativa.turno {
+  border-color: #d9bb78;
+  background: #52412b;
+}
+.pm-iniciativa-leitura .linha-iniciativa.pm-iniciativa-eu:not(.turno) {
+  border-color: #8b7755;
+}
+.pm-iniciativa-leitura .ini-selecionar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+  min-width: 0;
+  padding: 4px;
+}
+.pm-iniciativa-leitura .ini-selecionar strong {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 11px;
+}
+.pm-iniciativa-leitura .iniciativa-retrato {
+  flex: 0 0 32px;
+  width: 32px;
+  height: 36px;
+  overflow: hidden;
+}
+.pm-iniciativa-leitura .iniciativa-retrato img {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+}
+.pm-iniciativa-leitura .pm-iniciativa-valor {
+  display: grid;
+  place-items: center;
+  flex: 0 0 41px;
+  width: 41px;
+  height: 27px;
+  border: 1px solid #756854;
+  border-radius: 4px;
+  background: #121319;
+  color: #f5eadc;
+  font-size: 11px;
+  font-weight: 650;
+}
+.pm-iniciativa-leitura .pm-iniciativa-marcador {
+  font-size: 15px;
+  color: #ffe1a4;
+  padding: 0 3px;
+}
+.pm-iniciativa-leitura .pm-iniciativa-estado {
+  margin: 13px 0 2px;
+}
+.pm-iniciativa-leitura .pm-iniciativa-estado span {
+  width: 100%;
+  padding: 10px 9px;
+  border: 1px solid #a07c4a;
+  border-radius: 4px;
+  background: #443429;
+  color: #f3d5a4;
+  text-align: center;
+  font-weight: 750;
+  font-size: 11px;
+}
+.pm-iniciativa-leitura .iniciativa-adicionar-cabecalho {
+  margin: 4px 0 2px;
+  padding-top: 12px;
+  border-top: 1px solid #6e5a4380;
+  font-size: 10px;
+  letter-spacing: 0.04em;
+}
+.pm-iniciativa-leitura .vazio {
+  font-size: 11px;
+}
+/* A janela mantém altura/rolagem mesmo no Chrome lado a lado (700–850px). */
+.pm-jogo-overlay-portal {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 9999 !important;
+  pointer-events: none !important;
+  background: transparent !important;
+  overflow: visible !important;
+}
+.pm-jogo.pm-jogo-overlay-portal > .pm-jogo-janela-combate.janela-flutuante {
+  position: fixed !important;
+  pointer-events: auto;
+  width: min(340px, calc(100vw - 20px));
+  height: min(465px, calc(100dvh - 98px));
+  min-width: min(280px, calc(100vw - 20px));
+  min-height: 90px;
+  max-width: calc(100vw - 20px);
+  max-height: calc(100dvh - 80px);
+  resize: both;
+}
+.pm-jogo.pm-jogo-overlay-portal > .pm-jogo-janela-combate .pm-jogo-janela-corpo {
+  overflow: auto;
+  overscroll-behavior: contain;
+  min-height: 0;
+  flex: 1;
+}
+@media (max-width: 620px) {
+  .pm-jogo.pm-jogo-overlay-portal > .pm-jogo-janela-combate.janela-flutuante {
+    left: 8px !important;
+    top: 75px !important;
+    width: min(340px, calc(100vw - 16px));
+    max-height: calc(100dvh - 86px);
+  }
+}
+
+.pm-jogo.pm-jogo-overlay-portal > .pm-jogo-janela-combate.janela-flutuante.minimizada {
+  height: 41px !important;
+  min-height: 41px;
+  resize: none;
+}

@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "target": "ES2022",
+    "module": "CommonJS",
+    "moduleResolution": "Node",
+    "rootDir": ".",
+    "outDir": ".test-impeto-dist",
+    "lib": [
+      "ES2022",
+      "DOM"
+    ],
+    "skipLibCheck": true,
+    "noEmitOnError": true,
+    "types": []
+  },
+  "include": [
+    "src/impeto/**/*.ts",
+    "src/hexatombe/fichasLibrary.ts",
+    "src/hexatombe/acoesFichaDados.ts",
+    "src/hexatombe/logicaAcoesDaFicha.ts",
+    "src/hexatombe/iconesAcao.ts",
+    "testes/*.test.ts"
+  ]
+}

@@ -1,0 +1,33 @@
+const fs = require('node:fs');
+const path = require('node:path');
+const assert = require('node:assert/strict');
+const root=path.join(__dirname,'../src');
+const app=fs.readFileSync(path.join(root,'App.tsx'),'utf8');
+const skill=fs.readFileSync(path.join(root,'hexatombe/AcoesDaFicha.tsx'),'utf8');
+const creator=fs.readFileSync(path.join(root,'criador/App.tsx'),'utf8');
+const inventory=fs.readFileSync(path.join(root,'hexatombe/InventarioMesa.tsx'),'utf8');
+for(const [tab,label] of [['atributos','Atributos'],['habilidades','Habilidades'],['inventario','Inventário'],['token','Token']]){
+  assert.match(app,new RegExp("\\['"+tab+"', '[^']+', '"+label+"'\\]"));
+  assert.ok(app.includes("abaFicha==='"+tab+"' && <section"),tab+' only renders its own panel');
+}
+assert.match(app,/aria-label="Abas da ficha do personagem"/);
+assert.match(app,/Classe de Armadura \(CA\)/);
+assert.match(app,/onRolar=\{\(expressao, nomeAcao, iconeAcao\)=>lancarDados\(/);
+assert.match(app,/salvarOuAtualizarFicha\(dados, fichaId\)/);
+assert.match(app,/dados\.basicIcon = seguro/);
+assert.match(app,/dados\.passiveIcon = seguro/);
+assert.match(app,/dados\.skills\[indice\]\.icon = seguro/);
+assert.match(app,/dados\.editorOriginal\.habilidades\[indice\]\.icone = seguro/);
+assert.match(skill,/onEditarIcone\?/);
+assert.match(skill,/aria-expanded=\{mostrarDescricao\}/);
+assert.match(skill,/mostrarDescricao && temDescricao/);
+assert.equal((skill.match(/className="hx-acao-ficha-texto"/g)||[]).length,1,'description is rendered only once');
+assert.ok(!skill.includes('resumoDaHabilidade('));
+assert.ok(!skill.includes('Resumida') && !skill.includes('Completa'));
+assert.match(skill,/iconeAcaoEhImagem|IconeHabilidadeEditor/);
+assert.match(skill,/precisaTesteContraCA\(acao\.categoria\)/);
+assert.ok(!creator.includes('resumo curto (opcional') && !creator.includes('Resumo curto (opcional'));
+assert.match(creator,/IconeHabilidadeEditor id=\{`skill-\$\{indice\}`\}/);
+assert.match(inventory,/const idUnico = useId\(\)/);
+assert.match(inventory,/id=\{`\$\{idUnico\}-imp-item-catalogo`\}/);
+console.log('FICHA_ABAS_V13418_OK: tabs, CA, source-of-truth icons, single description, inventory ids, creator icons');

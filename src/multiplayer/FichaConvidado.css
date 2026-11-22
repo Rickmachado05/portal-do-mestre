@@ -1,0 +1,201 @@
+/* v29.11.1: paridade visual com a ficha do mestre, sem controles de edição. */
+.pm-jogo .pm-jogo-janela.janela-recursos {
+  /* Mesmo tamanho inicial da ficha do mestre; a altura acompanha o conteúdo. */
+  width: min(366px, calc(100vw - 24px));
+  height: auto;
+  min-height: 190px;
+  max-height: min(690px, calc(100dvh - 132px));
+}
+.pm-jogo .pm-jogo-janela.janela-recursos .hx-ficha-abas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+.pm-jogo .pm-jogo-janela.janela-recursos .hx-ficha-abas button {
+  flex: 1 1 72px;
+  min-width: 72px;
+  padding: 8px 5px !important;
+  font-size: 10px !important;
+}
+.pm-jogo .pm-jogo-janela.janela-recursos .hx-ficha-personagem-abas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+.pm-jogo .pm-jogo-janela.janela-recursos .impeto-a01-grade {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 8px;
+}
+.pm-jogo .pm-jogo-janela.janela-recursos .impeto-a01-testes {
+  margin-bottom: 14px;
+}
+.pm-jogo .pm-jogo-janela.janela-recursos .impeto-a01-testes-campos {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 8px;
+}
+.pm-jogo .pm-jogo-janela.janela-recursos .hx-ficha-corpo {
+  min-width: 0;
+}
+.pm-jogo-condicoes {
+  grid-column: 1/-1;
+  display: grid;
+  gap: 8px;
+  padding: 10px 4px;
+}
+.pm-jogo-condicoes > strong {
+  color: #e5c18a;
+  font-size: 12px;
+}
+.pm-jogo-ficha-token {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 13px;
+}
+.pm-jogo-ficha-token > img {
+  max-width: min(210px, 100%);
+  max-height: 245px;
+  object-fit: contain;
+  border-radius: 9px;
+  border: 1px solid #977954;
+  background: #1d232e;
+}
+.pm-jogo .pm-jogo-testes-impeto button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+@media (max-width: 570px) {
+  .pm-jogo .pm-jogo-janela.janela-recursos .hx-ficha-abas button {
+    flex: 1 1 31%;
+    min-width: 70px;
+  }
+  .pm-jogo .pm-jogo-janela.janela-recursos .impeto-a01-grade {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* v29.11.2 — a aba Habilidades do convidado segue o acabamento visual do mestre.
+   O estilo de perícias é importado de portalA01.css no próprio componente. */
+.pm-jogo .pm-jogo-janela.janela-recursos .pm-jogo-habilidades {
+  display: grid;
+  gap: 10px;
+  padding: 11px;
+  border-color: rgba(207, 173, 122, 0.34);
+}
+.pm-jogo .pm-jogo-janela.janela-recursos .pm-jogo-habilidades .impeto-a01-testes {
+  margin: 0 0 4px;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+.pm-jogo .pm-jogo-janela.janela-recursos .pm-jogo-habilidades .hx-acoes-conteudo {
+  display: grid;
+  gap: 10px;
+  min-width: 0;
+}
+.pm-jogo .pm-jogo-janela.janela-recursos .pm-jogo-habilidades .hx-acoes-subtabs {
+  margin: 0;
+}
+.pm-jogo .pm-jogo-janela.janela-recursos .pm-jogo-habilidades .hx-acao-ficha {
+  border-color: rgba(213, 185, 143, 0.32);
+  box-shadow: inset 0 1px rgba(255, 230, 185, 0.04);
+}
+.pm-jogo .pm-jogo-janela.janela-recursos .pm-jogo-habilidades .hx-acao-ficha-botoes {
+  gap: 6px;
+}
+.pm-jogo .pm-jogo-janela.janela-recursos .pm-jogo-habilidades .hx-acao-ficha-botoes button {
+  border: 1px solid #8c7054;
+  border-radius: 6px;
+  color: #f2d9af;
+  background: #30282b;
+  font-size: 11px;
+}
+.pm-jogo
+  .pm-jogo-janela.janela-recursos
+  .pm-jogo-habilidades
+  .hx-acao-ficha-botoes
+  button.botao-primario {
+  background: linear-gradient(120deg, #74503a, #523a30);
+  border-color: #cba573;
+  color: #ffe8c3;
+}
+.pm-jogo-icone-categoria {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  flex: none;
+  border: 1px solid #967956;
+  border-radius: 7px;
+  background: #4a372c;
+  color: #f1cd96;
+  font-size: 19px;
+}
+.pm-jogo .pm-jogo-janela.janela-recursos .pm-jogo-habilidades .pm-jogo-registro-rolagem {
+  font-size: 10px;
+  color: #bfb5a8;
+}
+.pm-jogo .pm-jogo-janela.janela-recursos .pm-jogo-habilidades .pm-jogo-acao-descricao {
+  border-top: 1px solid rgba(207, 173, 122, 0.3);
+  background: rgba(22, 22, 28, 0.65);
+  padding: 7px 9px;
+  border-radius: 5px;
+}
+.pm-jogo .pm-jogo-janela.janela-recursos .pm-jogo-atributos-limpos {
+  display: grid;
+  gap: 11px;
+  padding: 0 3px 12px;
+}
+.pm-jogo .pm-jogo-janela.janela-recursos .pm-jogo-atributos-limpos > .imp-escudo {
+  grid-area: auto;
+  margin: 0;
+  max-width: 100%;
+}
+.pm-jogo .pm-jogo-janela.janela-recursos .pm-jogo-atributos-limpos > .pm-jogo-condicoes {
+  grid-area: auto;
+  padding: 8px 2px;
+}
+.pm-jogo-atributos-explicacao,
+.pm-jogo-sem-condicoes {
+  margin: 0;
+  padding: 9px 10px;
+  border: 1px solid rgba(192, 157, 109, 0.24);
+  border-radius: 7px;
+  background: rgba(18, 20, 27, 0.63);
+  color: #c7b9a7;
+  font-size: 11px;
+  line-height: 1.45;
+}
+.pm-jogo .pm-jogo-janela.janela-recursos .hx-ficha-personagem-conteudo {
+  max-width: 100%;
+  min-width: 0;
+}
+@media (max-width: 480px) {
+  .pm-jogo .pm-jogo-janela.janela-recursos .pm-jogo-habilidades .hx-acoes-grade {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* v29.11.3 — abas e cartas adaptadas à largura REAL da janela do jogador.
+   O mestre usa duas colunas de abas na mesma largura por container query. */
+.pm-jogo .pm-jogo-janela.janela-recursos .hx-ficha-abas {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 5px;
+}
+.pm-jogo .pm-jogo-janela.janela-recursos .hx-ficha-abas button {
+  min-width: 0;
+  width: 100%;
+  flex: none;
+}
+.pm-jogo .pm-jogo-janela.janela-recursos .hx-acoes-grade {
+  grid-template-columns: minmax(0, 1fr);
+}
+.pm-jogo .pm-jogo-janela.janela-recursos .impeto-a01-grade,
+.pm-jogo .pm-jogo-janela.janela-recursos .impeto-a01-escolhas-grade {
+  grid-template-columns: minmax(0, 1fr);
+}
+.pm-jogo .pm-jogo-janela.janela-recursos .pm-jogo-atributos-limpos {
+  padding: 8px 3px 12px;
+}

@@ -1,0 +1,25 @@
+# Pastas geradas e arquivos de dados; nao formatar automaticamente
+node_modules/
+dist/
+.vercel/
+.portal-multiplayer-sessoes/
+coverage/
+.cache/
+package-lock.json
+
+# Legado e recursos estaticos: revisar antes de reformatar
+public/
+caderno/
+miniaturas/
+
+# Binarios e backups
+*.svg
+*.zip
+*.png
+*.jpg
+*.jpeg
+*.webp
+*.gif
+*.glb
+*.mp3
+*.ogg

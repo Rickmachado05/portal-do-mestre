@@ -1,0 +1,624 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#121721">
+<title>Portal do Mestre | Ateliê de Dados</title>
+<style>
+:root{color-scheme:dark;--bg:#10141e;--panel:#192030;--panel2:#222b3a;--line:#3c4556;--gold:#dcc08f;--muted:#9eabba;--ink:#f1eee8;--accent:#d98962}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 90% 0%,#302332 0,transparent 32%),radial-gradient(circle at 0% 0%,#20303c 0,transparent 34%),var(--bg);font-family:system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--ink);min-height:100vh}button,select,input{font:inherit}button{cursor:pointer}button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--gold);outline-offset:2px}h1,h2,h3,p{margin-top:0}header{padding:22px clamp(16px,4vw,56px);display:flex;gap:18px;justify-content:space-between;align-items:center;border-bottom:1px solid #65533855;background:#111723bb}header .brand{font:22px Georgia,serif;letter-spacing:.05em}header .brand b{color:var(--gold);font-weight:400}header .sub{font-size:11px;letter-spacing:.2em;color:var(--gold);margin:0 0 7px;font-weight:700}header .tag{font-size:11px;padding:7px 10px;border:1px solid #716349;border-radius:99px;color:#c9b992}main{max-width:1520px;margin:auto;padding:28px clamp(15px,3.4vw,45px) 65px}.intro{margin-bottom:23px;color:var(--muted);font-size:13px;max-width:850px;line-height:1.7}.layout{display:grid;grid-template-columns:minmax(295px,355px) minmax(320px,1fr) minmax(240px,315px);align-items:start;gap:18px}.panel{background:linear-gradient(160deg,#1b2332,#151c29);border:1px solid #455062;border-radius:13px;box-shadow:0 18px 35px #0003;overflow:hidden}.panel > h2,.panel .h2{font:20px Georgia,serif;font-weight:400;padding:19px 20px;margin:0;border-bottom:1px solid #40495a}.controls{padding:18px;display:grid;gap:15px}.field{display:grid;gap:7px}.field label,.eyebrow{font-size:11px;font-weight:750;letter-spacing:.12em;color:#c8bb9e;text-transform:uppercase}.field input[type=text],.field select,select,input[type=number]{width:100%;min-width:0;background:#101723;color:var(--ink);border:1px solid #4a5566;border-radius:7px;padding:10px 11px}.cols{display:grid;grid-template-columns:1fr 1fr;gap:12px}.palette{display:flex;flex-wrap:wrap;gap:7px}.swatch{width:34px;height:34px;border-radius:8px;border:2px solid #778291;box-shadow:inset 0 0 0 1px #0005}.swatch[aria-pressed=true]{border-color:#fff;outline:2px solid var(--gold);outline-offset:2px}.range{display:grid;gap:7px}.range header{padding:0;background:none;border:0;display:flex;justify-content:space-between}.range input{width:100%;accent-color:var(--gold)}.toolbar{display:flex;flex-wrap:wrap;gap:7px}.btn,.tool{background:#273244;color:#ece9e4;border:1px solid #536174;border-radius:8px;padding:9px 12px;font-size:12px}.btn:hover,.tool:hover{border-color:#d0b982;background:#364357}.btn.primary{background:linear-gradient(125deg,#ba8651,#a76c47);color:#151a23;border-color:#d7ad70;font-weight:800}.btn.ghost{background:transparent}.tool.active{border-color:#e0bb7e;background:#494039;color:#fff3d3}.tool{min-width:39px}.divider{border-top:1px solid #3c4556;margin:2px 0}.groupTitle{font-size:12px;font-weight:750;color:#e6d6af}.stamps{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}.stamps button{min-height:55px;display:grid;align-items:center;justify-content:center;gap:1px;text-align:center;padding:5px 2px}.stamps .symbol{font-size:23px;line-height:1}.stamps .legend{font-size:9px;color:#d1c6ae}.stamps button.active .legend{color:#fff}.faceTop{padding:14px 18px;display:flex;justify-content:space-between;align-items:center;gap:12px;border-bottom:1px solid #3c4657}.faceTop select{width:128px}.faceList{padding:11px 16px;display:flex;flex-wrap:wrap;gap:6px;max-height:130px;overflow:auto}.faceList button{min-width:39px;padding:6px 4px;border:1px solid #576173;background:#212b39;border-radius:6px;color:#eae0d0;font-size:12px}.faceList button.active{background:#7c634b;border-color:#e2c28d;color:#fff}.drawing{margin:0 auto;max-width:570px;padding:16px}.drawWrap{width:100%;aspect-ratio:1;position:relative;border-radius:12px;overflow:hidden;box-shadow:0 3px 0 #fff1 inset,0 20px 40px #0006;border:8px solid #3a3e4b;background:#242834;touch-action:none;isolation:isolate}.drawWrap canvas{width:100%;height:100%;display:block;position:absolute;inset:0}.drawWrap canvas#paintCanvas{cursor:crosshair;touch-action:none}.numberFace{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font:200px Georgia,serif;opacity:.84;color:var(--numColor,#ffecba);text-shadow:0 2px 1px #0008,0 0 15px #000b;pointer-events:none;user-select:none}.numberFace.off{display:none}.tip{margin:13px 20px 18px;color:var(--muted);font-size:12px;line-height:1.6;text-align:center}.status{padding:12px 18px;color:#e3c891;font-size:12px;background:#1e2a37;border-top:1px solid #394759;min-height:40px}.right{padding:18px;display:grid;gap:14px}.previewHdr{display:flex;align-items:center;justify-content:space-between}.previewHdr h3{margin:0;font:18px Georgia,serif}.tiny{color:var(--muted);font-size:11px}.previewStage{height:260px;border:1px solid #495367;border-radius:11px;background:radial-gradient(ellipse at 50% 45%,#3b465d,#141c2a 70%);display:grid;place-items:center;position:relative;overflow:hidden;perspective:800px}.previewStage:after{content:"";position:absolute;width:160px;height:25px;bottom:31px;background:#080d16c9;border-radius:100%;filter:blur(12px)}.cube{width:145px;height:145px;position:relative;transform-style:preserve-3d;animation:spin 17s linear infinite;z-index:1}.cube:hover{animation-play-state:paused}@keyframes spin{0%{transform:rotateX(-18deg) rotateY(0)}50%{transform:rotateX(20deg) rotateY(180deg)}100%{transform:rotateX(-18deg) rotateY(360deg)}}.cubeFace{position:absolute;width:145px;height:145px;border:2px solid #0009;background-position:center;background-size:cover;backface-visibility:visible}.cubeFace .faceNum{position:absolute;inset:0;display:grid;place-items:center;font:63px Georgia,serif;color:#ffeac5;text-shadow:1px 2px 5px #000}.cf1{transform:translateZ(72.5px)}.cf2{transform:rotateY(180deg) translateZ(72.5px)}.cf3{transform:rotateY(90deg) translateZ(72.5px)}.cf4{transform:rotateY(-90deg) translateZ(72.5px)}.cf5{transform:rotateX(90deg) translateZ(72.5px)}.cf6{transform:rotateX(-90deg) translateZ(72.5px)}.flatPreview{width:172px;height:172px;background-size:cover;background-position:center;transform:rotate(-9deg) rotateX(16deg);border:6px solid #bca1786c;filter:drop-shadow(10px 15px 12px #0007);clip-path:polygon(50% 0%,96% 23%,96% 78%,50% 100%,4% 78%,4% 23%);position:relative;z-index:1;display:none}.flatPreview span{position:absolute;inset:0;display:grid;place-items:center;font:80px Georgia,serif;color:#ffe7bd;text-shadow:1px 2px 5px #000}.note{font-size:11px;line-height:1.6;color:#a8b5c4}.actions{display:grid;gap:8px}.actions button{width:100%}.file{display:none}.check{font-size:12px;color:#c8d3df;display:flex;align-items:center;gap:8px}.check input{accent-color:#bba16c}.helperbox{font-size:11px;line-height:1.6;color:#c0c4cc;border:1px solid #5c5547;background:#282a2c;padding:12px;border-radius:8px}.under{text-decoration:none;color:#edd19f}.footer{margin-top:25px;color:#84909e;font-size:12px;line-height:1.65}@media(max-width:1200px){.layout{grid-template-columns:minmax(270px,320px) minmax(330px,1fr)}.rightPanel{grid-column:1/-1}.right{grid-template-columns:1fr 1fr;gap:20px}.right .rightActions{align-self:start}}@media(max-width:760px){header{align-items:start}header .tag{display:none}.layout{grid-template-columns:1fr}.rightPanel{grid-column:auto}.right{grid-template-columns:1fr}.drawing{padding:9px}.drawWrap{border-width:5px}.numberFace{font-size:30vw}}
+
+/* Bordas artísticas (arte 2D por face; não altera colisões físicas) */
+.edgeEditor{border:1px solid #5b4e40;background:linear-gradient(145deg,#282934,#1a2632);padding:15px;border-radius:10px;display:grid;gap:12px}
+.edgeEditor .groupTitle{color:#f3d49b}
+.edgeEditor .cols{grid-template-columns:1fr 1fr}
+.edgeEditor select{font-size:12px}
+#borderCanvas{pointer-events:none}
+.presetInfo{font-size:11px;line-height:1.55;color:#aeb9ca;margin-top:7px}
+#revertPreset{width:100%;margin-top:9px}
+#applyPreset{background:#7d553d;border-color:#d1aa6e;color:#fff2d5;font-weight:700}
+#applyPreset:hover{background:#986747}
+/* Ateliê de números — numeração cosmética com valores matemáticos preservados */
+.numberEditor{border:1px solid #57707e;background:linear-gradient(145deg,#192e37,#1b2131);padding:15px;border-radius:10px;display:grid;gap:12px}
+.numberEditor .groupTitle{color:#b8e6e5}
+.numberEditor .field{margin:0}
+.numberEditor .cols{grid-template-columns:1fr 1fr}
+.numberEditor .smallHelp{color:#acbaca;font-size:11px;line-height:1.6;margin:0}
+.numberEditor .inputLine{display:flex;gap:7px}
+.numberEditor .inputLine input{flex:1;min-width:0}
+.numberEditor .inputLine button{flex:0 0 auto}
+.numberEditor .check{align-items:flex-start}
+#numberCanvas{pointer-events:none}
+.numberHint{display:inline-flex;border:1px solid #65747e;padding:3px 8px;border-radius:99px;font-size:10px;color:#bfe2d9;margin-top:6px}
+
+.setEditor{border:1px solid #6f6044;background:linear-gradient(145deg,#322d29,#1e2531);border-radius:12px;padding:14px;display:grid;gap:12px}
+.setEditor .field{gap:6px}.setEditor .smallHelp{font-size:11px;color:#b6c1d0;line-height:1.55;margin:0}
+.setTypes{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px}
+.setTypes button{border:1px solid #556277;background:#202a3b;color:#c6d3e1;border-radius:7px;min-height:40px;cursor:pointer;display:grid;place-items:center;font-size:12px;position:relative}
+.setTypes button.active{border-color:#e3bf83;background:#584633;color:#fff4d5}
+.setTypes button.has-draft::after{content:'●';position:absolute;right:5px;top:2px;font-size:8px;color:#87d2b2}
+.setButtons{display:grid;gap:7px}.setButtons button{width:100%}
+</style>
+<style>
+/* Portal do Mestre · Ateliê v1.3.2: painel e fluxos apenas, sem alterar as artes */
+:root{--bg:#0d1720;--panel:#192734;--panel2:#213241;--line:#455c6d;--gold:#d4b486;--muted:#a8b9c3;--ink:#f1e8d9;--accent:#cba574}
+body{background:radial-gradient(ellipse at 12% 0%,#28445288,transparent 36%),radial-gradient(ellipse at 96% 12%,#332f3988,transparent 35%),#0c161f}
+.hx-workshop-header{padding:16px clamp(16px,3vw,52px);position:relative;z-index:3;background:#101d28ee;border-bottom:1px solid #6b7c815b;box-shadow:0 8px 24px #0002}
+.hx-workshop-header .brand{font:normal 25px Georgia,serif;letter-spacing:.025em;color:#f0dfc2}
+.hx-workshop-header .sub{font-size:10px;color:#cbb28e}
+.hx-header-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.hx-return-link{color:#e6d1a8;border:1px solid #826f52;border-radius:9px;padding:10px 13px;text-decoration:none;font-size:12px;font-weight:750;background:#223140}
+.hx-return-link:hover{background:#304658}
+.hx-return-link[hidden]{display:none!important}
+.hx-workshop-header .tag{border-color:#63747b;color:#cbd8de}
+.hx-workshop-intro{max-width:100%;display:flex;justify-content:space-between;align-items:start;gap:20px;padding:2px 0 18px}
+.hx-workshop-intro p{max-width:800px;color:#b3c3ca;font-size:12px;line-height:1.65;margin:0}
+.hx-workshop-intro strong{display:block;font:normal 22px Georgia,serif;color:#f1e1c7;margin:0 0 6px}
+.hx-workshop-key{font-size:10px;letter-spacing:.14em;color:#d1b586;text-transform:uppercase;white-space:nowrap;padding-top:10px}
+.hx-workshop-strip{border:1px solid #556977;background:linear-gradient(100deg,#263a46,#162734);border-radius:13px;display:flex;align-items:center;gap:18px;padding:13px 16px;margin-bottom:19px;box-shadow:0 12px 20px #0002}
+.hx-strip-label{display:flex;flex-direction:column;gap:4px;min-width:140px}.hx-strip-label strong{font:normal 18px Georgia,serif;color:#f4dec0}.hx-strip-label small{font-size:10px;color:#a2b5c1}
+.hx-quick-dice{display:flex;flex:1;flex-wrap:wrap;gap:6px}
+.hx-quick-dice button{background:#17232f;color:#c7d6dd;border:1px solid #5b6e7d;border-radius:8px;min-width:53px;min-height:39px;padding:7px 9px;font-size:12px;font-weight:750}
+.hx-quick-dice button:hover{background:#304658}.hx-quick-dice button[aria-pressed=true]{border-color:#ebce9b;background:#634e39;color:#fff0cd;box-shadow:inset 0 0 0 1px #ddbc83a0}
+.hx-quick-dice button.has-draft::after{content:' •';color:#96dec1}
+.hx-strip-save{background:#bca071;border:1px solid #e0c28d;border-radius:9px;padding:11px 13px;white-space:nowrap;font-weight:850;color:#19242d;font-size:12px}
+.hx-strip-save:hover{background:#e3c999}
+.layout{grid-template-columns:minmax(290px,350px) minmax(350px,1fr) minmax(240px,300px);align-items:start;gap:15px}
+.panel{background:linear-gradient(155deg,#1c2c39,#14212d);border-color:#536777;box-shadow:0 16px 33px #0003}
+.hx-tools-panel{position:sticky;top:12px;overflow:hidden}
+.hx-tool-head{padding:18px 18px 10px}.hx-tool-head h2{font:normal 21px Georgia,serif;margin:0 0 5px;color:#f0dfc6}.hx-tool-head p{font-size:11px;color:#a5b9c4;line-height:1.5;margin:0}
+.hx-editor-tabs{display:grid;grid-template-columns:1fr 1fr;gap:7px;padding:0 16px 14px;border-bottom:1px solid #465b6b}
+.hx-editor-tabs button{border:1px solid #4c6273;background:#172635;color:#c0d0d8;border-radius:8px;padding:11px 6px;font-weight:700;font-size:11px;display:flex;align-items:center;justify-content:center;gap:7px}
+.hx-editor-tabs button:hover{background:#2c4051}.hx-editor-tabs button[aria-selected=true]{background:#594c40;border-color:#d6b98a;color:#f7e7cb}
+.hx-editor-tabs button span{font-size:14px}
+.hx-tools-panel .controls{display:block;padding:15px;max-height:calc(100vh - 278px);overflow-y:auto;overscroll-behavior:contain;scrollbar-color:#536c7c transparent;min-height:180px}
+.hx-editor-pane{display:grid;gap:14px}.hx-editor-pane[hidden]{display:none!important}
+.hx-tools-panel .setEditor{margin:0}.hx-tools-panel .setTypes button{min-height:44px}
+.hx-tools-panel .setButtons{gap:9px}
+.hx-tools-panel .edgeEditor,.hx-tools-panel .numberEditor,.hx-tools-panel .setEditor{border-color:#597083;background:linear-gradient(150deg,#263645,#1d2b38)}
+.hx-tools-panel .groupTitle{color:#e9d2aa;font-size:13px}
+.hx-workshop-canvas{position:sticky;top:12px}.hx-workshop-canvas .drawing{padding:14px clamp(10px,2vw,25px) 10px;max-width:min(100%,650px)}
+.hx-workshop-canvas .faceTop{background:#1e3140}.hx-workshop-canvas .faceList{max-height:100px;padding:10px 16px}
+.hx-workshop-canvas .status{border-top-color:#546776;background:#213443;color:#ead2a2}
+.hx-workshop-preview{position:sticky;top:12px}.hx-workshop-preview .right{padding:15px}
+.hx-workshop-preview .helperbox{color:#adbec6;border-color:#536b76;background:#1d3140}
+.hx-workshop-preview .actions{gap:7px}
+.hx-workshop-preview .actions a{display:block}
+.hx-workshop-preview .previewStage{height:225px}
+.hx-workshop-footnote{border:1px solid #475d68;border-radius:10px;padding:15px;background:#172834;line-height:1.7}
+@media(max-width:1270px){.layout{grid-template-columns:minmax(285px,325px) minmax(0,1fr)}.hx-workshop-preview{position:static;grid-column:1/-1}.hx-workshop-preview .right{grid-template-columns:1fr 1fr}.hx-tools-panel .controls{max-height:calc(100vh - 278px)}}
+@media(max-width:780px){.layout{grid-template-columns:1fr}.hx-tools-panel,.hx-workshop-canvas{position:static}.hx-tools-panel .controls{max-height:none;overflow:visible}.hx-workshop-preview{grid-column:auto}.hx-workshop-preview .right{grid-template-columns:1fr}.hx-workshop-strip{flex-wrap:wrap;gap:10px}.hx-quick-dice{flex-basis:100%;order:2}.hx-strip-save{margin-left:auto}.hx-workshop-header{align-items:flex-start}.hx-workshop-intro{display:block}.hx-workshop-key{white-space:normal}}
+@media(max-width:480px){.hx-workshop-header .tag{display:none}.hx-quick-dice button{flex:1;min-width:60px}.hx-workshop-strip{padding:12px}.hx-return-link{padding:8px 10px}.hx-editor-tabs{gap:4px}.hx-editor-tabs button{font-size:10px}.hx-tools-panel .controls{padding:12px}}
+@media(prefers-reduced-motion:reduce){.cube{animation:none}}
+</style></head>
+<body>
+<header class="hx-workshop-header"><div><div class="sub">PORTAL DO MESTRE · OFICINA CRIATIVA</div><div class="brand">Ateliê <b>de Dados</b></div></div><div class="hx-header-actions"><span class="tag">CONJUNTOS COMPLETOS · D4 A D100</span><a href="/mesa/" class="hx-return-link" id="hxReturnMesa" hidden>← Voltar à mesa</a><a href="/dados/" class="hx-return-link">← Minha biblioteca</a></div></header>
+<script>
+/* Só exibe o retorno quando o Ateliê veio da mesa. Não aceita URL de retorno externa. */
+(function(){
+  const parametros = new URLSearchParams(location.search);
+  const link = document.getElementById("hxReturnMesa");
+  const origem = parametros.get("origem");
+  if (!(["mesa", "mesa3d", "convidado"].includes(origem)) || !link) return;
+  const destino = new URL(origem === "convidado" ? "/convidado/" : origem === "mesa3d" ? "/mesa3d/" : "/mesa/", location.origin);
+  const campanha = parametros.get("campanha");
+  if (campanha) destino.searchParams.set("campanha", campanha);
+  const sala = parametros.get("sala");
+  if (origem === "convidado" && sala && /^[A-Z2-9]{8}$/.test(sala)) destino.searchParams.set("sala", sala);
+  link.href = destino.pathname + destino.search;
+  link.hidden = false;
+  // Na sessão convidada, "Minha biblioteca" também volta aos painéis do jogador,
+  // sem abrir o painel administrativo da biblioteca local do mestre.
+  if (origem === "convidado") {
+    const biblioteca = document.querySelector('a[href="/dados/"]');
+    if (biblioteca) { biblioteca.href = link.href; biblioteca.textContent = "← Meus dados na mesa"; }
+  }
+})();
+</script>
+<main>
+<div class="hx-workshop-intro"><div><strong>Dê uma identidade aos seus dados.</strong><p>Edite materiais, bordas, símbolos e pinturas em todos os sete dados do mesmo conjunto. As rolagens continuam usando os valores reais, independentemente dos glifos.</p></div><span class="hx-workshop-key">ARQUIVOS SALVOS NESTE NAVEGADOR</span></div>
+<div class="hx-workshop-strip" aria-label="Trocar dado do conjunto"><div class="hx-strip-label"><strong>Conjunto atual</strong><small>Alternar não apaga a arte</small></div><div class="hx-quick-dice" id="hxQuickDice" role="group" aria-label="Escolher dado para editar"></div><button type="button" class="hx-strip-save" id="hxQuickSave">✦ Salvar conjunto</button></div>
+<div class="layout">
+<section class="panel hx-tools-panel"><div class="hx-tool-head"><h2>Personalização</h2><p>Selecione uma etapa para editar. Seu trabalho permanece quando você alterna.</p></div>
+<nav class="hx-editor-tabs" role="tablist" aria-label="Ferramentas do editor">
+<button type="button" data-hx-tab="conjunto" role="tab" aria-selected="false"><span>◈</span> Conjunto</button>
+<button type="button" data-hx-tab="aparencia" role="tab" aria-selected="true"><span>◉</span> Aparência</button>
+<button type="button" data-hx-tab="numeracao" role="tab" aria-selected="false"><span>✧</span> Números</button>
+<button type="button" data-hx-tab="desenho" role="tab" aria-selected="false"><span>✎</span> Desenho</button>
+</nav><div class="controls">
+<section class="hx-editor-pane" data-hx-pane="conjunto" hidden><div class="setEditor"><div class="groupTitle">✧ Meu conjunto completo</div>
+<div class="field"><label for="collectionName">Nome da coleção</label><input id="collectionName" type="text" maxlength="80" value="Meus dados elementais" placeholder="Ex.: Dados da Nação do Fogo"></div>
+<p class="smallHelp">Cada modelo abaixo guarda a sua própria arte, material, bordas e números. Alterne livremente entre os sete dados.</p>
+<div class="setTypes" id="collectionTypes" aria-label="Dados deste conjunto"></div>
+<div class="setButtons"><button type="button" class="btn primary" id="saveCollection">✦ Salvar conjunto na biblioteca</button><button type="button" class="btn" id="exportCollection">↓ Exportar conjunto completo (JSON)</button><button type="button" class="btn ghost" id="newCollection">+ Novo conjunto</button></div>
+<p class="smallHelp">O JSON completo inclui todos os dados, inclusive as artes. O armazenamento da biblioteca funciona neste navegador.</p></div></section>
+<section class="hx-editor-pane" data-hx-pane="aparencia"><div class="field"><label for="designName">Nome deste dado</label><input id="designName" type="text" maxlength="60" value="Meu dado elemental"></div>
+<div class="cols"><div class="field"><label for="diceType">Tipo de dado</label><select id="diceType"><option value="4">D4</option><option value="6" selected>D6</option><option value="8">D8</option><option value="10">D10</option><option value="12">D12</option><option value="20">D20</option><option value="100">D100 (dezenas)</option></select></div><div class="field"><label for="material">Material</label><select id="material"><option value="obsidiana">Obsidiana</option><option value="liso">Liso</option><option value="pedra">Pedra</option><option value="metal">Metal</option><option value="pergaminho">Pergaminho</option><option value="sangue">Sangue</option></select></div></div>
+<div class="field"><label>Cor base (RGB/HEX)</label><div class="cols"><input aria-label="Cor base" id="baseColor" type="color" value="#3d1822" style="height:42px;width:100%;background:#101723;border:1px solid #4a5566;border-radius:7px;padding:3px"><input aria-label="Código HEX da cor base" id="baseHex" type="text" value="#3d1822" maxlength="7"></div></div>
+<div class="field"><label>Atalhos de paleta</label><div class="palette" id="palette"></div></div>
+<div class="field"><label for="presetTheme">Conjuntos temáticos</label><div style="display:flex;gap:7px"><select id="presetTheme"><option value="fogo">Nação do Fogo</option><option value="agua">Tribo da Água</option><option value="terra">Reino da Terra</option><option value="ar">Nômades do Ar</option><option value="sangue">Ritual sangrento</option><option value="coracao">Corações</option><option value="runa">Runas antigas</option></select><button type="button" class="btn" id="applyPreset">Aplicar tema</button></div><p class="presetInfo">Aplica imediatamente às faces e às bordas. Você pode restaurar a versão anterior sem perder seu trabalho.</p><button type="button" class="btn ghost" id="revertPreset" hidden>↶ Restaurar conjunto anterior</button></div>
+<div class="edgeEditor" aria-label="Personalização de bordas"><div class="groupTitle">✧ Bordas artísticas do dado</div>
+<div class="field"><label for="borderStyle">Estilo da borda</label><select id="borderStyle"><option value="nenhuma">Sem borda</option><option value="simples">Simples</option><option value="dupla">Dupla</option><option value="metal">Metálica</option><option value="runa">Rúnica</option><option value="fissura">Rachaduras</option></select></div>
+<div class="field"><label>Cor da borda (RGB/HEX)</label><div class="cols"><input aria-label="Cor da borda" id="borderColor" type="color" value="#d9aa70" style="height:42px;width:100%;background:#101723;border:1px solid #4a5566;border-radius:7px;padding:3px"><input aria-label="HEX da borda" id="borderHex" type="text" value="#d9aa70" maxlength="7"></div></div>
+<div class="range"><header><label for="borderWidth" class="eyebrow">Espessura da borda</label><span id="borderWidthLabel">15</span></header><input id="borderWidth" type="range" min="3" max="40" value="15"></div>
+<p class="presetInfo">Estas são bordas desenhadas nas texturas. Relevo e chanfros 3D poderão ser adicionados quando integrarmos o editor ao Dice Box.</p></div></section>
+<section class="hx-editor-pane" data-hx-pane="numeracao" hidden><div class="numberEditor" aria-label="Personalização dos números do dado">
+ <div class="groupTitle">⟡ Números e glifos das faces</div>
+ <p class="smallHelp">A aparência pode mudar completamente, mas cada face mantém seu valor real nas rolagens.</p>
+ <div class="field"><label for="numberStyle">Sistema de numeração</label>
+ <select id="numberStyle"><option value="padrao">Algarismos 1, 2, 3…</option><option value="romano">Romanos I, II, III…</option><option value="kanji">Kanji comuns 一, 二, 三… (chinês/japonês)</option><option value="chines-formal">Chinês tradicional formal 壹, 貳, 參…</option><option value="japones-formal">Japonês formal 壱, 弐, 参…</option><option value="arabico-oriental">Algarismos árabe-orientais ١, ٢, ٣…</option><option value="devanagari">Devanágari १, २, ३…</option><option value="runas">Runas decorativas (não numéricas)</option><option value="ritual">Glifos do ritual (fantasia)</option></select></div>
+ <div class="cols"><div class="field"><label for="numberFont">Estilo da letra</label><select id="numberFont"><option value="cerimonial">Cerimonial</option><option value="classico">Clássico</option><option value="moderno">Moderno</option><option value="manuscrito">Manuscrito</option></select></div><div class="field"><label>Cor dos glifos (RGB/HEX)</label><div class="cols"><input id="numberColor" type="color" value="#ffe5b5" aria-label="Cor da numeração" style="height:42px;width:100%;background:#101723;border:1px solid #4a5566;border-radius:7px;padding:3px"><input id="numberHex" type="text" value="#ffe5b5" aria-label="Código HEX da numeração" maxlength="7"></div></div></div>
+ <div class="range"><header><label class="eyebrow" for="numberSize">Tamanho dos números</label><span id="numberSizeLabel">100%</span></header><input id="numberSize" type="range" min="45" max="150" value="100"></div>
+ <div class="field"><label for="faceNumberCustom">Glifo exclusivo da face <strong id="editNumberFace">1</strong></label><div class="inputLine"><input id="faceNumberCustom" type="text" maxlength="18" placeholder="Vazio = usar estilo do conjunto" aria-label="Texto personalizado para esta face"><button type="button" class="btn ghost" id="clearNumberCustom">Restaurar</button></div><p class="smallHelp" id="numberExample">Ex.: 1 → I. Você pode colocar ♥, 炎, ☯ ou qualquer símbolo, um por face.</p></div>
+ <label class="check"><input type="checkbox" id="realValueHint" checked> Mostrar discretamente o valor real no canto quando houver símbolos.</label>
+ <p class="smallHelp">A fonte depende dos caracteres disponíveis no seu dispositivo. O valor numérico sempre será salvo no JSON, separado do glifo.</p>
+</div></section>
+<section class="hx-editor-pane" data-hx-pane="desenho" hidden><div class="divider"></div>
+<div class="groupTitle">Ferramentas para desenhar</div>
+<div class="toolbar"><button class="tool active" data-tool="brush" title="Pincel">✎ Pincel</button><button class="tool" data-tool="eraser" title="Borracha">◌ Borracha</button><button class="tool" data-tool="stamp" title="Carimbo">✦ Carimbo</button></div>
+<div class="field"><label>Cor do desenho</label><div class="cols"><input id="brushColor" type="color" value="#ffb35e" aria-label="Cor do pincel" style="height:42px;width:100%;background:#101723;border:1px solid #4a5566;border-radius:7px;padding:3px"><input type="text" id="brushHex" value="#ffb35e" aria-label="HEX do pincel" maxlength="7"></div></div>
+<div class="range"><header><label for="brushSize" class="eyebrow">Tamanho do pincel/carimbo</label><span id="sizeLabel">24</span></header><input id="brushSize" type="range" min="3" max="160" value="24"></div>
+<div class="range"><header><label for="brushOpacity" class="eyebrow">Opacidade</label><span id="opacityLabel">100%</span></header><input id="brushOpacity" type="range" min="5" max="100" value="100"></div>
+<div class="groupTitle">Símbolos e padrões</div>
+<div class="stamps" id="stamps"><button class="tool active" data-stamp="fire"><span class="symbol">♨</span><span class="legend">Fogo</span></button><button class="tool" data-stamp="water"><span class="symbol">〰</span><span class="legend">Água</span></button><button class="tool" data-stamp="earth"><span class="symbol">◆</span><span class="legend">Terra</span></button><button class="tool" data-stamp="air"><span class="symbol">༄</span><span class="legend">Ar</span></button><button class="tool" data-stamp="heart"><span class="symbol">♥</span><span class="legend">Coração</span></button><button class="tool" data-stamp="star"><span class="symbol">✦</span><span class="legend">Estrela</span></button><button class="tool" data-stamp="rune"><span class="symbol">𓂀</span><span class="legend">Hieróglifo</span></button><button class="tool" data-stamp="blood"><span class="symbol">🩸</span><span class="legend">Sangue</span></button></div>
+<div class="field"><label for="glyph">Glifo/texto personalizado</label><div style="display:flex;gap:7px"><input id="glyph" type="text" placeholder="Ex.: 炎, ♥, ☯" maxlength="16"><button type="button" class="btn" id="useGlyph">Usar</button></div></div>
+<div class="toolbar"><button class="btn" id="undo" title="Desfazer Ctrl+Z">↶ Desfazer</button><button class="btn" id="redo" title="Refazer Ctrl+Y">↷ Refazer</button><button class="btn ghost" id="clearFace">Limpar desenho</button></div>
+<div class="toolbar"><button class="btn" id="imageBtn">Importar imagem</button><input class="file" id="imageUpload" type="file" accept="image/png,image/jpeg,image/webp"><button class="btn" id="copyAll">Copiar arte para todas as faces</button></div>
+</section></div></section>
+<section class="panel hx-workshop-canvas"><div class="faceTop"><div><div class="eyebrow">TELA DE DESENHO</div><div style="margin-top:5px;font:19px Georgia,serif">Editar face <strong id="faceTitle">1</strong></div></div><select id="facePick" aria-label="Escolher face"></select></div><div class="faceList" id="faceList"></div>
+<div class="drawing"><div class="drawWrap" id="drawWrap"><canvas id="textureCanvas" width="512" height="512" aria-label="Textura da face"></canvas><canvas id="paintCanvas" width="512" height="512" aria-label="Desenhe aqui com mouse, caneta ou toque"></canvas><canvas id="borderCanvas" width="512" height="512" aria-label="Prévia das bordas artísticas"></canvas><canvas id="numberCanvas" width="512" height="512" aria-label="Prévia da numeração personalizada"></canvas></div></div>
+<label class="check" style="justify-content:center"><input type="checkbox" id="showNums" checked> Mostrar número por cima do desenho</label><div class="tip">Use o mouse, uma mesa digitalizadora ou o dedo para desenhar. O valor matemático continua sendo o número da face; o glifo é apenas visual.</div><div class="status" id="status" role="status">Pronto para criar o seu dado.</div></section>
+<section class="panel rightPanel hx-workshop-preview"><div class="h2">Prévia e exportação</div><div class="right"><div><div class="previewHdr"><h3>Prévia do dado</h3><span id="previewMode" class="tiny">D6 · 3D ilustrativo</span></div><div class="previewStage" style="margin-top:12px"><div class="cube" id="cube"><div class="cubeFace cf1"></div><div class="cubeFace cf2"></div><div class="cubeFace cf3"></div><div class="cubeFace cf4"></div><div class="cubeFace cf5"></div><div class="cubeFace cf6"></div></div><div class="flatPreview" id="flatPreview"><span></span></div></div><p class="note" id="previewNote" style="margin-top:12px">D6: prévia 3D ilustrativa; não é a simulação física do Dice Box.</p></div>
+<div class="rightActions"><div class="eyebrow" style="margin-bottom:11px">Salvamento individual e arquivos</div><div class="actions"><button class="btn primary" id="saveToMesa">✦ Salvar apenas este dado</button><button type="button" class="btn" id="hxOpenSetTools">◈ Salvar / exportar conjunto completo</button><button class="btn" id="exportFace">Exportar PNG da face</button><button class="btn" id="exportProject">Exportar dado atual (JSON)</button><button class="btn" id="importProject">Importar dado ou conjunto (JSON)</button><input class="file" id="jsonUpload" type="file" accept="application/json,.json"><button class="btn ghost" id="resetAll">Limpar dado atual</button></div><label class="check" style="margin-top:13px"><input type="checkbox" id="exportNumbers" checked> Incluir números no PNG</label><div class="helperbox" style="margin-top:13px"><strong>Importante:</strong> o PNG é uma arte quadrada por face, ainda não um atlas UV pronto para Dice Box. O JSON guarda todas as faces e pode servir como fonte para o integrador de temas.</div><p class="note" style="margin-top:14px">Arquivos processados localmente no seu navegador. “Salvar conjunto na biblioteca” guarda uma coleção inteira no IndexedDB; a biblioteca pode manter várias coleções. Faça backup pelo JSON completo para transportar entre dispositivos.</p></div>
+</div></section>
+</div><p class="footer hx-workshop-footnote">Portal do Mestre · Ateliê de Dados v1.3.2 · As artes e o valor real dos dados permanecem separados. Exporte seus conjuntos em JSON para ter um backup.</p>
+</main>
+<script>
+(()=>{'use strict';
+const ALL_DICE_TYPES=[4,6,8,10,12,20,100],SZ=512,$=id=>document.getElementById(id), PALETTE=['#3d1822','#b73e34','#171a29','#d1a15c','#27637c','#76bfd0','#3d5741','#988962','#714678','#edb9cc','#ede0c9'];
+const state={type:6,face:1,material:'obsidiana',base:'#3d1822',tool:'brush',stamp:'fire',glyph:'',painting:false,previous:null,faces:new Map(),history:new Map(),future:new Map(),borderStyle:'nenhuma',borderColor:'#d9aa70',borderWidth:15,numberStyle:'padrao',numberFont:'cerimonial',numberColor:'#ffe5b5',numberSize:100,realValueHint:true,numberOverrides:new Map(),themeBackup:null};
+const drafts=new Map();
+let hxEditingCollectionId = new URLSearchParams(location.search).get('collection');
+let typeChanging=false;
+const faceCount = type => type===100?10:type;
+const faceValue = n => state.type===100?(n===10?0:n*10):n;
+const numberStandard = n => state.type===100 && n===10?'00':String(faceValue(n));
+const bg=$('textureCanvas'),bctx=bg.getContext('2d'); const paint=$('paintCanvas'),pctx=paint.getContext('2d',{willReadFrequently:true}); const borderLayer=$('borderCanvas'),edgeCtx=borderLayer.getContext('2d'); const numberLayer=$('numberCanvas'),numberCtx=numberLayer.getContext('2d');
+function cv(){const c=document.createElement('canvas');c.width=c.height=SZ;return c;}
+function faceCanvas(n){if(!state.faces.has(n))state.faces.set(n,cv());return state.faces.get(n);}
+function hex(v){return /^#[0-9a-fA-F]{6}$/.test(v)?v.toLowerCase():null;}
+function rgba(h,a){const x=h.replace('#','');return `rgba(${parseInt(x.slice(0,2),16)},${parseInt(x.slice(2,4),16)},${parseInt(x.slice(4,6),16)},${a})`;}
+function lighten(hex,s){const v=hex.replace('#','');return '#'+[0,2,4].map(i=>Math.min(255,Math.max(0,parseInt(v.slice(i,i+2),16)+s)).toString(16).padStart(2,'0')).join('');}
+function rng(seed){return ()=>{seed^=seed<<13;seed^=seed>>>17;seed^=seed<<5;return (seed>>>0)/4294967296;};}
+function drawBackground(ctx,n){const r=rng(98471+n*131+state.material.length*59),mat=state.material;ctx.clearRect(0,0,SZ,SZ);ctx.fillStyle=state.base;ctx.fillRect(0,0,SZ,SZ);
+const gradient=ctx.createLinearGradient(0,0,510,510);gradient.addColorStop(0,rgba('#ffffff',mat==='metal'?.32:.15));gradient.addColorStop(.5,rgba('#000000',.06));gradient.addColorStop(1,rgba('#000000',mat==='metal'?.48:.27));ctx.fillStyle=gradient;ctx.fillRect(0,0,SZ,SZ);
+if(mat==='liso')return;
+if(mat==='pergaminho'){ctx.fillStyle=rgba('#fff7ce',.29);ctx.fillRect(0,0,SZ,SZ);}
+let count=mat==='pedra'?2600:mat==='sangue'?110:mat==='metal'?1400:mat==='pergaminho'?1700:1650;
+for(let i=0;i<count;i++){const x=r()*SZ,y=r()*SZ,rad=mat==='pedra'?r()*3.8:mat==='sangue'?r()*5: r()*2.2;ctx.globalAlpha=mat==='sangue'?.37:(.06+r()*.13);ctx.fillStyle=mat==='sangue'?'#b0080c':r()>.48?'#faf0df':'#000';ctx.beginPath();ctx.arc(x,y,rad,0,Math.PI*2);ctx.fill();}ctx.globalAlpha=1;
+if(mat==='obsidiana'||mat==='pedra'){for(let j=0;j<(mat==='pedra'?17:29);j++){let x=r()*SZ,y=r()*SZ;ctx.beginPath();ctx.moveTo(x,y);for(let k=0;k<4;k++){x+=r()*65-32;y+=r()*65-32;ctx.lineTo(x,y);}ctx.strokeStyle=mat==='pedra'?rgba('#15100d',.15):rgba('#e2a39d',.08);ctx.lineWidth=1+r()*2;ctx.stroke();}}
+if(mat==='metal'){for(let i=0;i<SZ;i+=3){ctx.strokeStyle=rgba(i%9?'#ffffff':'#080b10',.045);ctx.beginPath();ctx.moveTo(0,i);ctx.lineTo(SZ,i-38);ctx.stroke();}}
+if(mat==='sangue'){for(let i=0;i<21;i++){const x=r()*SZ,y=r()*SZ;ctx.fillStyle=rgba('#6a0209',.2+r()*.36);ctx.beginPath();ctx.arc(x,y,r()*32+4,0,7);ctx.fill();}}
+}
+function drawBorder(ctx){
+ const st=state.borderStyle, w=state.borderWidth, col=state.borderColor;
+ if(st==='nenhuma')return;
+ ctx.save();ctx.lineJoin='round';ctx.lineCap='round';
+ const inset=22+w/2;
+ const edgeRect=(i,l=1)=>{ctx.lineWidth=l;ctx.strokeRect(i,i,SZ-2*i,SZ-2*i);};
+ if(st==='simples'){
+  ctx.strokeStyle=col;edgeRect(inset,w);
+  ctx.strokeStyle=rgba('#ffffff',.27);edgeRect(inset+w*.30,1.5);
+ }else if(st==='dupla'){
+  ctx.strokeStyle=col;edgeRect(inset,w*.65);edgeRect(inset+w*1.8,Math.max(2,w*.32));
+  ctx.fillStyle=col;
+  for(const [x,y] of [[inset,inset],[SZ-inset,inset],[inset,SZ-inset],[SZ-inset,SZ-inset]]){ctx.beginPath();ctx.arc(x,y,Math.max(3,w*.52),0,Math.PI*2);ctx.fill();}
+ }else if(st==='metal'){
+  ctx.strokeStyle=rgba('#000000',.54);edgeRect(inset-w*.24,w*1.5);
+  const g=ctx.createLinearGradient(0,0,SZ,SZ);g.addColorStop(0,lighten(col,84));g.addColorStop(.33,col);g.addColorStop(.66,lighten(col,-65));g.addColorStop(1,lighten(col,36));
+  ctx.strokeStyle=g;edgeRect(inset,w);
+  ctx.strokeStyle=rgba('#ffffff',.52);edgeRect(inset+w*.45,Math.max(1,w*.13));
+ }else if(st==='runa'){
+  ctx.strokeStyle=col;edgeRect(inset,Math.max(2,w*.48));
+  ctx.fillStyle=col;ctx.font=`${Math.round(12+w*.65)}px Georgia,serif`;ctx.textAlign='center';ctx.textBaseline='middle';
+  const symbols=['✧','◇','✦','⋄','❖','✧'];
+  for(let j=0;j<6;j++){const x=58+j*(SZ-116)/5;ctx.fillText(symbols[j],x,inset+w*1.3);ctx.fillText(symbols[5-j],x,SZ-inset-w*1.3);}
+  ctx.save();ctx.translate(SZ/2,SZ/2);ctx.rotate(Math.PI/2);
+  for(let j=1;j<5;j++){const x=-SZ/2+58+j*(SZ-116)/5;ctx.fillText('✧',x,-SZ/2+inset+w*1.3);ctx.fillText('◇',x,SZ/2-inset-w*1.3);}ctx.restore();
+ }else if(st==='fissura'){
+  ctx.strokeStyle=col;ctx.setLineDash([w*2,w*.58,w*.7,w*1.4]);edgeRect(inset,Math.max(2,w*.65));ctx.setLineDash([]);
+  ctx.strokeStyle=rgba(col,.75);ctx.lineWidth=Math.max(1.5,w*.17);
+  for(const [x,y,sx,sy] of [[inset,inset,1,1],[SZ-inset,inset,-1,1],[inset,SZ-inset,1,-1],[SZ-inset,SZ-inset,-1,-1]]){
+   ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x+sx*w*1.8,y+sy*w*.7);ctx.lineTo(x+sx*w*1.35,y+sy*w*2.4);ctx.lineTo(x+sx*w*3,y+sy*w*3.2);ctx.stroke();
+  }
+ }
+ ctx.restore();
+}
+function renderBorderLayer(){edgeCtx.clearRect(0,0,SZ,SZ);drawBorder(edgeCtx);}
+const numericRoman=['','I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII','XIII','XIV','XV','XVI','XVII','XVIII','XIX','XX'];
+const numeralsKanji=['','一','二','三','四','五','六','七','八','九','十','十一','十二','十三','十四','十五','十六','十七','十八','十九','二十'];
+const numeralsChina=['','壹','貳','參','肆','伍','陸','柒','捌','玖','拾','拾壹','拾貳','拾參','拾肆','拾伍','拾陸','拾柒','拾捌','拾玖','貳拾'];
+const numeralsJapan=['','壱','弐','参','肆','伍','陸','漆','捌','玖','拾','拾壱','拾弐','拾参','拾肆','拾伍','拾陸','拾漆','拾捌','拾玖','弐拾'];
+const decorativeRunes=['','ᚠ','ᚢ','ᚦ','ᚨ','ᚱ','ᚲ','ᚷ','ᚹ','ᚺ','ᚾ','ᛁ','ᛃ','ᛇ','ᛈ','ᛉ','ᛋ','ᛏ','ᛒ','ᛖ','ᛗ'];
+const ritualGlyphs=['','✦','✧','❖','◈','☯','✺','✶','✷','✹','✸','✵','✻','✼','❂','❈','❉','✤','✥','✣','✢'];
+function numberByStyle(n){
+ const v=faceValue(n),digit=n;
+ if(state.type===100 && v===0){
+  if(state.numberStyle==='kanji')return '〇〇';
+  if(state.numberStyle==='chines-formal'||state.numberStyle==='japones-formal')return '零零';
+  if(state.numberStyle==='runas')return decorativeRunes[digit]||'ᛟ';
+  if(state.numberStyle==='ritual')return ritualGlyphs[digit]||'◈';
+  return state.numberStyle==='arabico-oriental'?'٠٠':state.numberStyle==='devanagari'?'००':'00';
+ }
+ const number=v;
+ switch(state.numberStyle){
+  case 'romano':{
+   const parts=[[100,'C'],[90,'XC'],[50,'L'],[40,'XL'],[10,'X'],[9,'IX'],[5,'V'],[4,'IV'],[1,'I']];
+   let rest=number,result='';for(const [value,label] of parts){while(rest>=value){result+=label;rest-=value;}}return result;
+  }
+  case 'kanji':return state.type===100?(number===10?'十':'一二三四五六七八九'[number/10-1]+'十'):(numeralsKanji[number]||String(number));
+  case 'chines-formal':return state.type===100?(number===10?'拾':'壹貳參肆伍陸柒捌玖'[number/10-1]+'拾'):(numeralsChina[number]||String(number));
+  case 'japones-formal':return state.type===100?(number===10?'拾':'壱弐参肆伍陸漆捌玖'[number/10-1]+'拾'):(numeralsJapan[number]||String(number));
+  case 'arabico-oriental':return String(number).replace(/[0-9]/g,d=>'٠١٢٣٤٥٦٧٨٩'[+d]);
+  case 'devanagari':return String(number).replace(/[0-9]/g,d=>'०१२३४५६७८९'[+d]);
+  case 'runas':return decorativeRunes[digit]||String(number);
+  case 'ritual':return ritualGlyphs[digit]||String(number);
+  default:return String(number);
+ }
+}
+function labelForFace(n){return state.numberOverrides.get(n)??numberByStyle(n);}
+function numberingFont(){
+ const fallback='"Noto Sans CJK JP", "Yu Gothic", "Microsoft YaHei", "Meiryo", "Segoe UI Symbol", "DejaVu Sans", sans-serif';
+ switch(state.numberFont){
+ case 'classico':return `Georgia, "Times New Roman", ${fallback}`;
+ case 'moderno':return `"Segoe UI", Arial, ${fallback}`;
+ case 'manuscrito':return `"Palatino Linotype", "Book Antiqua", Georgia, ${fallback}`;
+ default:return `"Times New Roman", Georgia, ${fallback}`;
+ }
+}
+function drawNumber(ctx,n){
+ const label=labelForFace(n);if(!label)return;
+ ctx.save();ctx.textAlign='center';ctx.textBaseline='middle';
+ const family=numberingFont();const weight=state.numberFont==='moderno'?'700':'600';
+ let size=Math.round(250*state.numberSize/100);
+ ctx.font=`${weight} ${size}px ${family}`;
+ const measured=Math.max(1,ctx.measureText(label).width);
+ size=Math.max(22,Math.min(size,Math.floor(size*375/measured)));
+ ctx.font=`${weight} ${size}px ${family}`;
+ ctx.fillStyle=state.numberColor;ctx.shadowColor='#000000';ctx.shadowBlur=15;ctx.shadowOffsetY=5;
+ ctx.fillText(label,256,258,390);
+ const isSymbolic=label!==numberStandard(n);
+ if(state.realValueHint&&isSymbolic){
+  ctx.shadowBlur=0;ctx.shadowOffsetY=0;
+  ctx.fillStyle='rgba(0,0,0,.62)';ctx.beginPath();ctx.roundRect(402,419,75,60,13);ctx.fill();
+  ctx.lineWidth=1.8;ctx.strokeStyle='rgba(255,255,255,.35)';ctx.stroke();
+  ctx.font='bold 38px "Segoe UI",Arial,sans-serif';ctx.fillStyle='#fff3d6';ctx.fillText(numberStandard(n),439,450,60);
+ }
+ ctx.restore();
+}
+function renderNumberLayer(){numberCtx.clearRect(0,0,SZ,SZ);if($('showNums').checked)drawNumber(numberCtx,state.face);}
+function syncNumberControls(){
+ $('numberStyle').value=state.numberStyle;$('numberFont').value=state.numberFont;
+ $('numberColor').value=state.numberColor;$('numberHex').value=state.numberColor;
+ $('numberSize').value=state.numberSize;$('numberSizeLabel').textContent=state.numberSize+'%';
+ $('realValueHint').checked=state.realValueHint;
+ syncFaceNumberControl();
+}
+function syncFaceNumberControl(){
+ $('editNumberFace').textContent=numberStandard(state.face);
+ $('faceNumberCustom').value=state.numberOverrides.get(state.face)??'';
+ const sample=numberByStyle(state.face);
+ $('faceNumberCustom').placeholder=`Padrão atual: ${sample}`;
+ $('numberExample').textContent=`Valor visual ${numberStandard(state.face)} → ${labelForFace(state.face)}. Deixe vazio para usar o estilo escolhido para o conjunto.`;
+}
+function setMessage(msg){$('status').textContent=msg;}
+function snapshot(){return paint.toDataURL('image/png');}
+function setFromData(data,canvas,cb){const c=canvas||paint,ctx=c.getContext('2d');ctx.clearRect(0,0,SZ,SZ);if(!data){cb?.();return;}const im=new Image();im.onload=()=>{ctx.drawImage(im,0,0,SZ,SZ);cb?.();};im.onerror=()=>{cb?.();};im.src=data;}
+function saveCurrent(){const dest=faceCanvas(state.face),c=dest.getContext('2d');c.clearRect(0,0,SZ,SZ);c.drawImage(paint,0,0);}
+function renderFaceList(){const list=$('faceList'),pick=$('facePick');list.innerHTML='';pick.innerHTML='';for(let i=1;i<=faceCount(state.type);i++){const b=document.createElement('button');b.type='button';b.textContent=state.numberOverrides.has(i)?`${numberStandard(i)} ✎`:numberStandard(i);b.className=state.face===i?'active':'';b.title=`Face ${numberStandard(i)}: ${labelForFace(i)}`;b.onclick=()=>selectFace(i);list.appendChild(b);const o=new Option('Face '+numberStandard(i),String(i),false,state.face===i);pick.append(o);} }
+function selectFace(n,saveBefore=true){if(saveBefore)saveCurrent();state.face=n;const c=faceCanvas(n);pctx.clearRect(0,0,SZ,SZ);pctx.drawImage(c,0,0);$('faceTitle').textContent=numberStandard(n);syncFaceNumberControl();renderFaceList();drawBackground(bctx,n);renderBorderLayer();renderNumberLayer();updatePreview();setMessage('Editando face '+numberStandard(n)+' do D'+state.type+'.');}
+function renderAll(){drawBackground(bctx,state.face);renderBorderLayer();renderNumberLayer();syncFaceNumberControl();renderFaceList();updatePreview();}
+function composition(i,withNum=true){const c=cv(),ctx=c.getContext('2d');drawBackground(ctx,i);ctx.drawImage(faceCanvas(i),0,0);drawBorder(ctx);if(withNum)drawNumber(ctx,i);return c;}
+function updatePreview(){const isD6=state.type===6;$('cube').style.display=isD6?'block':'none';$('flatPreview').style.display=isD6?'none':'block';$('previewMode').textContent=`D${state.type} · ${isD6?'3D ilustrativo':'face ilustrativa'}`;$('previewNote').textContent=isD6?'Gire o olhar: a prévia 3D é ilustrativa, não a física do Dice Box.':'Prévia ilustrativa da face selecionada. O dado 3D jogável continua no Dice Box.';
+if(isD6){[1,6,3,4,2,5].forEach((num,k)=>{$('cube').children[k].style.backgroundImage=`url("${composition(num,$('showNums').checked).toDataURL('image/png')}")`;});}else{$('flatPreview').style.backgroundImage=`url("${composition(state.face,$('showNums').checked).toDataURL('image/png')}")`;$('flatPreview').firstElementChild.style.display='none';}}
+let raf=0;function schedulePreview(){cancelAnimationFrame(raf);raf=requestAnimationFrame(()=>{saveCurrent();updatePreview();});}
+function setTool(t){state.tool=t;document.querySelectorAll('[data-tool]').forEach(b=>b.classList.toggle('active',b.dataset.tool===t));setMessage(t==='brush'?'Pincel selecionado.':t==='eraser'?'Borracha selecionada.':'Carimbo selecionado. Clique na face para aplicar.');}
+function selectStamp(s){state.stamp=s;document.querySelectorAll('[data-stamp]').forEach(b=>b.classList.toggle('active',b.dataset.stamp===s));setTool('stamp');}
+function brushSize(){return +$('brushSize').value;}function opacity(){return +$('brushOpacity').value/100;}
+function point(ev){const rect=paint.getBoundingClientRect();return{x:(ev.clientX-rect.left)*SZ/rect.width,y:(ev.clientY-rect.top)*SZ/rect.height};}
+function beginStroke(){const stack=state.history.get(state.face)||[];stack.push(snapshot());if(stack.length>20)stack.shift();state.history.set(state.face,stack);state.future.set(state.face,[]);}
+function moveStroke(p0,p1){pctx.save();pctx.globalCompositeOperation=state.tool==='eraser'?'destination-out':'source-over';pctx.globalAlpha=state.tool==='eraser'?1:opacity();pctx.lineWidth=brushSize();pctx.lineCap='round';pctx.lineJoin='round';pctx.strokeStyle=$('brushColor').value;pctx.beginPath();pctx.moveTo(p0.x,p0.y);pctx.lineTo(p1.x,p1.y);pctx.stroke();pctx.restore();}
+function drawStamp(x,y){const size=brushSize()*1.55,color=$('brushColor').value;const kind=state.stamp;pctx.save();pctx.globalAlpha=opacity();pctx.translate(x,y);pctx.fillStyle=color;pctx.strokeStyle=color;pctx.lineWidth=Math.max(2,size/13);pctx.lineJoin='round';pctx.lineCap='round';
+if(kind==='heart'){pctx.beginPath();pctx.moveTo(0,size*.6);pctx.bezierCurveTo(-size*1.2,-size*.03,-size*.5,-size*.75,0,-size*.25);pctx.bezierCurveTo(size*.5,-size*.75,size*1.2,-size*.03,0,size*.6);pctx.fill();}
+else if(kind==='star'){pctx.beginPath();for(let j=0;j<10;j++){const a=-Math.PI/2+j*Math.PI/5,r=j%2?size*.33:size;const xx=Math.cos(a)*r,yy=Math.sin(a)*r;if(!j)pctx.moveTo(xx,yy);else pctx.lineTo(xx,yy);}pctx.closePath();pctx.fill();}
+else if(kind==='fire'){pctx.beginPath();pctx.moveTo(0,-size);pctx.bezierCurveTo(size*.8,-size*.2,size*.75,size*.5,0,size);pctx.bezierCurveTo(-size*.8,size*.5,-size*.9,-size*.2,-size*.32,-size*.75);pctx.bezierCurveTo(-size*.15,-size*.1,size*.13,-size*.2,0,-size);pctx.fill();pctx.fillStyle=rgba('#1d1719',.8);pctx.beginPath();pctx.moveTo(0,-size*.2);pctx.quadraticCurveTo(size*.38,size*.45,0,size*.75);pctx.quadraticCurveTo(-size*.4,size*.45,0,-size*.2);pctx.fill();}
+else if(kind==='earth'){pctx.beginPath();pctx.moveTo(0,-size);pctx.lineTo(size*.9,-size*.15);pctx.lineTo(size*.65,size*.75);pctx.lineTo(-size*.65,size*.75);pctx.lineTo(-size*.9,-size*.15);pctx.closePath();pctx.stroke();pctx.beginPath();pctx.moveTo(0,-size);pctx.lineTo(0,size*.75);pctx.moveTo(-size*.9,-size*.15);pctx.lineTo(size*.9,-size*.15);pctx.stroke();}
+else if(kind==='water'||kind==='air'){for(let j=0;j<3;j++){const yy=(j-1)*size*.43;pctx.beginPath();pctx.moveTo(-size,yy);pctx.bezierCurveTo(-size*.45,yy-size*.6,size*.18,yy+size*.6,size,yy);pctx.stroke();}}
+else if(kind==='blood'){const r=rng(Math.floor(x*211+y*13));pctx.beginPath();pctx.arc(0,0,size*.45,0,Math.PI*2);pctx.fill();for(let j=0;j<15;j++){const a=r()*Math.PI*2,dist=size*(.55+r()*.85),rad=size*(.035+r()*.18);pctx.beginPath();pctx.arc(Math.cos(a)*dist,Math.sin(a)*dist,rad,0,7);pctx.fill();}}
+else {pctx.font=`${Math.round(size*1.7)}px serif`;pctx.textAlign='center';pctx.textBaseline='middle';pctx.fillText(kind==='glyph'?state.glyph:'𓂀',0,0);}
+pctx.restore();}
+paint.addEventListener('pointerdown',ev=>{if(ev.button!==undefined&&ev.button!==0)return;paint.setPointerCapture(ev.pointerId);beginStroke();state.painting=true;const p=point(ev);state.previous=p;if(state.tool==='stamp')drawStamp(p.x,p.y);else moveStroke(p,p);schedulePreview();});
+paint.addEventListener('pointermove',ev=>{if(!state.painting||state.tool==='stamp')return;const p=point(ev);moveStroke(state.previous,p);state.previous=p;schedulePreview();});
+const endStroke=()=>{if(!state.painting)return;state.painting=false;state.previous=null;saveCurrent();updatePreview();setMessage('Desenho atualizado na face '+state.face+'.');};paint.addEventListener('pointerup',endStroke);paint.addEventListener('pointercancel',endStroke);paint.addEventListener('lostpointercapture',endStroke);
+function undoOrRedo(isRedo){const src=(isRedo?state.future:state.history).get(state.face)||[];if(!src.length)return setMessage(isRedo?'Nada para refazer.':'Nada para desfazer.');const dst=isRedo?state.history:state.future,arr=dst.get(state.face)||[];arr.push(snapshot());dst.set(state.face,arr);setFromData(src.pop(),paint,()=>{saveCurrent();updatePreview();});setMessage(isRedo?'Desenho refeito.':'Última alteração desfeita.');}
+function downloadBlob(name,blob){const u=URL.createObjectURL(blob);const a=document.createElement('a');a.href=u;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),1500);}
+function slug(){return ($('designName').value.trim()||'dado').normalize('NFKD').replace(/[\u0300-\u036f]/g,'').replace(/[^\w-]+/g,'-').slice(0,54).toLowerCase();}
+function toData(){
+ saveCurrent();const images={};
+ for(let i=1;i<=faceCount(state.type);i++){
+  const c=faceCanvas(i),rgba=c.getContext('2d').getImageData(0,0,SZ,SZ).data;
+  let visible=false;for(let p=3;p<rgba.length;p+=4){if(rgba[p]){visible=true;break;}}
+  if(visible)images[i]=c.toDataURL('image/png');
+ }
+ return{format:'hexatombe-dice-art',version:3,name:$('designName').value.trim()||`D${state.type} personalizado`,type:state.type,material:state.material,baseColor:state.base,border:{style:state.borderStyle,color:state.borderColor,width:state.borderWidth},brushColor:$('brushColor').value,showNumbers:$('showNums').checked,numbering:{style:state.numberStyle,font:state.numberFont,color:state.numberColor,size:state.numberSize,realValueHint:state.realValueHint,overrides:Object.fromEntries(state.numberOverrides)},faceValues:Array.from({length:faceCount(state.type)},(_,i)=>faceValue(i+1)),faceLabels:Array.from({length:faceCount(state.type)},(_,i)=>labelForFace(i+1)),artworkPNG:images,notes:state.type===100?'D100: faces de dezenas (10,20,...90,00); D10 é usado para as unidades.':'Arte por face física do Dice Box.'};
+}
+function safeData(d){
+ if(!d||d.format!=='hexatombe-dice-art'||![1,2,3].includes(d.version)||!ALL_DICE_TYPES.includes(d.type)||!hex(d.baseColor)||!['obsidiana','liso','pedra','metal','pergaminho','sangue'].includes(d.material)||!d.artworkPNG||typeof d.artworkPNG!=='object'||Array.isArray(d.artworkPNG))throw Error('Este arquivo não é um dado compatível.');
+ for(const [face,image] of Object.entries(d.artworkPNG)){if(!Number.isInteger(+face)||+face<1||+face>faceCount(d.type)||typeof image!=='string'||image.length>2400000||!image.startsWith('data:image/png;base64,'))throw Error('Imagem inválida na face '+face);}
+ return d;
+}
+async function loadData(d){
+ safeData(d);state.type=d.type;state.face=1;state.material=d.material;state.base=d.baseColor;
+ const bd=d.border||{};state.borderStyle=['nenhuma','simples','dupla','metal','runa','fissura'].includes(bd.style)?bd.style:'nenhuma';state.borderColor=hex(bd.color||'')||'#d9aa70';state.borderWidth=Math.max(3,Math.min(40,Number(bd.width)||15));syncBorderControls();
+ state.themeBackup=null;$('revertPreset').hidden=true;state.faces.clear();state.history.clear();state.future.clear();
+ const nm=d.numbering||{};state.numberStyle=['padrao','romano','kanji','chines-formal','japones-formal','arabico-oriental','devanagari','runas','ritual'].includes(nm.style)?nm.style:'padrao';state.numberFont=['cerimonial','classico','moderno','manuscrito'].includes(nm.font)?nm.font:'cerimonial';state.numberColor=hex(nm.color||'')||'#ffe5b5';state.numberSize=Math.max(45,Math.min(150,Number(nm.size)||100));state.realValueHint=nm.realValueHint!==false;
+ state.numberOverrides.clear();if(nm.overrides&&typeof nm.overrides==='object'){for(const [k,v] of Object.entries(nm.overrides)){const i=Number(k);if(Number.isInteger(i)&&i>=1&&i<=faceCount(d.type)&&typeof v==='string'&&v.trim()&&[...v].length<=18)state.numberOverrides.set(i,v.trim());}}
+ syncNumberControls();$('designName').value=String(d.name||'Dado importado').slice(0,60);$('diceType').value=String(state.type);$('material').value=state.material;$('baseColor').value=state.base;$('baseHex').value=state.base;$('showNums').checked=d.showNumbers!==false;
+ const color=hex(d.brushColor||'')||'#ffb35e';$('brushColor').value=color;$('brushHex').value=color;
+ // Aguardar o carregamento das imagens antes de pintar a nova face.
+ await Promise.all(Object.entries(d.artworkPNG).map(([key,data])=>new Promise(resolve=>setFromData(data,faceCanvas(+key),resolve))));
+ selectFace(1,false);renderAll();
+}
+function newDie(type){
+ return{format:'hexatombe-dice-art',version:3,type,name:`${$('collectionName').value.trim()||'Meu conjunto'} · D${type}`,material:'obsidiana',baseColor:'#3d1822',border:{style:'nenhuma',color:'#d9aa70',width:15},brushColor:'#ffb35e',showNumbers:true,numbering:{style:'padrao',font:'cerimonial',color:'#ffe5b5',size:100,realValueHint:true,overrides:{}},faceValues:Array.from({length:faceCount(type)},(_,i)=>type===100?((i+1)%10)*10:i+1),faceLabels:Array.from({length:faceCount(type)},(_,i)=>type===100?((i+1)%10?String((i+1)*10):'00'):String(i+1)),artworkPNG:{}};
+}
+function showSetTypes(){
+ const holder=$('collectionTypes');holder.textContent='';
+ for(const type of ALL_DICE_TYPES){const b=document.createElement('button');b.type='button';b.textContent='D'+type;b.className=(type===state.type?'active ':'')+(drafts.has(type)?'has-draft':'');b.title='Editar D'+type;b.onclick=()=>{void switchDie(type)};holder.append(b);}
+ hxRenderQuickDice();
+}
+async function switchDie(type){
+ if(typeChanging||!ALL_DICE_TYPES.includes(type))return;
+ if(type===state.type){showSetTypes();return;}
+ typeChanging=true;
+ try{
+  drafts.set(state.type,toData());
+  await loadData(drafts.get(type)||newDie(type));
+  showSetTypes();
+  setMessage('D'+type+' aberto. As alterações anteriores permanecem neste conjunto.');
+ }catch(e){setMessage('Falha ao trocar de dado: '+e.message)}
+ finally{typeChanging=false;}
+}
+$('diceType').addEventListener('change',e=>{void switchDie(+e.target.value)});
+
+$('facePick').addEventListener('change',e=>selectFace(+e.target.value));$('material').addEventListener('change',e=>{state.material=e.target.value;renderAll();});
+function baseChange(v){const c=hex(v);if(!c)return;state.base=c;$('baseColor').value=c;$('baseHex').value=c;renderAll();}
+function syncBorderControls(){
+ $('borderStyle').value=state.borderStyle;$('borderColor').value=state.borderColor;$('borderHex').value=state.borderColor;$('borderWidth').value=state.borderWidth;$('borderWidthLabel').textContent=String(state.borderWidth);
+}
+function changeBorderColor(v){const c=hex(v);if(!c)return;state.borderColor=c;$('borderColor').value=c;$('borderHex').value=c;renderAll();}
+$('borderStyle').addEventListener('change',e=>{state.borderStyle=e.target.value;renderAll();setMessage('Borda '+e.target.selectedOptions[0].text+' aplicada às faces.');});
+$('borderColor').addEventListener('input',e=>changeBorderColor(e.target.value));
+$('borderHex').addEventListener('change',e=>changeBorderColor(e.target.value));
+$('borderWidth').addEventListener('input',e=>{state.borderWidth=+e.target.value;$('borderWidthLabel').textContent=e.target.value;renderAll();});
+$('numberStyle').addEventListener('change',e=>{state.numberStyle=e.target.value;renderAll();setMessage('Numeração do conjunto: '+e.target.selectedOptions[0].text+'.');});
+$('numberFont').addEventListener('change',e=>{state.numberFont=e.target.value;renderAll();});
+function changeNumberColor(v){const c=hex(v);if(!c)return;state.numberColor=c;$('numberColor').value=c;$('numberHex').value=c;renderAll();}
+$('numberColor').addEventListener('input',e=>changeNumberColor(e.target.value));
+$('numberHex').addEventListener('change',e=>changeNumberColor(e.target.value));
+$('numberSize').addEventListener('input',e=>{state.numberSize=+e.target.value;$('numberSizeLabel').textContent=e.target.value+'%';renderAll();});
+$('realValueHint').addEventListener('change',e=>{state.realValueHint=e.target.checked;renderAll();});
+$('faceNumberCustom').addEventListener('input',e=>{const v=e.target.value.trim();if(v)state.numberOverrides.set(state.face,v);else state.numberOverrides.delete(state.face);renderAll();});
+$('clearNumberCustom').addEventListener('click',()=>{state.numberOverrides.delete(state.face);renderAll();setMessage('Glifo da face '+state.face+' restaurado para o estilo do conjunto.');});
+$('baseColor').addEventListener('input',e=>baseChange(e.target.value));$('baseHex').addEventListener('change',e=>baseChange(e.target.value));
+function brushChange(v){const c=hex(v);if(!c)return;$('brushColor').value=c;$('brushHex').value=c;}
+$('brushColor').addEventListener('input',e=>brushChange(e.target.value));$('brushHex').addEventListener('change',e=>brushChange(e.target.value));
+$('brushSize').addEventListener('input',e=>$('sizeLabel').textContent=e.target.value);$('brushOpacity').addEventListener('input',e=>$('opacityLabel').textContent=e.target.value+'%');
+document.querySelectorAll('[data-tool]').forEach(b=>b.addEventListener('click',()=>setTool(b.dataset.tool)));document.querySelectorAll('[data-stamp]').forEach(b=>b.addEventListener('click',()=>selectStamp(b.dataset.stamp)));
+$('useGlyph').addEventListener('click',()=>{state.glyph=$('glyph').value.trim()||'✧';selectStamp('glyph');setMessage('Glifo personalizado selecionado: clique no dado.');});
+const palette=$('palette');for(const color of PALETTE){const b=document.createElement('button');b.type='button';b.className='swatch';b.style.background=color;b.title='Aplicar cor '+color;b.addEventListener('click',()=>{baseChange(color);document.querySelectorAll('.swatch').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));});palette.append(b);}document.querySelector('.swatch').setAttribute('aria-pressed','true');
+
+const THEMES={
+ fogo:{name:'Nação do Fogo',base:'#34141b',material:'obsidiana',brush:'#f4aa51',stamp:'fire',border:'metal',borderColor:'#e8a450',borderWidth:18},
+ agua:{name:'Tribo da Água',base:'#214762',material:'metal',brush:'#adf2ff',stamp:'water',border:'dupla',borderColor:'#a7e8f0',borderWidth:14},
+ terra:{name:'Reino da Terra',base:'#42563a',material:'pedra',brush:'#d9d096',stamp:'earth',border:'fissura',borderColor:'#c9bd82',borderWidth:19},
+ ar:{name:'Nômades do Ar',base:'#c1a779',material:'pergaminho',brush:'#f4f0de',stamp:'air',border:'runa',borderColor:'#f4e7b8',borderWidth:14},
+ sangue:{name:'Ritual sangrento',base:'#1b1520',material:'sangue',brush:'#b31424',stamp:'blood',border:'fissura',borderColor:'#ae1225',borderWidth:22},
+ coracao:{name:'Corações',base:'#a35e88',material:'liso',brush:'#ffe1eb',stamp:'heart',border:'dupla',borderColor:'#ffe1eb',borderWidth:15},
+ runa:{name:'Runas antigas',base:'#393c44',material:'pedra',brush:'#efd79d',stamp:'rune',border:'runa',borderColor:'#d1b77b',borderWidth:18}
+};
+function makeThemeBackup(){
+ saveCurrent();const images={};
+ for(let i=1;i<=faceCount(state.type);i++)images[i]=faceCanvas(i).toDataURL('image/png');
+ return {images,type:state.type,name:$('designName').value,base:state.base,material:state.material,brush:$('brushColor').value,borderStyle:state.borderStyle,borderColor:state.borderColor,borderWidth:state.borderWidth,numbering:{style:state.numberStyle,font:state.numberFont,color:state.numberColor,size:state.numberSize,realValueHint:state.realValueHint,overrides:[...state.numberOverrides]}};
+}
+function applyTheme(){
+ const preset=$('presetTheme').value, o=THEMES[preset];if(!o){setMessage('Tema não encontrado.');return;}
+ state.themeBackup=makeThemeBackup();$('revertPreset').hidden=false;
+ state.base=o.base;state.material=o.material;$('designName').value=o.name;
+ $('baseColor').value=o.base;$('baseHex').value=o.base;$('material').value=o.material;brushChange(o.brush);
+ state.borderStyle=o.border;state.borderColor=o.borderColor;state.borderWidth=o.borderWidth;syncBorderControls();
+ state.faces.clear();state.history.clear();state.future.clear();
+ const savedSize=$('brushSize').value,savedOpacity=$('brushOpacity').value,savedStamp=state.stamp;
+ $('brushSize').value='50';$('brushOpacity').value='98';state.stamp=o.stamp;
+ for(let i=1;i<=faceCount(state.type);i++){
+   pctx.clearRect(0,0,SZ,SZ);
+   drawStamp(107,110);drawStamp(407,400);
+   if(preset==='sangue') {drawStamp(421,93);drawStamp(81,415);}
+   else if(preset==='coracao') {drawStamp(405,105);drawStamp(107,405);}
+   else if(preset==='runa') {drawStamp(402,104);drawStamp(106,404);}
+   // Selo central discreto e transparente, por trás do número.
+   pctx.save();pctx.globalAlpha=.20;pctx.translate(256,256);
+   pctx.strokeStyle=o.brush;pctx.lineWidth=6;
+   pctx.beginPath();pctx.arc(0,0,125,0,Math.PI*2);pctx.stroke();
+   pctx.beginPath();pctx.arc(0,0,139,0,Math.PI*2);pctx.stroke();
+   pctx.restore();
+   const dest=faceCanvas(i),ctx=dest.getContext('2d');ctx.drawImage(paint,0,0);
+ }
+ $('brushSize').value=savedSize;$('sizeLabel').textContent=savedSize;
+ $('brushOpacity').value=savedOpacity;$('opacityLabel').textContent=savedOpacity+'%';state.stamp=savedStamp;
+ state.face=1;selectFace(1,false);renderAll();
+ setMessage('✓ Tema '+o.name+' aplicado a todas as '+state.type+' faces, incluindo bordas. Use “Restaurar conjunto anterior” para desfazer.');
+}
+$('applyPreset').addEventListener('click',applyTheme);
+$('revertPreset').addEventListener('click',()=>{
+ const b=state.themeBackup;if(!b)return;
+ state.type=b.type;state.face=1;state.base=b.base;state.material=b.material;
+ state.borderStyle=b.borderStyle;state.borderColor=b.borderColor;state.borderWidth=b.borderWidth;if(b.numbering){state.numberStyle=b.numbering.style;state.numberFont=b.numbering.font;state.numberColor=b.numbering.color;state.numberSize=b.numbering.size;state.realValueHint=b.numbering.realValueHint;state.numberOverrides=new Map(b.numbering.overrides);}syncNumberControls();
+ $('diceType').value=b.type;$('designName').value=b.name;$('material').value=b.material;
+ $('baseColor').value=b.base;$('baseHex').value=b.base;brushChange(b.brush);syncBorderControls();
+ state.faces.clear();state.history.clear();state.future.clear();
+ let remaining=Object.keys(b.images).length;
+ if(!remaining){selectFace(1,false);renderAll();setMessage('Conjunto anterior restaurado.');}
+ for(const [key,img] of Object.entries(b.images)){setFromData(img,faceCanvas(+key),()=>{if(!--remaining){selectFace(1,false);renderAll();setMessage('Conjunto anterior restaurado.');}});}
+ state.themeBackup=null;$('revertPreset').hidden=true;
+});
+$('showNums').addEventListener('change',renderAll);$('undo').onclick=()=>undoOrRedo(false);$('redo').onclick=()=>undoOrRedo(true);
+document.addEventListener('keydown',ev=>{if(!(ev.ctrlKey||ev.metaKey)||!['z','y'].includes(ev.key.toLowerCase()))return;if(['INPUT','TEXTAREA'].includes(document.activeElement.tagName))return;ev.preventDefault();undoOrRedo(ev.key.toLowerCase()==='y'||ev.shiftKey);});
+$('clearFace').onclick=()=>{if(!confirm('Remover os desenhos da face '+state.face+'?'))return;beginStroke();pctx.clearRect(0,0,SZ,SZ);schedulePreview();setMessage('Face limpa.');};
+$('copyAll').onclick=()=>{if(!confirm('Copiar o desenho da face '+numberStandard(state.face)+' para as outras faces do D'+state.type+'? Os desenhos delas serão substituídos.'))return;saveCurrent();for(let i=1;i<=faceCount(state.type);i++){if(i===state.face)continue;const c=faceCanvas(i),ctx=c.getContext('2d');ctx.clearRect(0,0,SZ,SZ);ctx.drawImage(paint,0,0);}updatePreview();setMessage('Desenho copiado para todas as '+state.type+' faces.');};
+$('imageBtn').onclick=()=>$('imageUpload').click();$('imageUpload').addEventListener('change',async e=>{const f=e.target.files?.[0];if(!f)return;if(f.size>6*1024*1024)return setMessage('Escolha uma imagem de até 6 MB.');try{const im=await createImageBitmap(f);beginStroke();const max=420,sc=Math.min(max/im.width,max/im.height);pctx.drawImage(im,256-im.width*sc/2,256-im.height*sc/2,im.width*sc,im.height*sc);im.close();schedulePreview();setMessage('Imagem inserida no centro da face.');}catch{setMessage('Não foi possível importar esta imagem.');}e.target.value='';});
+$('exportFace').onclick=()=>{saveCurrent();const c=composition(state.face,$('exportNumbers').checked);c.toBlob(blob=>{if(blob){downloadBlob(`${slug()}_d${state.type}_face-${state.face}.png`,blob);setMessage('PNG exportado.');}},'image/png');};
+$('exportProject').onclick=()=>{const data=toData();downloadBlob(`${slug()}_d${state.type}_artes.json`,new Blob([JSON.stringify(data)],{type:'application/json'}));setMessage('D'+state.type+' exportado separadamente. Para salvar os sete dados num só JSON use o botão no painel esquerdo.');};
+$('importProject').onclick=()=>$('jsonUpload').click();
+$('jsonUpload').addEventListener('change',async e=>{const f=e.target.files?.[0];if(!f)return;
+ try{
+  if(f.size>160*1024*1024)throw Error('Arquivo maior que 160 MB.');
+  const data=JSON.parse(await f.text());
+  if(data.format==='hexatombe-dice-collection'){
+   await loadCollection(data);setMessage('✓ Conjunto completo importado: '+Object.keys(data.dice).length+' tipos de dados.');
+  }else{
+   safeData(data);drafts.set(state.type,toData());drafts.set(data.type,data);await loadData(data);showSetTypes();setMessage('✓ D'+data.type+' importado. Os outros dados do pacote continuam guardados.');
+  }
+ }catch(err){setMessage('Falha ao abrir: '+err.message);}
+ e.target.value='';
+});
+$('resetAll').onclick=async()=>{
+ if(!confirm('Limpar apenas o D'+state.type+'? A arte atual será substituída, mas os demais dados serão mantidos.'))return;
+ const type=state.type;drafts.set(type,newDie(type));await loadData(drafts.get(type));showSetTypes();setMessage('D'+type+' reiniciado. Os outros dados do pacote estão intactos.');
+};
+syncBorderControls();syncNumberControls();selectFace(1);renderAll();
+
+// HEXATOMBE / ATELIÊ v0.7 — dados e coleções no mesmo IndexedDB v2 da mesa.
+const HX_DB_NAME='hexatombe-avatar-dados',HX_STORE='packs',HX_COLLECTION_STORE='collections',HX_ACTIVE='hexatombe-dice-active-v1',HX_SYNC='hexatombe-dice-sync-v1';
+let hxEditingId = new URLSearchParams(location.search).get('edit');
+function hxId(){return crypto.randomUUID?.()||`dado-${Date.now()}-${Math.random().toString(36).slice(2)}`;}
+function hxOpenDB(){return new Promise((resolve,reject)=>{
+ if(!('indexedDB' in window))return reject(Error('Seu navegador não disponibiliza IndexedDB.'));
+ const r=indexedDB.open(HX_DB_NAME,2);
+ r.onupgradeneeded=()=>{if(!r.result.objectStoreNames.contains(HX_STORE))r.result.createObjectStore(HX_STORE,{keyPath:'id'});if(!r.result.objectStoreNames.contains(HX_COLLECTION_STORE))r.result.createObjectStore(HX_COLLECTION_STORE,{keyPath:'id'});};
+ r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error||Error('Erro na biblioteca de dados.'));r.onblocked=()=>reject(Error('Feche outras abas da Mesa e atualize a página.'));
+});}
+async function hxGet(id,store=HX_STORE){const db=await hxOpenDB();try{return await new Promise((resolve,reject)=>{const r=db.transaction(store,'readonly').objectStore(store).get(id);r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error);});}finally{db.close();}}
+async function hxPut(item){const db=await hxOpenDB();try{return await new Promise((resolve,reject)=>{
+ const tx=db.transaction(HX_STORE,'readwrite');tx.objectStore(HX_STORE).put(item);tx.oncomplete=()=>resolve(item);tx.onabort=()=>reject(tx.error||Error('Falha ao gravar o conjunto.'));tx.onerror=()=>reject(tx.error||Error('Falha ao gravar o conjunto.'));
+});}finally{db.close();}}
+function hxSync(){try{localStorage.setItem(HX_SYNC,String(Date.now()));}catch{} window.dispatchEvent(new Event('hexatombe-dice-library-changed'));}
+function hxSetActive(map){let active={};try{active=JSON.parse(localStorage.getItem(HX_ACTIVE)||'{}')||{};}catch{}
+ Object.assign(active,map);localStorage.setItem(HX_ACTIVE,JSON.stringify(active));hxSync();}
+function collectionData(){
+ drafts.set(state.type,toData());
+ const dice={};for(const type of ALL_DICE_TYPES)dice[type]=drafts.get(type)||newDie(type);
+ const name=$('collectionName').value.trim()||'Meu conjunto de dados';
+ return{format:'hexatombe-dice-collection',version:1,name,dice};
+}
+async function loadCollection(data){
+ if(!data||data.format!=='hexatombe-dice-collection'||data.version!==1||!data.dice||typeof data.dice!=='object')throw Error('Formato de coleção inválido.');
+ const entries=Object.entries(data.dice);if(!entries.length||entries.length>7)throw Error('Esta coleção não contém dados válidos.');
+ for(const [side,art] of entries){safeData(art);if(String(art.type)!==side)throw Error('O D'+side+' possui formato incorreto.');}
+ drafts.clear();for(const [side,art] of entries)drafts.set(+side,art);
+ $('collectionName').value=String(data.name||'Meu conjunto').slice(0,80);
+ const first=drafts.has(20)?20:entries.length?Number(entries[0][0]):6;
+ await loadData(drafts.get(first));showSetTypes();
+}
+async function hxSave(){
+ const btn=$('saveToMesa');btn.disabled=true;
+ try{
+  const art=toData();drafts.set(state.type,art);
+  const exists=hxEditingId?await hxGet(hxEditingId):null;
+  if(JSON.stringify(art).length>30*1024*1024)throw Error('Dado maior que 30 MB.');
+  const now=new Date().toISOString(),id=exists?.id||hxId();
+  await hxPut({id,art,createdAt:exists?.createdAt||now,updatedAt:now});hxEditingId=id;
+  const url=new URL(location.href);url.searchParams.set('edit',id);history.replaceState(null,'',url);
+  hxSetActive({[art.type]:{kind:'custom',id}});
+  showSetTypes();setMessage('✓ D'+art.type+' salvo na biblioteca! Para salvar o pacote inteiro, clique em “Salvar conjunto na biblioteca”.');
+ }catch(e){setMessage('Não foi possível salvar o dado: '+(e.message||e));}
+ finally{btn.disabled=false;}
+}
+$('saveToMesa').addEventListener('click',hxSave);
+async function hxSaveCollection(){
+ const btn=$('saveCollection');btn.disabled=true;
+ try{
+  const data=collectionData();for(const art of Object.values(data.dice))safeData(art);
+  if(JSON.stringify(data).length>160*1024*1024)throw Error('Pacote acima de 160 MB.');
+  const previous=hxEditingCollectionId?await hxGet(hxEditingCollectionId,HX_COLLECTION_STORE):null;
+  if(hxEditingCollectionId&&!previous)throw Error('O pacote anterior não existe mais.');
+  const now=new Date().toISOString(),coll={id:previous?.id||hxId(),name:data.name,members:{},createdAt:previous?.createdAt||now,updatedAt:now};
+  const db=await hxOpenDB();
+  try{await new Promise((resolve,reject)=>{
+    const tx=db.transaction([HX_STORE,HX_COLLECTION_STORE],'readwrite'),store=tx.objectStore(HX_STORE);
+    for(const [side,art] of Object.entries(data.dice)){
+     const memberId=previous?.members?.[side]||hxId();coll.members[side]=memberId;
+     const getOld=store.get(memberId);getOld.onsuccess=()=>{const old=getOld.result;store.put({id:memberId,art,collectionId:coll.id,createdAt:old?.createdAt||now,updatedAt:now});};
+    }
+    tx.objectStore(HX_COLLECTION_STORE).put(coll);
+    tx.oncomplete=()=>resolve();tx.onabort=()=>reject(tx.error||Error('Falha ao salvar o pacote.'));tx.onerror=()=>reject(tx.error||Error('Falha ao salvar o pacote.'));
+  });}finally{db.close();}
+  hxEditingCollectionId=coll.id;const url=new URL(location.href);url.searchParams.set('collection',coll.id);url.searchParams.delete('edit');history.replaceState(null,'',url);
+  hxEditingId=null;
+  hxSetActive(Object.fromEntries(Object.entries(coll.members).map(([type,id])=>[type,{kind:'custom',id}])));
+  setMessage('✓ Pacote “'+coll.name+'” salvo com os 7 dados e selecionado para uso. Você pode criar outro pacote sem apagar este.');
+ }catch(e){setMessage('Não foi possível salvar o pacote: '+(e.message||e));}
+ finally{btn.disabled=false;}
+}
+$('saveCollection').addEventListener('click',hxSaveCollection);
+$('exportCollection').addEventListener('click',()=>{
+ try{const pack=collectionData();const name=pack.name.normalize('NFKD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-zA-Z0-9_-]+/g,'-').slice(0,50).toLowerCase();
+ downloadBlob(`${name||'dados'}-pacote-completo.json`,new Blob([JSON.stringify(pack)],{type:'application/json'}));
+ setMessage('✓ JSON único com todos os 7 dados exportado.');}
+ catch(e){setMessage('Falha ao exportar: '+e.message)}
+});
+$('newCollection').addEventListener('click',async()=>{
+ if(!confirm('Começar outra coleção? Salve ou exporte a atual antes para não perder alterações.'))return;
+ hxEditingCollectionId=null;hxEditingId=null;drafts.clear();$('collectionName').value='Meu novo conjunto';
+ const u=new URL(location.href);u.searchParams.delete('collection');u.searchParams.delete('edit');history.replaceState(null,'',u);
+ await loadData(newDie(6));showSetTypes();setMessage('Nova coleção aberta. Os pacotes que você salvou continuam na biblioteca.');
+});
+async function hxLoadEdit(){
+ if(hxEditingCollectionId){
+  try{
+   const coll=await hxGet(hxEditingCollectionId,HX_COLLECTION_STORE);if(!coll)throw Error('Coleção não encontrada.');
+   const db=await hxOpenDB();let dice={};
+   try{
+    const tx=db.transaction(HX_STORE,'readonly'),s=tx.objectStore(HX_STORE);
+    const items=await Promise.all(Object.entries(coll.members).map(([type,id])=>new Promise((resolve,reject)=>{const request=s.get(id);request.onsuccess=()=>resolve([type,request.result?.art]);request.onerror=()=>reject(request.error);})));for(const [type,art] of items){if(art)dice[type]=art;}
+   }finally{db.close();}
+   await loadCollection({format:'hexatombe-dice-collection',version:1,name:coll.name,dice});
+   setMessage('✓ Editando coleção “'+coll.name+'” com '+Object.keys(dice).length+' dados.');
+  }catch(e){setMessage('Erro ao abrir coleção: '+e.message);hxEditingCollectionId=null;}
+  return;
+ }
+ if(!hxEditingId)return;
+ try{const item=await hxGet(hxEditingId);if(!item)throw Error('Este dado não existe nesta biblioteca.');drafts.set(item.art.type,item.art);await loadData(item.art);showSetTypes();setMessage('✓ Editando D'+item.art.type+' · '+item.art.name+'. Você também pode criar os outros dados deste pacote.');}
+ catch(e){setMessage('Não foi possível abrir para edição: '+e.message);hxEditingId=null;}
+}
+
+// Portal do Mestre v1.3.2 — navegação da oficina (somente interface).
+function hxShowEditorPane(key){
+ document.querySelectorAll('[data-hx-pane]').forEach(p=>{p.hidden=p.dataset.hxPane!==key;});
+ document.querySelectorAll('[data-hx-tab]').forEach(b=>{const yes=b.dataset.hxTab===key;b.setAttribute('aria-selected',String(yes));b.tabIndex=yes?0:-1;});
+ document.querySelector('.hx-tools-panel .controls')?.scrollTo({top:0,behavior:'instant'});
+}
+for(const b of document.querySelectorAll('[data-hx-tab]'))b.addEventListener('click',()=>hxShowEditorPane(b.dataset.hxTab));
+$('hxQuickSave').addEventListener('click',()=>{hxShowEditorPane('conjunto');$('saveCollection').click();});
+$('hxOpenSetTools').addEventListener('click',()=>{hxShowEditorPane('conjunto');document.querySelector('.hx-tools-panel')?.scrollIntoView({behavior:'smooth',block:'start'});});
+function hxRenderQuickDice(){
+ const area=$('hxQuickDice');area.replaceChildren();
+ for(const type of ALL_DICE_TYPES){const b=document.createElement('button');b.type='button';b.textContent='D'+type;b.setAttribute('aria-pressed',String(type===state.type));b.className=drafts.has(type)?'has-draft':'';b.title='Editar D'+type;b.onclick=()=>{void switchDie(type)};area.append(b);}
+}
+hxShowEditorPane('aparencia');
+
+showSetTypes();void hxLoadEdit();
+})();
+</script>
+</body></html>

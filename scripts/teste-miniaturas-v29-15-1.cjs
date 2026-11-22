@@ -1,0 +1,44 @@
+/* Regressão da v29.15.1: vínculo entre GLB e token, substituição e recursos. */
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const path=require('node:path');
+const ts=require('typescript');
+const base=path.resolve(__dirname,'..');
+const ler=p=>fs.readFileSync(path.join(base,p),'utf8');
+function executarTS(arquivo,mods={}){
+ const r=ts.transpileModule(ler(arquivo),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022},reportDiagnostics:true});
+ assert.equal((r.diagnostics||[]).filter(d=>d.category===ts.DiagnosticCategory.Error).length,0,arquivo);
+ const module={exports:{}};
+ new Function('module','exports','require',r.outputText)(module,module.exports,(id)=>{if(id in mods)return mods[id];throw Error(`Importação inesperada: ${id}`);});
+ return module.exports;
+}
+const helper=executarTS('src/mesa3d/animacoesMiniaturas3D.ts');
+const m=executarTS('src/mesa3d/miniaturasCena3D.ts',{'./animacoesMiniaturas3D':helper});
+const x=m.criarInstanciaMiniatura3D('mini-abcdef','Mago',{x:0,z:0});
+const y=m.vincularModeloAoPersonagem3D([x],'mini-abc123','Nova forma','pj-1',{x:5,z:6});
+assert.equal(y.length,2);assert.equal(y[1].personagemId,'pj-1');
+assert.equal(y[1].x,5);assert.equal(y[1].z,6);
+const replaced=m.vincularModeloAoPersonagem3D(y,'mini-xyz987','Outra forma','pj-1',{x:90,z:90});
+assert.equal(replaced.length,2,'A substituição não duplica o personagem');
+assert.equal(replaced[1].id,y[1].id,'Mantém a instância ao trocar GLB');
+assert.equal(replaced[1].modeloId,'mini-xyz987');
+assert.equal(replaced[1].x,5,'Mantém os ajustes da instância');
+assert.equal(replaced[1].z,6,'Mantém os ajustes da instância');
+assert.equal(replaced[0].modeloId,'mini-abcdef','Não altera objetos independentes');
+const normalized=m.normalizarMiniaturasCena3D(replaced);
+assert.equal(normalized[1].personagemId,'pj-1','Vínculo persiste na cena');
+const detached=m.desvincularMiniatura3D(normalized[1],{x:-2.5,z:4.25});
+assert.equal(detached.personagemId,undefined);assert.equal(detached.x,-2.5);assert.equal(detached.z,4.25);
+const scene=ler('src/mesa3d/renderMiniaturas3D.ts');
+assert.match(scene,/leituras<2/,'Limite de carregamentos simultâneos');
+assert.match(scene,/modeloPorInstancia\.get\(id\)!==/,'Troca de GLB descarrega a instância antiga');
+assert.match(scene,/removerInstancia\(id\)/,'Liberação de objetos removidos');
+assert.match(scene,/selecionarPersonagem/,'Miniatura acompanha seleção do token');
+const room=ler('src/mesa3d/roomScene.ts');
+assert.match(room,/camadaMiniaturas\.selecionarPersonagem\(id\)/);
+assert.match(room,/camadaMiniaturas\.moverVinculada\(id,x,z\)/);
+const ui=ler('src/mesa3d/Mesa3DPrototipo.tsx');
+assert.match(ui,/Vincular ou substituir miniatura do personagem/);
+assert.match(ui,/vincularModeloAoPersonagem3D/);
+assert.match(ui,/Geometria estimada/);
+console.log('v29.15.1: vínculo, substituição sem duplicação, desvinculação, cena, carregamento e seleção: 19 verificações aprovadas.');

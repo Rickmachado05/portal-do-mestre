@@ -1,0 +1,975 @@
+/* v1.3.40.56.3 — Paridade da Mesa do Jogador com a Mesa do Mestre.
+   O mesmo menuDireita.css é aplicado a ambos os papéis; aqui são apenas
+   ajustes de layout responsivo e janelas. Permissões seguem no servidor. */
+
+/* O menu usa as mesmas classes, cores, cabeçalhos recolhíveis e botões do mestre. */
+.pm-jogo .atalhos-direita.pm-jogo-lateral {
+  position: absolute;
+  top: 76px;
+  right: 12px;
+  bottom: 264px;
+  width: 132px;
+  max-width: none;
+  max-height: none;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 0 3px 8px 1px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  border: none;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+  scrollbar-width: thin;
+  scrollbar-color: #856e50 transparent;
+}
+.pm-jogo .pm-jogo-lateral .hx-dock-grupo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: none;
+  padding: 6px;
+  border-radius: 9px;
+  border: 1px solid rgba(178, 147, 101, 0.25);
+  background: linear-gradient(165deg, rgba(23, 26, 32, 0.9), rgba(12, 18, 25, 0.84));
+  box-shadow: 0 5px 14px rgba(0, 0, 0, 0.17);
+}
+.pm-jogo .pm-jogo-lateral .hx-dock-cabecalho {
+  min-height: 25px;
+  padding: 3px 5px;
+  font-weight: 800;
+  box-shadow: none;
+  background: transparent;
+  border: 0;
+  border-radius: 5px;
+}
+.pm-jogo .pm-jogo-lateral .hx-dock-cabecalho > span {
+  display: inline;
+  width: auto;
+  min-width: 0;
+  text-align: left;
+  font-size: 9px;
+  color: #c8ad80;
+  letter-spacing: 1.1px;
+}
+.pm-jogo .pm-jogo-lateral .hx-dock-cabecalho > span:last-child {
+  font-size: 13px;
+  color: #ad936d;
+}
+.pm-jogo .pm-jogo-lateral .hx-dock-itens {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.pm-jogo .pm-jogo-lateral .hx-dock-itens > button {
+  width: 100%;
+  min-height: 36px;
+  padding: 7px 6px;
+  gap: 6px;
+  font-size: 10px;
+  background: #1a1e26d9;
+  border: 1px solid rgba(160, 133, 95, 0.35);
+  border-radius: 6px;
+  box-shadow: none;
+  justify-content: flex-start;
+}
+.pm-jogo .pm-jogo-lateral .hx-dock-itens > button.ativo {
+  border-color: #ccaa7b;
+  background: #403229;
+  box-shadow: inset 2px 0 #c9a26b;
+}
+.pm-jogo .pm-jogo-lateral .hx-dock-itens > button > span {
+  width: 18px;
+  min-width: 18px;
+  font-size: 15px;
+  color: #d6b17d;
+}
+.pm-jogo .pm-jogo-lateral .hx-dock-itens > button > strong {
+  display: block;
+  font-size: 10px;
+  line-height: 1.25;
+  color: #e3d8c5;
+}
+.pm-jogo .pm-jogo-lateral .pm-jogo-presenca {
+  display: block;
+  padding: 6px 4px;
+  font-size: 9px;
+  line-height: 1.4;
+  color: #90cdb0;
+  border: 0;
+  background: transparent;
+}
+/* O chat está nos atalhos rápidos à esquerda, exatamente como na mesa original. */
+.pm-jogo .atalhos-esquerda.pm-jogo-atalhos-esquerda {
+  position: absolute;
+  top: 80px;
+  left: 135px;
+  right: auto;
+  z-index: 18;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+.pm-jogo .pm-jogo-atalhos-esquerda button {
+  min-width: 95px;
+  padding: 8px 11px;
+  border: 1px solid var(--contorno);
+  border-radius: 5px;
+  background: #24252d;
+  color: #e3d8c4;
+  font-size: 12px;
+  text-align: left;
+  box-shadow: none;
+}
+.pm-jogo .pm-jogo-atalhos-esquerda small {
+  font-size: 9px;
+  color: #c5b4a3;
+}
+.pm-jogo .pm-jogo-atalhos-esquerda button:hover,
+.pm-jogo .pm-jogo-atalhos-esquerda button[aria-expanded='true'] {
+  background: #393037;
+  border-color: #cda775;
+}
+/* Janela flutuante e cabeçalho são os mesmos do mestre, com proporções equivalentes. */
+.pm-jogo .pm-jogo-janela.janela-flutuante {
+  position: fixed;
+  display: flex;
+  flex-direction: column;
+  min-height: 42px;
+  width: min(400px, calc(100vw - 24px));
+  height: min(550px, calc(100dvh - 115px));
+  min-width: 280px;
+  max-width: min(96vw, 1100px);
+  max-height: calc(100dvh - 100px);
+  padding: 0;
+  overflow: hidden;
+  resize: both;
+  background: var(--vidro);
+  border: 1px solid #8e7960;
+  border-radius: 7px;
+  box-shadow:
+    0 7px 32px #000c,
+    0 0 0 1px #b184522a;
+  backdrop-filter: blur(17px);
+}
+/* v29.11.4: a folha de paridade é carregada após a ficha; nunca sobrescrever a
+   largura compacta do mestre com os 550px da antiga versão panorâmica. */
+.pm-jogo .pm-jogo-janela.janela-recursos {
+  width: min(366px, calc(100vw - 24px));
+  height: auto;
+  min-height: 190px;
+  max-height: min(690px, calc(100dvh - 132px));
+}
+.pm-jogo .pm-jogo-janela.janela-inventario {
+  width: min(400px, calc(100vw - 24px));
+}
+.pm-jogo .pm-jogo-janela.janela-historico {
+  width: min(340px, calc(100vw - 24px));
+  height: min(510px, calc(100dvh - 115px));
+}
+.pm-jogo .pm-jogo-janela.janela-chat {
+  width: min(385px, calc(100vw - 24px));
+}
+.pm-jogo .pm-jogo-janela.minimizada {
+  height: 41px !important;
+  min-height: 41px;
+  resize: none;
+}
+.pm-jogo .pm-jogo-janela .janela-barra {
+  height: 41px;
+  min-height: 41px;
+  padding: 0 9px 0 12px;
+  background: linear-gradient(90deg, #33282a, #26232a 58%, #1a1b22);
+  border-bottom: 1px solid #a27a555e;
+  cursor: move;
+}
+.pm-jogo .pm-jogo-janela .janela-barra strong {
+  font-size: 12px;
+  color: #e6d2b0;
+  font-family: Cinzel, Georgia, serif;
+  white-space: normal;
+  line-height: 1.1;
+}
+.pm-jogo .pm-jogo-janela .janela-conteudo {
+  flex: 1;
+  min-height: 0;
+  max-height: none;
+  padding: 14px;
+  overflow: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #7b6955 #15161b;
+}
+.pm-jogo .pm-jogo-janela.janela-recursos .janela-conteudo {
+  padding: 12px 15px 14px;
+}
+.pm-jogo .pm-jogo-janela .janela-barra-ajuda {
+  margin-left: auto;
+  font-size: 8px;
+}
+.pm-jogo .pm-jogo-janela .janela-barra button {
+  min-width: 26px;
+  height: 25px;
+  min-height: 25px;
+  padding: 0;
+}
+/* Mesmas categorias, etiquetas e apresentação dos itens/rolagens do mestre. */
+.pm-jogo .pm-mp-inventario.imp-inventario {
+  display: grid;
+  gap: 13px;
+  padding: 0;
+}
+.pm-jogo .pm-mp-inventario .pm-mp-inventario-filtro.imp-inventario-filtros {
+  display: grid;
+  gap: 6px;
+  padding: 11px;
+  background: #1b2028;
+  border: 1px solid #594d3d;
+  border-radius: 8px;
+}
+.pm-jogo .pm-mp-inventario .pm-mp-inventario-filtro label {
+  font-size: 11px;
+  color: #e9c99d;
+  font-weight: 700;
+}
+.pm-jogo .pm-mp-inventario .pm-mp-itens.imp-itens-lista {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+}
+.pm-jogo .pm-mp-inventario .pm-mp-item.imp-item-cartao {
+  background: #141821;
+  border: 1px solid #5b5044;
+  border-radius: 7px;
+  padding: 12px;
+}
+.pm-jogo .pm-mp-inventario .imp-item-texto {
+  min-width: 0;
+  flex: 1;
+}
+.pm-jogo .pm-mp-inventario .imp-item-titulo {
+  display: flex;
+  gap: 8px;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+.pm-jogo .pm-mp-inventario .imp-item-titulo span {
+  font-size: 9px;
+  color: #dbb77d;
+}
+.pm-jogo .pm-mp-inventario .pm-mp-item-quantidade {
+  white-space: nowrap;
+  font-size: 11px;
+  color: #eccc9b;
+}
+.pm-jogo .pm-jogo-historico .lista-eventos .registro {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  padding: 8px;
+  background: #202127;
+  border: 1px solid #826344;
+  border-radius: 4px;
+}
+.pm-jogo .pm-jogo-historico .lista-eventos .registro p {
+  margin: 0;
+  line-height: 1.45;
+  flex: 1;
+  min-width: 0;
+}
+.pm-jogo .pm-jogo-historico .lista-eventos .registro .pm-jogo-historico-total {
+  color: #eac48c;
+  font-size: 13px;
+}
+/* A ficha se adapta à largura compacta aprovada no mestre. */
+/* Cinco abas compactas: duas colunas iguais, como na ficha do mestre. */
+.pm-jogo .pm-jogo-janela.janela-recursos .hx-ficha-abas {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 5px;
+}
+.pm-jogo .pm-jogo-janela.janela-recursos .hx-ficha-abas button {
+  flex: none;
+  width: 100%;
+  min-width: 0;
+  padding: 8px 4px !important;
+  font-size: 10px !important;
+}
+.pm-jogo .pm-jogo-janela.janela-recursos .cabecalho-ficha {
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.pm-jogo .pm-jogo-janela.janela-recursos .cabecalho-ficha .hx-ficha-resumo {
+  flex: 1 1 100%;
+  min-width: 0;
+}
+.pm-jogo .pm-jogo-janela.janela-recursos .cabecalho-ficha .hx-ficha-identidade {
+  flex: 1;
+  min-width: 0;
+}
+.pm-jogo .pm-jogo-janela.janela-recursos .hx-ficha-atributos {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+.pm-jogo .pm-jogo-janela.janela-recursos .hx-ficha-atributos .recurso {
+  padding: 9px 8px;
+}
+.pm-jogo .pm-jogo-janela.janela-recursos .hx-acoes-grade {
+  grid-template-columns: 1fr;
+}
+.pm-jogo .pm-jogo-janela.janela-recursos .hx-acoes-toolbar {
+  flex-wrap: wrap;
+}
+.pm-jogo .pm-jogo-zoom.navegacao-mapa {
+  right: 13px;
+  bottom: 95px;
+  width: 127px;
+  min-height: 45px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 3px;
+  border-color: #8f7958;
+  background: #171a22e8;
+}
+.pm-jogo .pm-jogo-zoom.navegacao-mapa button {
+  min-width: 28px;
+  padding: 6px 5px;
+}
+.pm-jogo .pm-jogo-zoom.navegacao-mapa span {
+  min-width: 23px;
+}
+@media (max-width: 1120px) {
+  .pm-jogo .atalhos-direita.pm-jogo-lateral {
+    right: 8px;
+    width: 117px;
+    bottom: 245px;
+  }
+  .pm-jogo .pm-jogo-zoom.navegacao-mapa {
+    right: 8px;
+    width: 110px;
+    bottom: 86px;
+  }
+}
+@media (max-width: 780px) {
+  .pm-jogo .atalhos-direita.pm-jogo-lateral {
+    right: 5px;
+    top: 66px;
+    bottom: 227px;
+    width: 100px;
+    gap: 6px;
+  }
+  .pm-jogo .pm-jogo-lateral .hx-dock-grupo {
+    padding: 4px;
+  }
+  .pm-jogo .pm-jogo-atalhos-esquerda.atalhos-esquerda {
+    left: 84px;
+    top: 67px;
+  }
+  .pm-jogo .pm-jogo-zoom.navegacao-mapa {
+    right: 5px;
+    width: 96px;
+    bottom: 78px;
+  }
+}
+@media (max-width: 520px) {
+  .pm-jogo .atalhos-direita.pm-jogo-lateral {
+    width: 65px;
+    bottom: 201px;
+  }
+  .pm-jogo .pm-jogo-lateral .hx-dock-grupo {
+    padding: 3px;
+  }
+  .pm-jogo .pm-jogo-lateral .hx-dock-cabecalho > span:first-child {
+    font-size: 7px;
+    letter-spacing: 0;
+  }
+  .pm-jogo .pm-jogo-lateral .hx-dock-itens > button {
+    justify-content: center;
+    padding: 5px 2px;
+  }
+  .pm-jogo .pm-jogo-lateral .hx-dock-itens > button > strong {
+    display: none;
+  }
+  .pm-jogo .pm-jogo-zoom.navegacao-mapa {
+    width: 73px;
+    bottom: 65px;
+  }
+  .pm-jogo .pm-jogo-zoom.navegacao-mapa button {
+    min-width: 18px;
+    padding: 5px 1px;
+    font-size: 13px;
+  }
+  .pm-jogo .pm-jogo-zoom.navegacao-mapa span {
+    display: none;
+  }
+  .pm-jogo .pm-jogo-janela.janela-flutuante {
+    left: 8px !important;
+    top: 75px !important;
+    max-width: 94vw;
+  }
+}
+/* Diário compartilhado: mesma janela flutuante e biblioteca do mestre. */
+.pm-jogo .pm-jogo-janela.pm-jogo-janela-diario {
+  width: min(520px, calc(100vw - 24px));
+  height: min(575px, calc(100dvh - 115px));
+}
+.pm-jogo .pm-jogo-janela-diario .pm-jogo-janela-corpo {
+  padding: 12px 13px;
+}
+.pm-jogo .pm-jogo-janela-diario .pm-bib {
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+}
+
+/* v1.3.40.56.5 — Acesso rápido do Diário logo abaixo do Chat, como na Mesa do Mestre. */
+.pm-jogo .pm-jogo-atalhos-esquerda button:nth-child(2) {
+  margin-top: 0;
+}
+.pm-jogo .pm-jogo-janela.janela-diario {
+  width: min(520px, calc(100vw - 24px));
+  height: min(600px, calc(100dvh - 115px));
+}
+
+/* v1.3.40.56.8 — Dados completos do convidado, no mesmo lugar do mestre. */
+.pm-jogo .hd-dados-central {
+  right: 18px;
+  bottom: 190px;
+  z-index: 120;
+}
+.pm-jogo .pm-jogo-visibilidade {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: #cdb897;
+  font-size: 9px;
+  white-space: nowrap;
+  margin-right: 4px;
+}
+.pm-jogo .pm-jogo-visibilidade select {
+  font:
+    600 10px Inter,
+    system-ui,
+    sans-serif;
+  color: #f1d8ae;
+  background: #1d2630;
+  border: 1px solid #856a4f;
+  border-radius: 5px;
+  padding: 7px 5px;
+  cursor: pointer;
+  max-width: 100px;
+}
+.pm-jogo .pm-jogo-dados-barra {
+  overflow-x: auto;
+}
+@media (max-width: 900px) {
+  .pm-jogo .pm-jogo-visibilidade {
+    font-size: 0;
+  }
+  .pm-jogo .pm-jogo-visibilidade select {
+    font-size: 10px;
+  }
+}
+@media (max-width: 650px) {
+  .pm-jogo .hd-dados-central {
+    right: 8px;
+    bottom: 170px;
+  }
+  .pm-jogo .pm-jogo-visibilidade select {
+    max-width: 88px;
+  }
+}
+
+/* v29.10: alternância permitida de visualização publicada 2D/3D. */
+.pm-jogo-trocar-visao {
+  display: flex;
+  gap: 4px;
+  border: 1px solid rgba(199, 166, 114, 0.34);
+  border-radius: 6px;
+  padding: 3px;
+  background: #10161ecc;
+}
+.pm-jogo-trocar-visao button {
+  padding: 6px 10px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  background: transparent;
+  color: #d7c4ac;
+  font-size: 10px;
+}
+.pm-jogo-trocar-visao button.ativa {
+  border-color: #b69a6e;
+  background: #5c4535;
+  color: #fff0d6;
+}
+@media (max-width: 800px) {
+  .pm-jogo-trocar-visao {
+    gap: 1px;
+  }
+  .pm-jogo-trocar-visao button {
+    padding: 5px;
+    font-size: 9px;
+  }
+}
+
+.pm-jogo-atribuicao {
+  position: absolute;
+  z-index: 7;
+  top: 68px;
+  left: 50%;
+  transform: translateX(-50%);
+  margin: 0;
+  width: max-content;
+  max-width: min(310px, calc(100vw - 250px));
+  padding: 7px 12px;
+  border: 1px solid #96784b;
+  border-radius: 5px;
+  background: #1a2230ee;
+  color: #f4dcba;
+  font-size: 11px;
+  text-align: center;
+  pointer-events: none;
+}
+
+/* v1.3.4.56.29.11 — Visual 2D do convidado, referência direta à Mesa do Mestre.
+   Reutilizamos .mesa-fundo de App.css: o mesmo padrão, tons e diagonais do mestre.
+   Todo o ajuste é local ao convidado; os dados filtrados do servidor não mudam. */
+.pm-jogo.pm-jogo--modo2d {
+  background: #0b0c11;
+}
+.pm-jogo > .pm-jogo-fundo {
+  display: none;
+  pointer-events: none;
+  z-index: 0;
+}
+.pm-jogo.pm-jogo--modo2d > .pm-jogo-fundo {
+  display: block;
+}
+.pm-jogo.pm-jogo--modo2d .pm-jogo-tabuleiro {
+  z-index: 1;
+  background: transparent;
+}
+.pm-jogo.pm-jogo--modo2d .pm-jogo-palco {
+  border-color: #a28a68;
+  box-shadow:
+    0 22px 80px #000c,
+    0 0 0 1px #ad876348;
+}
+.pm-jogo.pm-jogo--modo2d .pm-jogo-info,
+.pm-jogo.pm-jogo--modo2d .pm-jogo-erro,
+.pm-jogo.pm-jogo--modo2d .pm-jogo-sem-cena {
+  box-shadow: 0 8px 28px #0009;
+}
+.pm-jogo.pm-jogo--modo2d .pm-jogo-oculto {
+  background: radial-gradient(ellipse at 45% 45%, #202027, #101219 75%);
+}
+/* O topo e a barra de dados reutilizam as classes originais do mestre. */
+.pm-jogo.pm-jogo--modo2d .pm-jogo-dados-barra {
+  background: linear-gradient(180deg, #23252cf0, #111318f8);
+  border-color: #8b7053;
+  backdrop-filter: blur(10px);
+}
+/* v29.11.1: laterais da mesa do jogador permanecem visíveis como na mesa do mestre. */
+
+/* v29.12 — controles do mapa 2D sem ferramentas administrativas. */
+.pm-jogo .pm-jogo-token-npc > .token-rosto {
+  box-shadow:
+    0 0 0 2px #ae835a88,
+    0 3px 14px #000a;
+}
+.pm-jogo .pm-jogo-token-npc small {
+  color: #efd5ba;
+}
+.pm-jogo .pm-jogo-comandos-2d {
+  position: absolute;
+  z-index: 3;
+  bottom: 104px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  max-width: min(660px, 65vw);
+  padding: 6px 10px;
+  border: 1px solid #786044;
+  border-radius: 6px;
+  background: #131820dd;
+  color: #dfccae;
+  font-size: 10px;
+  pointer-events: none;
+  text-align: center;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.pm-jogo .pm-jogo-zoom.navegacao-mapa {
+  width: auto;
+  min-width: 165px;
+  max-width: 260px;
+}
+.pm-jogo .pm-jogo-zoom.navegacao-mapa button {
+  min-width: 25px;
+}
+.pm-jogo .pm-jogo-zoom button.pm-jogo-seguindo {
+  color: #ffe2a9;
+  background: #67503a;
+  border-color: #dbb27c;
+}
+@media (max-width: 920px) {
+  .pm-jogo .pm-jogo-comandos-2d {
+    left: 45%;
+    max-width: 46vw;
+    font-size: 9px;
+  }
+}
+@media (max-width: 620px) {
+  .pm-jogo .pm-jogo-comandos-2d {
+    display: none;
+  }
+  .pm-jogo .pm-jogo-zoom.navegacao-mapa {
+    min-width: 130px;
+    width: auto;
+    max-width: 170px;
+  }
+}
+
+/* v29.12.1 — Câmera do convidado com ações explícitas, sem ícones ambíguos. */
+.pm-jogo .pm-jogo-zoom.navegacao-mapa.pm-jogo-camera {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: center;
+  width: 204px;
+  min-width: 0;
+  max-width: calc(100vw - 22px);
+  padding: 6px;
+  gap: 5px;
+  right: 13px;
+  bottom: 93px;
+  background: #171a22ef;
+  border-color: #92744d;
+  box-shadow: 0 5px 20px #0007;
+}
+.pm-jogo .pm-jogo-camera-acoes,
+.pm-jogo .pm-jogo-camera-zoom {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  width: 100%;
+}
+.pm-jogo .pm-jogo-camera-acoes {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+}
+.pm-jogo .pm-jogo-zoom.pm-jogo-camera .pm-jogo-camera-acao {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 7px 5px;
+  min-width: 0;
+  min-height: 33px;
+  font-size: 10px;
+  font-weight: 700;
+  white-space: nowrap;
+  background: #29272d;
+  border-color: #655848;
+}
+.pm-jogo .pm-jogo-camera-acao svg {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+}
+.pm-jogo .pm-jogo-zoom.pm-jogo-camera button.pm-jogo-seguindo,
+.pm-jogo .pm-jogo-zoom.pm-jogo-camera button.pm-jogo-seguindo:hover {
+  color: #ffe6b5;
+  background: #624730;
+  border-color: #d8ac72;
+  box-shadow: inset 0 0 0 1px #e7b57d40;
+}
+.pm-jogo .pm-jogo-camera-zoom {
+  justify-content: space-between;
+}
+.pm-jogo .pm-jogo-zoom.pm-jogo-camera .pm-jogo-camera-zoom button {
+  flex: 0 0 34px;
+  min-width: 0;
+  min-height: 30px;
+  padding: 4px 5px;
+  font-size: 16px;
+}
+.pm-jogo .pm-jogo-zoom.pm-jogo-camera .pm-jogo-camera-zoom span {
+  flex: 1;
+  min-width: 0;
+  text-align: center;
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+@media (max-width: 620px) {
+  .pm-jogo .pm-jogo-zoom.navegacao-mapa.pm-jogo-camera {
+    right: 8px;
+    bottom: 78px;
+    width: 186px;
+    min-width: 0;
+    max-width: calc(100vw - 18px);
+  }
+  .pm-jogo .pm-jogo-zoom.pm-jogo-camera .pm-jogo-camera-acao {
+    font-size: 9px;
+  }
+  .pm-jogo .pm-jogo-zoom.pm-jogo-camera .pm-jogo-camera-zoom span {
+    display: inline;
+  }
+}
+
+/* A posição é interpolada em requestAnimationFrame; transições CSS reiniciavam
+   em cada pacote de rede e produziam "passinhos" entre as atualizações. */
+.pm-jogo .pm-jogo-token {
+  transition: none;
+  will-change: left, top;
+}
+@media (prefers-reduced-motion: reduce) {
+  .pm-jogo .pm-jogo-token {
+    will-change: auto;
+  }
+}
+
+/* v29.15.9 — paridade do cenário com a mesa do mestre.
+   A mesma tonalidade e vinheta usadas em .mapa-palco.com-imagem/.mapa-palco:after
+   são aplicadas SOMENTE ao fundo, nunca escurecendo tokens ou textos. */
+.pm-jogo.pm-jogo--modo2d .pm-jogo-palco::before,
+.pm-jogo.pm-jogo--modo2d .pm-jogo-palco::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+}
+.pm-jogo.pm-jogo--modo2d .pm-jogo-palco::before {
+  background: linear-gradient(180deg, #06070933, #090b0e22);
+}
+.pm-jogo.pm-jogo--modo2d .pm-jogo-palco::after {
+  background: radial-gradient(ellipse at center, transparent 38%, #05060878 110%);
+  box-shadow: inset 0 0 115px #030406a0;
+}
+/* Tokens sem imagem: mesmo retrato circular de 51 px do mestre.
+   Tokens topview: tamanho ajustável definido na ficha/cena, não 51 px fixos. */
+.pm-jogo.pm-jogo--modo2d .pm-jogo-token:not(.token-topview) > .token-rosto {
+  width: 51px;
+  height: 51px;
+  flex-shrink: 0;
+}
+.pm-jogo.pm-jogo--modo2d .pm-jogo-token.token-topview > .token-rosto {
+  width: var(--tamanho-token, 70px);
+  height: var(--tamanho-token, 70px);
+  flex-shrink: 0;
+}
+/* O grupo do mestre encolhe os retratos apenas abaixo de 780 px. */
+@media (min-width: 781px) and (max-width: 920px) {
+  .pm-jogo.pm-jogo--modo2d .pm-jogo-personagens {
+    left: 12px;
+    top: 73px;
+    width: 112px;
+  }
+  .pm-jogo.pm-jogo--modo2d .pm-jogo-personagens .cartao-retrato {
+    width: 98px;
+  }
+  .pm-jogo.pm-jogo--modo2d .pm-jogo-personagens .borda-retrato {
+    height: 100px;
+  }
+}
+@media (min-width: 621px) and (max-width: 780px) {
+  .pm-jogo.pm-jogo--modo2d .pm-jogo-personagens {
+    left: 5px;
+    width: 72px;
+  }
+  .pm-jogo.pm-jogo--modo2d .pm-jogo-personagens .cartao-retrato {
+    width: 65px;
+  }
+  .pm-jogo.pm-jogo--modo2d .pm-jogo-personagens .borda-retrato {
+    height: 65px;
+  }
+}
+@media (max-width: 620px) {
+  .pm-jogo.pm-jogo--modo2d .pm-jogo-personagens .cartao-retrato {
+    width: 65px;
+  }
+  .pm-jogo.pm-jogo--modo2d .pm-jogo-personagens .borda-retrato {
+    height: 65px;
+  }
+}
+
+/* v29.15.10 — o tamanho do palco vem da mesma fórmula da Mesa do Mestre.
+   Em telas menores/maiores, medir o viewport real em vez do 100dvh bruto. */
+.pm-jogo.pm-jogo--modo2d > .pm-jogo-cabecalho {
+  height: 62px;
+}
+.pm-jogo.pm-jogo--modo2d .pm-jogo-tabuleiro {
+  inset: 62px 0 0;
+}
+.pm-jogo.pm-jogo--modo2d .pm-jogo-palco {
+  width: auto;
+  max-height: none;
+  aspect-ratio: auto;
+  border: 0;
+  box-shadow: none;
+  overflow: hidden;
+}
+/* O aro, o interior e o texto seguem o mestre, não os indicadores antigos
+   'meu token'/NPC: a cor publicada é a aparência ATIVA da skin. */
+.pm-jogo.pm-jogo--modo2d .pm-jogo-token {
+  gap: 4px;
+  max-width: none;
+}
+.pm-jogo.pm-jogo--modo2d .pm-jogo-token.token-topview {
+  gap: 0;
+  min-width: unset;
+}
+.pm-jogo.pm-jogo--modo2d .pm-jogo-token > .token-rosto {
+  background: var(--fundo-token, #22252d);
+  border: 3px solid var(--cor-token);
+  border-radius: 50%;
+  box-shadow:
+    0 0 0 2px #161415,
+    0 5px 20px #000d;
+  overflow: hidden;
+}
+.pm-jogo.pm-jogo--modo2d .pm-jogo-token.token-topview > .token-rosto {
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  overflow: visible;
+}
+.pm-jogo.pm-jogo--modo2d .pm-jogo-token.meu > .token-rosto,
+.pm-jogo.pm-jogo--modo2d .pm-jogo-token.pm-mp-token-controlavel > .token-rosto,
+.pm-jogo.pm-jogo--modo2d .pm-jogo-token.pm-jogo-token-npc > .token-rosto {
+  box-shadow:
+    0 0 0 2px #161415,
+    0 5px 20px #000d;
+}
+.pm-jogo.pm-jogo--modo2d .pm-jogo-token.token-topview.meu > .token-rosto,
+.pm-jogo.pm-jogo--modo2d .pm-jogo-token.token-topview.pm-mp-token-controlavel > .token-rosto,
+.pm-jogo.pm-jogo--modo2d .pm-jogo-token.token-topview.pm-jogo-token-npc > .token-rosto {
+  box-shadow: none;
+}
+.pm-jogo.pm-jogo--modo2d .pm-jogo-token > .token-rosto .token-arte {
+  background: var(--fundo-token, #22252d);
+}
+.pm-jogo.pm-jogo--modo2d .pm-jogo-token > .token-nome {
+  max-width: 104px;
+}
+.pm-jogo.pm-jogo--modo2d .pm-jogo-token.token-topview > .token-nome {
+  max-width: 155px;
+}
+
+/* v29.15.11 — Nenhuma regra legada de miniatura pode atingir a etiqueta.
+   A etiqueta e sua largura são idênticas às da Mesa do Mestre. */
+.pm-jogo.pm-jogo--modo2d .pm-jogo-token > .token-nome {
+  width: auto;
+  height: auto;
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid #7b6b5888;
+  border-radius: 4px;
+  background: #11131ce0;
+  box-shadow: none;
+  display: block;
+  place-items: unset;
+  flex-shrink: 0;
+  padding: 4px 6px;
+  font-size: 10px;
+  font-weight: 700;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  color: #f2e7d6;
+}
+.pm-jogo.pm-jogo--modo2d .pm-jogo-token.token-topview > .token-nome {
+  margin-top: -1px;
+  padding: 3px 5px;
+  font-size: 9px;
+}
+
+/* v29.15.16: aviso compacto acima do cenário, sem encobrir chat e câmeras. */
+.pm-jogo .pm-jogo-atribuicao {
+  top: 76px;
+  z-index: 24;
+  line-height: 1.45;
+  box-sizing: border-box;
+  box-shadow: 0 4px 16px #0008;
+}
+@media (max-width: 620px) {
+  .pm-jogo .pm-jogo-atribuicao {
+    top: 68px;
+    max-width: min(260px, calc(100vw - 160px));
+    font-size: 10px;
+    padding: 5px 8px;
+  }
+}
+
+/* v29.15.24: o mesmo compositor de nevoa utilizado pela Mesa 3D,
+   abaixo de qualquer token para nunca cortar seus sprites. */
+.pm-jogo .pm-jogo-visao-comum {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* v29.15.30.21 — câmera tática do convidado: a regra geral dos botões
+   da lateral impunha min-width:95px e estourava os controles −/＋.
+   A correção é exclusiva da visão do jogador, sem mexer na câmera do mestre. */
+.pm-jogo.pm-jogo--modo3d .pm-jogo-atalhos-esquerda .hx-camera-zoom-tatico {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+.pm-jogo.pm-jogo--modo3d .pm-jogo-atalhos-esquerda .hx-camera-zoom-tatico-controles {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr) 28px;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  gap: 5px;
+  align-items: center;
+  box-sizing: border-box;
+}
+.pm-jogo.pm-jogo--modo3d .pm-jogo-atalhos-esquerda .hx-camera-zoom-tatico-controles > button {
+  box-sizing: border-box;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  min-width: 0;
+  max-width: 28px;
+  height: 28px;
+  min-height: 28px;
+  padding: 0;
+  margin: 0;
+  line-height: 1;
+  text-align: center;
+  font-size: 16px;
+}
+.pm-jogo.pm-jogo--modo3d
+  .pm-jogo-atalhos-esquerda
+  .hx-camera-zoom-tatico-controles
+  > input[type='range'] {
+  box-sizing: border-box;
+  display: block;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  margin: 0;
+}
+@media (max-width: 780px) {
+  .pm-jogo.pm-jogo--modo3d .pm-jogo-atalhos-esquerda .hx-camera-zoom-tatico-controles {
+    grid-template-columns: 26px minmax(0, 1fr) 26px;
+    gap: 4px;
+  }
+  .pm-jogo.pm-jogo--modo3d .pm-jogo-atalhos-esquerda .hx-camera-zoom-tatico-controles > button {
+    width: 26px;
+    max-width: 26px;
+    height: 26px;
+    min-height: 26px;
+  }
+}

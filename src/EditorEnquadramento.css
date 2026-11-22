@@ -1,0 +1,202 @@
+.editor-enquadramento {
+  padding: 10px;
+  border: 1px solid #756046;
+  border-radius: 8px;
+  background: #171b24;
+  display: grid;
+  gap: 9px;
+  color: #e6cfaa;
+}
+.editor-enquadramento > strong {
+  font-size: 12px;
+}
+.editor-enquadramento > small {
+  font-size: 10px;
+  line-height: 1.5;
+  color: #b4b3b5;
+}
+.editor-enquadramento-corpo {
+  display: flex;
+  gap: 13px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.editor-enquadramento-preview {
+  flex: 0 0 112px;
+  width: 112px;
+  height: 112px;
+  overflow: hidden;
+  background: radial-gradient(circle, #39424b, #171b24);
+  display: grid;
+  place-items: center;
+  touch-action: none;
+  cursor: grab;
+  user-select: none;
+  border: 2px solid #d5ae74;
+  position: relative;
+}
+.editor-enquadramento-preview:active {
+  cursor: grabbing;
+}
+.editor-enquadramento-preview.circular {
+  border-radius: 50%;
+}
+.editor-enquadramento-preview.vertical {
+  height: 136px;
+  border-radius: 6px;
+}
+.editor-enquadramento-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transform: translate(var(--ajuste-x, 0%), var(--ajuste-y, 0%)) scale(var(--ajuste-zoom, 1));
+  pointer-events: none;
+}
+.editor-enquadramento-preview.vertical img {
+  object-fit: cover;
+}
+.editor-enquadramento-preview small {
+  font-size: 9px;
+  text-align: center;
+  padding: 10px;
+  color: #c5b9ad;
+}
+.editor-enquadramento-campos {
+  display: grid;
+  gap: 6px;
+  flex: 1;
+  min-width: 160px;
+}
+.editor-enquadramento-campos label {
+  font-size: 10px;
+  display: grid;
+  gap: 3px;
+  color: #d8c8b3;
+}
+.editor-enquadramento-campos input {
+  width: 100%;
+  accent-color: #d0a56b;
+}
+.editor-enquadramento-campos button {
+  padding: 6px !important;
+  font-size: 10px !important;
+}
+
+/* v1.3.40.10 — edição visual independente por skin */
+.editor-aparencia-token {
+  display: grid;
+  gap: 9px;
+  padding: 10px 0 3px;
+  border-top: 1px solid #75604655;
+}
+.editor-aparencia-token > strong {
+  font-size: 11px;
+  color: #e5c69e;
+}
+.editor-aparencia-token label {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  flex-wrap: wrap;
+  font-size: 11px;
+  color: #dbcaaf;
+}
+.editor-aparencia-token label input[type='color'] {
+  width: 42px;
+  height: 29px;
+  border: 1px solid #8b785d;
+  border-radius: 5px;
+  background: #262733;
+  padding: 2px;
+  cursor: pointer;
+}
+.editor-aparencia-token label select {
+  max-width: 100%;
+  min-height: 30px;
+  padding: 4px 8px;
+  color: #ead8bf;
+  background: #252730;
+  border: 1px solid #817159;
+  border-radius: 5px;
+}
+.editor-aparencia-token > button {
+  justify-self: start;
+  font-size: 10px !important;
+  padding: 7px 10px !important;
+}
+.editor-aparencia-token > small {
+  font-size: 10px;
+  line-height: 1.55;
+  color: #aeb4b8;
+}
+.editor-cores-rapidas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.editor-cores-rapidas button {
+  width: 24px;
+  height: 24px;
+  border: 2px solid #53505a;
+  border-radius: 50%;
+  padding: 0 !important;
+  min-width: 0 !important;
+  cursor: pointer;
+}
+.editor-cores-rapidas button.ativo {
+  outline: 2px solid #f4d69a;
+  outline-offset: 2px;
+}
+.editor-enquadramento-preview.circular {
+  background-clip: padding-box;
+}
+
+/* Quadriculado somente na prévia sinaliza áreas realmente transparentes. */
+.editor-enquadramento-preview.circular.fundo-transparente {
+  background-image:
+    linear-gradient(45deg, #ddd 25%, transparent 25%),
+    linear-gradient(-45deg, #ddd 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, #ddd 75%),
+    linear-gradient(-45deg, transparent 75%, #ddd 75%);
+  background-size: 16px 16px;
+  background-position:
+    0 0,
+    0 8px,
+    8px -8px,
+    -8px 0;
+  background-color: #fafafa !important;
+}
+
+/* v29.15.11 — Prévia idêntica ao token 2D do mestre (aro 90% e arte 90%).
+   Não dimensionar ou transformar a imagem duas vezes. */
+.editor-enquadramento-preview.circular {
+  border: 0;
+  background: transparent;
+  isolation: isolate;
+}
+.editor-enquadramento-preview .editor-enquadramento-token {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 1;
+  pointer-events: none;
+  min-width: 0;
+  max-width: none;
+  gap: 0;
+}
+.editor-enquadramento-preview .editor-enquadramento-token > .token-rosto {
+  width: 112px;
+  height: 112px;
+  flex-shrink: 0;
+}
+.editor-enquadramento-preview .editor-enquadramento-token:not(.token-topview) > .token-rosto {
+  border: 3px solid var(--cor-token);
+  border-radius: 50%;
+  overflow: hidden;
+}
+.editor-enquadramento-preview .editor-enquadramento-token .token-arte {
+  background: var(--fundo-token, #22252d);
+}
+.editor-enquadramento-preview .editor-enquadramento-token .token-arte img {
+  object-fit: contain;
+}

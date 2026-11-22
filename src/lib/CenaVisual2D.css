@@ -1,0 +1,66 @@
+/* v29.15.12 — Renderizador visual 2D unico para mestre e convidado. */
+.mapa-palco.pm-cena2d-palco,
+.pm-jogo-palco.pm-cena2d-palco {
+  isolation: isolate;
+  overflow: hidden;
+}
+.mapa-palco.pm-cena2d-palco.com-imagem {
+  background-image: none;
+  background-color: transparent;
+}
+.mapa-palco.pm-cena2d-palco::after,
+.pm-jogo.pm-jogo--modo2d .pm-jogo-palco.pm-cena2d-palco::before,
+.pm-jogo.pm-jogo--modo2d .pm-jogo-palco.pm-cena2d-palco::after {
+  content: none;
+}
+.pm-jogo.pm-jogo--modo2d .pm-jogo-palco.pm-cena2d-palco {
+  background: transparent;
+}
+.pm-cena2d-fundo {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.pm-cena2d-fundo > img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  display: block;
+}
+.pm-cena2d-tom,
+.pm-cena2d-vinheta {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+/* Adota a tonalidade mais viva preferida pelo usuario da mesa do convidado. */
+.pm-cena2d-tom {
+  background: linear-gradient(180deg, #06070933, #090b0e22);
+}
+.pm-cena2d-vinheta {
+  background: radial-gradient(ellipse at center, transparent 38%, #05060878 110%);
+  box-shadow: inset 0 0 115px #030406a0;
+}
+/* As fontes de luz afetam o cenario, mas nao lavam/escurecem as artes dos tokens. */
+.pm-cena2d-iluminacao {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 3;
+  pointer-events: none;
+  overflow: hidden;
+  display: block;
+}
+.mapa-palco.pm-cena2d-palco > .clima-camada,
+.pm-jogo-palco.pm-cena2d-palco > .clima-camada {
+  z-index: 4;
+}
+.mapa-palco.pm-cena2d-palco > .token,
+.pm-jogo-palco.pm-cena2d-palco > .token {
+  z-index: 5;
+}

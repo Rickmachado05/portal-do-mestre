@@ -1,0 +1,367 @@
+.imp-inventario {
+  color: #ebdfc9;
+  display: grid;
+  gap: 13px;
+}
+.imp-inventario-intro strong {
+  font-family: Cinzel, serif;
+  color: #f2d3a2;
+  font-size: 16px;
+}
+.imp-inventario-intro p,
+.imp-item-nota {
+  font-size: 10px;
+  line-height: 1.65;
+  color: #b7b4b1;
+}
+.imp-inventario-add {
+  background: #20262e;
+  border: 1px solid #736045;
+  border-radius: 8px;
+  padding: 12px;
+  display: grid;
+  gap: 9px;
+}
+.imp-inventario-add > label {
+  font-size: 11px;
+  font-weight: 700;
+  color: #dfc598;
+}
+.imp-inventario-add select,
+.imp-inventario-add input,
+.imp-item-controles input {
+  background: #10151d;
+  color: #f2ddbe;
+  border: 1px solid #7b6a52;
+  border-radius: 5px;
+  padding: 8px;
+  min-width: 0;
+}
+.imp-inventario-add select {
+  width: 100%;
+}
+.imp-inventario-add > div {
+  display: flex;
+  gap: 8px;
+  align-items: end;
+}
+.imp-inventario-add > div label,
+.imp-item-controles > label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 10px;
+  color: #d9c7a9;
+}
+.imp-inventario-add input {
+  max-width: 65px;
+}
+.imp-inventario-add > div button {
+  flex: 1;
+}
+.imp-inventario-add a {
+  color: #f1c891;
+  font-size: 11px;
+  text-decoration: underline;
+}
+.imp-inventario button {
+  border: 1px solid #876d50;
+  border-radius: 5px;
+  background: #363035;
+  color: #f1ddba;
+  padding: 7px 9px;
+  font-size: 10px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.imp-inventario button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.imp-inventario button:not(:disabled):hover {
+  background: #5c4734;
+}
+.imp-inventario-add button.imp-item-add-button {
+  background: #b69260;
+  color: #171821;
+}
+.imp-itens-lista {
+  display: grid;
+  gap: 8px;
+  max-height: 460px;
+  overflow: auto;
+  scrollbar-width: thin;
+}
+.imp-item-cartao {
+  padding: 12px;
+  background: #141821;
+  border: 1px solid #5b5044;
+  border-radius: 7px;
+}
+.imp-item-titulo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.imp-item-titulo strong {
+  font-size: 12px;
+  color: #f1d1a2;
+}
+.imp-item-titulo span {
+  font-size: 9px;
+  color: #dbb77d;
+}
+.imp-item-cartao small {
+  display: block;
+  margin-top: 7px;
+  color: #91bdd0;
+  line-height: 1.6;
+  font-size: 10px;
+}
+.imp-item-cartao p {
+  font-size: 10px;
+  line-height: 1.65;
+  white-space: pre-wrap;
+  color: #b9b9c0;
+  margin: 7px 0;
+}
+.imp-item-controles {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+.imp-item-controles input[type='number'] {
+  width: 65px;
+}
+.imp-item-controles input[type='checkbox'] {
+  accent-color: #d8ac74;
+}
+.imp-item-equipar {
+  white-space: nowrap;
+}
+.imp-inventario-vazio {
+  font-size: 11px;
+  color: #beb1a1;
+  line-height: 1.6;
+}
+.imp-escudo {
+  padding: 12px 10px;
+  margin: 12px 0;
+  border: 1px solid #6f92a5;
+  background: linear-gradient(130deg, #263c50c9, #1a222f);
+  border-radius: 7px;
+}
+.imp-escudo-cabecalho {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #bee5fb;
+  font-size: 11px;
+  font-weight: 800;
+}
+.imp-escudo-cabecalho strong {
+  font-size: 17px;
+}
+.imp-escudo .imp-escudo-ajustes {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  margin-top: 11px;
+}
+.imp-escudo input {
+  min-width: 0;
+  width: 78px;
+  background: #101722;
+  color: #eff9ff;
+  border: 1px solid #659ab5;
+  border-radius: 5px;
+  padding: 8px;
+}
+.imp-escudo button {
+  background: #2b475c;
+  border: 1px solid #689ab7;
+  border-radius: 5px;
+  color: #e0f6ff;
+  padding: 7px 9px;
+  font-size: 11px;
+  cursor: pointer;
+}
+.imp-escudo p {
+  font-size: 10px;
+  color: #abc6d8;
+  line-height: 1.5;
+  margin: 9px 0 0;
+}
+.imp-inventario-resumo {
+  border-top: 1px solid #82694a55;
+  margin: 13px 0;
+  padding-top: 10px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: space-between;
+}
+.imp-inventario-resumo strong {
+  color: #e9cda9;
+  font-size: 11px;
+}
+.imp-inventario-resumo button {
+  font-size: 11px;
+  cursor: pointer;
+}
+.imp-dano-info {
+  font-size: 10px;
+  line-height: 1.5;
+  color: #c9b7a1;
+  margin: -5px 0 8px;
+}
+/* v1.3.14 — Miniaturas dos itens no inventário e no seletor do catálogo */
+.imp-item-previsualizacao {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 9px;
+  border: 1px solid #625441;
+  border-radius: 8px;
+  background: #111923;
+}
+.imp-item-previsualizacao .pm-item-thumb {
+  width: 60px;
+  height: 60px;
+}
+.imp-item-previsualizacao strong {
+  font-size: 12px;
+  color: #f0d09f;
+  overflow-wrap: anywhere;
+}
+.imp-item-previsualizacao small {
+  display: block;
+  font-size: 10px;
+  color: #aabacc;
+  line-height: 1.6;
+}
+.imp-item-cabecalho-visual {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+.imp-item-cabecalho-visual > .pm-item-thumb {
+  width: 68px;
+  height: 68px;
+}
+.imp-item-texto {
+  flex: 1;
+  min-width: 0;
+}
+.imp-item-titulo {
+  flex-wrap: wrap;
+}
+.imp-item-titulo strong {
+  overflow-wrap: anywhere;
+}
+@media (max-width: 470px) {
+  .imp-item-cabecalho-visual > .pm-item-thumb {
+    width: 56px;
+    height: 56px;
+  }
+}
+
+/* v1.3.15 — Filtro de inventário e entrega controlada de itens */
+.imp-inventario-filtros {
+  display: grid;
+  gap: 6px;
+  padding: 11px;
+  border: 1px solid #594d3d;
+  border-radius: 8px;
+  background: #1b2028;
+}
+.imp-inventario-filtros label {
+  font-size: 11px;
+  color: #e9c99d;
+  font-weight: 700;
+}
+.imp-inventario-filtros select,
+.imp-item-transferencia select,
+.imp-item-transferencia input {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  background: #10151d;
+  border: 1px solid #7b6a52;
+  border-radius: 5px;
+  padding: 8px;
+  color: #f2ddbe;
+  font-size: 11px;
+}
+.imp-inventario-filtros small {
+  font-size: 10px;
+  color: #b5b4b4;
+}
+.imp-item-transferencia {
+  margin-top: 11px;
+  border: 1px solid #98754a;
+  background: #22242b;
+  border-radius: 7px;
+  padding: 11px;
+  display: grid;
+  gap: 8px;
+}
+.imp-item-transferencia > strong {
+  font-size: 12px;
+  color: #f1cf9f;
+}
+.imp-item-transferencia-campos {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 95px;
+  gap: 9px;
+}
+.imp-item-transferencia-campos label {
+  display: grid;
+  gap: 5px;
+  font-size: 10px;
+  color: #d8c19e;
+}
+.imp-item-transferencia p {
+  margin: 0;
+  font-size: 10px;
+  color: #b5b4b4;
+}
+.imp-item-transferencia-acoes {
+  display: flex;
+  gap: 7px;
+  flex-wrap: wrap;
+}
+.imp-item-transferencia-acoes button:first-child {
+  background: #9e7e53;
+  color: #171821;
+}
+@media (max-width: 370px) {
+  .imp-item-transferencia-campos {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* v1.3.40.46: abrir documentos sem consumi-los */
+.imp-item-controles button.imp-item-ver {
+  background: #304956;
+  border-color: #729eae;
+  color: #dcf2f8;
+}
+.imp-item-controles button.imp-item-ver:hover {
+  background: #3c6071;
+}
+
+/* v1.3.40.48.1 — o formulário de criação agora usa ModalCriarItem.css */
+.imp-item-criacao-atalho {
+  margin-top: 6px;
+  width: 100%;
+  border: 1px solid rgba(207, 172, 112, 0.4);
+  border-radius: 8px;
+  background: #202631;
+  color: #ead9b8;
+  padding: 9px;
+  cursor: pointer;
+}

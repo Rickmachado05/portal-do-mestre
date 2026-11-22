@@ -1,0 +1,878 @@
+/* Ficha de combate 2D/3D: cabeçalho fixo e conteúdo por abas. */
+.janela-recursos .janela-conteudo {
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+.janela-recursos .cabecalho-ficha {
+  position: sticky;
+  top: -12px;
+  z-index: 4;
+  flex: none;
+  margin-bottom: 0;
+  padding: 6px 2px 8px;
+  background: linear-gradient(180deg, #29262c, #212026);
+  border-radius: 4px;
+}
+.hx-ficha-abas {
+  position: sticky;
+  top: 55px;
+  z-index: 3;
+  display: flex;
+  gap: 5px;
+  overflow-x: auto;
+  scrollbar-width: thin;
+  padding: 7px 0 9px;
+  background: linear-gradient(180deg, #24232b, #202026);
+  border-bottom: 1px solid rgba(213, 185, 143, 0.32);
+  margin: 0 -1px 10px;
+}
+.hx-ficha-abas > button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  flex: 1 0 auto;
+  min-width: max-content;
+  min-height: 34px;
+  font-size: 11px !important;
+  padding: 7px 9px !important;
+  border: 1px solid #615a50;
+  border-radius: 6px;
+  background: #26252b;
+  color: #ccbda3;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.hx-ficha-abas > button.ativa {
+  background: linear-gradient(120deg, #644631, #433527);
+  border-color: #cfad78;
+  color: #ffe3b6;
+  box-shadow: inset 0 -2px 0 #d2af74;
+}
+.hx-ficha-abas > button:focus-visible {
+  outline: 2px solid #f0c891;
+  outline-offset: 2px;
+}
+.hx-ficha-abas small {
+  display: inline-grid;
+  place-items: center;
+  min-width: 16px;
+  height: 16px;
+  border-radius: 9px;
+  background: #15151a;
+  color: #d9c5a6;
+  padding: 0 3px;
+  font-size: 9px;
+}
+.hx-ficha-corpo {
+  min-height: 0;
+  width: 100%;
+  padding-bottom: 12px;
+}
+.hx-ficha-painel {
+  min-width: 0;
+  display: grid;
+  gap: 9px;
+}
+.hx-ficha-painel > .recurso {
+  margin: 3px 0;
+}
+.hx-ficha-painel .imp-escudo {
+  margin: 4px 0;
+}
+.hx-ficha-painel .lista-condicoes {
+  margin: 3px 0;
+}
+.hx-ficha-painel .acoes-ficha {
+  margin-top: 3px;
+}
+.hx-ficha-painel > .token-opcoes-discretas {
+  margin: 0;
+}
+.hx-ficha-criador-link {
+  display: block;
+  text-align: center;
+  text-decoration: none;
+  padding: 8px 10px;
+  margin-top: 6px;
+}
+.hx-inventario-separado {
+  margin-top: 6px;
+  width: 100%;
+  text-align: center;
+}
+@media (max-width: 560px) {
+  .janela-recursos .janela-conteudo {
+    padding: 9px;
+  }
+  .janela-recursos .cabecalho-ficha {
+    top: -9px;
+  }
+  .hx-ficha-abas {
+    top: 58px;
+  }
+  .hx-ficha-abas > button {
+    flex: 0 0 auto;
+  }
+}
+
+.hx-ficha-ca-controle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 9px;
+  padding: 7px 9px;
+  background: rgba(139, 113, 76, 0.12);
+  border: 1px solid rgba(208, 173, 117, 0.28);
+  border-radius: 6px;
+}
+.hx-ficha-ca-controle label {
+  font-size: 11px;
+  font-weight: 700;
+  color: #e7c99b;
+}
+.hx-ficha-ca-controle input {
+  width: 62px;
+  max-width: 28%;
+  background: #15151b;
+  color: #ecd6b2;
+  border: 1px solid #a78b5e;
+  border-radius: 4px;
+  text-align: center;
+  padding: 5px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+/* v1.3.40.19 — ficha panorâmica: recursos sem coluna vertical longa. */
+.janela-recursos {
+  max-width: min(96vw, 820px);
+  max-height: min(690px, calc(100dvh - 132px));
+}
+.janela-recursos .janela-conteudo {
+  padding: 12px 15px 14px;
+}
+.janela-recursos .cabecalho-ficha {
+  top: -12px;
+  padding: 4px 3px 8px;
+}
+.janela-recursos .avatar-ficha {
+  width: 44px;
+  height: 48px;
+}
+.janela-recursos .cabecalho-ficha > div strong {
+  font-size: 15px;
+}
+.janela-recursos .hx-ficha-abas {
+  top: 53px;
+  gap: 7px;
+  margin: 0 0 10px;
+  padding: 7px 1px 9px;
+}
+.janela-recursos .hx-ficha-abas > button {
+  min-height: 36px;
+  padding: 7px 13px !important;
+}
+.janela-recursos .hx-ficha-corpo {
+  padding-bottom: 5px;
+}
+
+/* Atributos organizados em duas colunas com CA curta no cabeçalho. */
+.janela-recursos .hx-ficha-atributos {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 9px 12px;
+}
+.hx-ficha-atributos > .hx-ficha-ca-controle {
+  grid-column: 1 / -1;
+  grid-row: 1;
+  padding: 5px 11px;
+  min-height: 34px;
+}
+.hx-ficha-atributos > .recurso-hp {
+  grid-column: 1;
+  grid-row: 2;
+}
+.hx-ficha-atributos > .recurso-mana {
+  grid-column: 2;
+  grid-row: 2;
+}
+.hx-ficha-atributos > .imp-escudo {
+  grid-column: 1 / -1;
+  grid-row: 3;
+}
+.hx-ficha-atributos > .imp-dano-info {
+  grid-column: 1 / -1;
+  grid-row: 4;
+  margin: 0;
+  font-size: 10px;
+}
+.hx-ficha-atributos > .janela-linha-acoes {
+  grid-column: 1 / -1;
+  grid-row: 5;
+  margin: 0;
+}
+.hx-ficha-atributos > .lista-condicoes {
+  grid-column: 1 / -1;
+  grid-row: 6;
+}
+.hx-ficha-atributos > .acoes-ficha {
+  grid-column: 1 / -1;
+  grid-row: 7;
+}
+.janela-recursos .hx-ficha-atributos > .recurso {
+  min-width: 0;
+  margin: 0;
+  padding: 10px 11px 9px;
+  border: 1px solid rgba(195, 160, 109, 0.38);
+  border-radius: 9px;
+  background: linear-gradient(140deg, rgba(46, 38, 42, 0.92), rgba(22, 23, 31, 0.85));
+}
+.janela-recursos .recurso-cabecalho {
+  font-size: 11px;
+  gap: 8px;
+}
+.janela-recursos .recurso-cabecalho strong {
+  font-size: 20px;
+  color: #f3dfb9;
+  letter-spacing: 0.2px;
+  font-variant-numeric: tabular-nums;
+}
+.janela-recursos .recurso-cabecalho small {
+  font-size: 10px;
+  color: #bcae97;
+}
+.janela-recursos .recurso-hp .recurso-cabecalho > span {
+  color: #e89f9e;
+}
+.janela-recursos .recurso-mana .recurso-cabecalho > span {
+  color: #9bcce9;
+}
+.janela-recursos .barra-recurso {
+  height: 3px;
+  margin: 5px 0 7px;
+  border: 0;
+  background: #10131b;
+}
+.janela-recursos .mana-regra {
+  margin: 4px 0;
+  font-size: 10px;
+  color: #b3b0a5;
+}
+.janela-recursos .recurso-quantidade {
+  margin: 3px 0 0;
+  padding: 6px;
+  gap: 0;
+}
+.janela-recursos .recurso-quantidade > label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.janela-recursos .recurso-quantidade-acoes {
+  grid-template-columns: minmax(50px, 1fr) auto auto;
+  gap: 5px;
+}
+.janela-recursos .recurso-quantidade-acoes input {
+  padding: 6px;
+  font-size: 12px;
+  min-width: 0;
+}
+.janela-recursos .recurso-quantidade-acoes button {
+  padding: 6px 8px;
+  font-size: 10px;
+  min-height: 30px;
+}
+.janela-recursos .hx-recurso-detalhes {
+  margin-top: 6px;
+  border-top: 1px solid rgba(200, 170, 128, 0.22);
+  padding-top: 6px;
+}
+.janela-recursos .hx-recurso-detalhes > summary {
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 10px;
+  color: #bfab8b;
+  user-select: none;
+}
+.janela-recursos .hx-recurso-detalhes > summary::before {
+  content: '▸';
+  color: #e3b779;
+}
+.janela-recursos .hx-recurso-detalhes[open] > summary::before {
+  content: '▾';
+}
+.janela-recursos .hx-recurso-detalhes > summary::-webkit-details-marker {
+  display: none;
+}
+.janela-recursos .hx-recurso-detalhes .recurso-botoes {
+  margin-top: 9px;
+}
+.janela-recursos .hx-recurso-detalhes .recurso-valor-exato {
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.janela-recursos .hx-recurso-detalhes .recurso-valor-exato input {
+  width: 78px;
+}
+.janela-recursos .hx-ficha-atributos > .imp-escudo {
+  margin: 0;
+  padding: 9px 11px;
+}
+.janela-recursos .hx-ficha-atributos > .imp-escudo p {
+  margin: 3px 0 7px;
+  font-size: 10px;
+}
+.janela-recursos .hx-ficha-atributos > .lista-condicoes {
+  margin: 0;
+}
+
+/* Duas habilidades por linha, sem cortar conteúdo ou os botões. */
+.janela-recursos .hx-acoes-da-ficha {
+  padding: 12px;
+}
+.hx-acoes-grade {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  align-items: start;
+}
+.hx-acoes-grade > .hx-acao-ficha {
+  min-width: 0;
+  align-content: start;
+}
+.hx-acoes-grade > .aviso-pequeno {
+  grid-column: 1/-1;
+}
+.hx-acoes-da-ficha .hx-acao-ficha {
+  padding: 10px;
+  border-color: rgba(207, 173, 122, 0.32);
+  background: linear-gradient(145deg, rgba(35, 32, 39, 0.86), rgba(15, 20, 28, 0.82));
+}
+.hx-acoes-da-ficha .hx-acao-ficha:hover {
+  border-color: rgba(225, 185, 122, 0.7);
+}
+
+/* Seletor de categorias: base escura, ouro discreto e seta personalizada. */
+.hx-acoes-toolbar .hx-filtro-categoria {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 11px;
+  font-weight: 650;
+}
+.hx-filtro-categoria-campo {
+  position: relative;
+  display: block;
+}
+.hx-filtro-categoria-campo::after {
+  content: '⌄';
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-58%);
+  font-size: 17px;
+  color: #e5bf83;
+  pointer-events: none;
+}
+.hx-acoes-toolbar .hx-filtro-categoria select {
+  -webkit-appearance: none;
+  appearance: none;
+  display: block;
+  width: 190px;
+  max-width: 100%;
+  height: 37px;
+  min-height: 37px;
+  margin: 0;
+  padding: 7px 32px 7px 12px;
+  border: 1px solid rgba(213, 174, 113, 0.68);
+  border-radius: 8px;
+  background: linear-gradient(130deg, #3a3030, #1c2029 82%);
+  color: #f4dfba;
+  font-size: 12px;
+  font-weight: 650;
+  box-shadow:
+    inset 0 1px 0 rgba(241, 210, 160, 0.12),
+    0 2px 8px #0004;
+  cursor: pointer;
+}
+.hx-acoes-toolbar .hx-filtro-categoria select option {
+  color: #f4dfba;
+  background: #24212a;
+}
+.hx-acoes-toolbar .hx-filtro-categoria select:hover {
+  border-color: #efc991;
+}
+.hx-acoes-toolbar .hx-filtro-categoria select:focus-visible {
+  outline: 2px solid #eabf7d;
+  outline-offset: 2px;
+}
+
+@media (max-width: 680px) {
+  .janela-recursos .hx-ficha-atributos {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .hx-ficha-atributos > .recurso-hp {
+    grid-column: 1;
+    grid-row: 2;
+  }
+  .hx-ficha-atributos > .recurso-mana {
+    grid-column: 1;
+    grid-row: 3;
+  }
+  .hx-ficha-atributos > .imp-escudo {
+    grid-column: 1;
+    grid-row: 4;
+  }
+  .hx-ficha-atributos > .imp-dano-info {
+    grid-column: 1;
+    grid-row: 5;
+  }
+  .hx-ficha-atributos > .janela-linha-acoes {
+    grid-column: 1;
+    grid-row: 6;
+  }
+  .hx-ficha-atributos > .lista-condicoes {
+    grid-column: 1;
+    grid-row: 7;
+  }
+  .hx-ficha-atributos > .acoes-ficha {
+    grid-column: 1;
+    grid-row: 8;
+  }
+  .hx-acoes-grade {
+    grid-template-columns: 1fr;
+  }
+  .hx-acoes-toolbar .hx-filtro-categoria select {
+    width: min(190px, 49vw);
+  }
+}
+@media (max-width: 560px) {
+  .janela-recursos .janela-conteudo {
+    padding: 9px;
+  }
+  .janela-recursos .cabecalho-ficha {
+    top: -9px;
+  }
+  .janela-recursos .hx-ficha-abas {
+    top: 50px;
+  }
+}
+
+/* v1.3.40.20 — resumo de recursos no cabeçalho e adaptação à largura REAL
+   da janela, não à largura da tela do navegador. */
+.janela-recursos {
+  container-type: inline-size;
+  min-width: 280px;
+}
+.janela-recursos .cabecalho-ficha {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  min-width: 0;
+  padding-bottom: 10px;
+}
+.janela-recursos .cabecalho-ficha > .hx-ficha-identidade {
+  flex: 1 1 145px;
+  min-width: 0;
+}
+.janela-recursos .hx-ficha-identidade strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.janela-recursos .hx-ficha-identidade small {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.janela-recursos .cabecalho-ficha > .hx-ficha-resumo {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 9px;
+  flex: 0 1 300px;
+  min-width: 215px;
+}
+.janela-recursos .hx-resumo-recurso {
+  min-width: 0;
+  padding: 6px 8px;
+  background: #171b23;
+  border: 1px solid rgba(176, 150, 117, 0.4);
+  border-radius: 7px;
+  font-variant-numeric: tabular-nums;
+}
+.janela-recursos .hx-resumo-cabecalho {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 5px;
+  white-space: nowrap;
+}
+.janela-recursos .hx-resumo-cabecalho > span {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.2px;
+}
+.janela-recursos .cabecalho-ficha .hx-resumo-cabecalho strong {
+  font-family: Inter, 'Segoe UI', sans-serif;
+  font-size: 14px;
+  font-weight: 800;
+  color: #f3dfb9;
+}
+.janela-recursos .hx-resumo-cabecalho small {
+  font-size: 10px;
+  font-weight: 450;
+  color: #b7aa97;
+}
+.janela-recursos .hx-resumo-hp .hx-resumo-cabecalho > span {
+  color: #eda5a6;
+}
+.janela-recursos .hx-resumo-mana .hx-resumo-cabecalho > span {
+  color: #9ecfec;
+}
+.janela-recursos .hx-resumo-barra {
+  margin-top: 5px;
+  height: 4px;
+  background: #0d111a;
+  border-radius: 999px;
+  overflow: hidden;
+}
+.janela-recursos .hx-resumo-barra > span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #a9454c, #e07b7d);
+}
+.janela-recursos .hx-resumo-mana .hx-resumo-barra > span {
+  background: linear-gradient(90deg, #286b99, #76bbdc);
+}
+.janela-recursos .cabecalho-ficha > .selo-ca {
+  flex: none;
+  white-space: nowrap;
+}
+/* Os valores estão sempre visíveis no cabeçalho; a aba Atributos só ajusta. */
+.janela-recursos .hx-ficha-atributos > .recurso .recurso-cabecalho {
+  margin-bottom: 5px;
+  color: #e5cfa9;
+  font-size: 12px;
+}
+.janela-recursos .hx-ficha-atributos > .recurso {
+  padding: 9px 11px;
+}
+.janela-recursos .hx-ficha-atributos > .recurso .recurso-quantidade {
+  margin-top: 5px;
+}
+.janela-recursos .hx-ficha-abas > button {
+  min-width: 0;
+  font-size: 12px !important;
+  line-height: 1.25;
+  white-space: normal;
+  text-align: center;
+  overflow-wrap: normal;
+}
+.janela-recursos .hx-ficha-abas {
+  overflow: visible;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 6px;
+}
+
+/* Janela intermediária: cabeçalho em duas faixas sem esconder HP e Mana. */
+@container (max-width:620px) {
+  .janela-recursos .cabecalho-ficha {
+    display: grid;
+    grid-template-columns: 44px minmax(0, 1fr) auto;
+    gap: 6px 10px;
+  }
+  .janela-recursos .cabecalho-ficha > .avatar-ficha {
+    grid-column: 1;
+    grid-row: 1;
+  }
+  .janela-recursos .cabecalho-ficha > .hx-ficha-identidade {
+    grid-column: 2;
+    grid-row: 1;
+  }
+  .janela-recursos .cabecalho-ficha > .selo-ca {
+    grid-column: 3;
+    grid-row: 1;
+  }
+  .janela-recursos .cabecalho-ficha > .hx-ficha-resumo {
+    grid-column: 1/-1;
+    grid-row: 2;
+    min-width: 0;
+    width: 100%;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .janela-recursos .cabecalho-ficha {
+    position: relative;
+    top: auto;
+  }
+  .janela-recursos .hx-ficha-abas {
+    position: relative;
+    top: auto;
+  }
+}
+
+/* Painéis compactos: a grade adapta-se à ficha, mesmo num monitor grande. */
+@container (max-width:560px) {
+  .janela-recursos .hx-ficha-atributos {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .janela-recursos .hx-ficha-atributos > .hx-ficha-ca-controle,
+  .janela-recursos .hx-ficha-atributos > .recurso-hp,
+  .janela-recursos .hx-ficha-atributos > .recurso-mana,
+  .janela-recursos .hx-ficha-atributos > .imp-escudo,
+  .janela-recursos .hx-ficha-atributos > .imp-dano-info,
+  .janela-recursos .hx-ficha-atributos > .janela-linha-acoes,
+  .janela-recursos .hx-ficha-atributos > .lista-condicoes,
+  .janela-recursos .hx-ficha-atributos > .acoes-ficha {
+    grid-column: 1;
+  }
+  .janela-recursos .hx-ficha-atributos > .hx-ficha-ca-controle {
+    grid-row: 1;
+  }
+  .janela-recursos .hx-ficha-atributos > .recurso-hp {
+    grid-row: 2;
+  }
+  .janela-recursos .hx-ficha-atributos > .recurso-mana {
+    grid-row: 3;
+  }
+  .janela-recursos .hx-ficha-atributos > .imp-escudo {
+    grid-row: 4;
+  }
+  .janela-recursos .hx-ficha-atributos > .imp-dano-info {
+    grid-row: 5;
+  }
+  .janela-recursos .hx-ficha-atributos > .janela-linha-acoes {
+    grid-row: 6;
+  }
+  .janela-recursos .hx-ficha-atributos > .lista-condicoes {
+    grid-row: 7;
+  }
+  .janela-recursos .hx-ficha-atributos > .acoes-ficha {
+    grid-row: 8;
+  }
+  .janela-recursos .hx-acoes-grade {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .janela-recursos .hx-acoes-da-ficha .hx-acao-ficha {
+    min-width: 0;
+  }
+  .janela-recursos .hx-acoes-toolbar {
+    flex-wrap: wrap;
+    gap: 9px;
+  }
+  .janela-recursos .hx-acoes-toolbar .hx-filtro-categoria select {
+    width: min(100%, 220px);
+  }
+}
+
+/* Redução extrema: abas em duas linhas, com texto legível, sem esmagar. */
+@container (max-width:440px) {
+  .janela-recursos .hx-ficha-abas {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 5px;
+    margin-bottom: 9px;
+  }
+  .janela-recursos .hx-ficha-abas > button {
+    min-height: 38px;
+    padding: 8px 4px !important;
+    font-size: 12px !important;
+    justify-content: center;
+  }
+  .janela-recursos .janela-conteudo {
+    padding: 8px 10px 10px;
+  }
+  .janela-recursos .hx-ficha-ca-controle label {
+    font-size: 12px;
+  }
+  .janela-recursos .hx-ficha-painel {
+    font-size: 12px;
+  }
+  .janela-recursos .recurso-quantidade-acoes {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 6px;
+  }
+  .janela-recursos .recurso-quantidade-acoes input {
+    grid-column: 1/-1;
+    min-height: 34px;
+  }
+  .janela-recursos .recurso-quantidade-acoes button {
+    min-height: 34px;
+    font-size: 12px !important;
+  }
+  .janela-recursos .hx-resumo-recurso {
+    padding: 6px;
+  }
+  .janela-recursos .hx-ficha-atributos > .imp-escudo p {
+    font-size: 11px;
+    line-height: 1.45;
+  }
+  .janela-recursos .hx-recurso-detalhes > summary {
+    font-size: 11px;
+  }
+  .janela-recursos .acoes-ficha button,
+  .janela-recursos .acoes-ficha a {
+    font-size: 11px !important;
+  }
+}
+
+/* Legibilidade nas abas de Habilidades e Inventário em janelas estreitas. */
+@container (max-width:440px) {
+  .janela-recursos .hx-acao-ficha-identidade strong,
+  .janela-recursos .hx-acao-ficha-valor {
+    font-size: 13px;
+  }
+  .janela-recursos .hx-acao-ficha-identidade span:not(.hx-icone-acao):not(.hx-icone-ausente),
+  .janela-recursos .hx-acoes-toolbar label {
+    font-size: 11px;
+  }
+  .janela-recursos .hx-acao-ficha-texto {
+    font-size: 12px;
+    line-height: 1.5;
+  }
+  .janela-recursos .hx-acao-ficha-botoes button {
+    font-size: 11px !important;
+    min-height: 32px;
+  }
+  .janela-recursos .hx-acoes-toolbar select {
+    max-width: 100%;
+    font-size: 12px;
+  }
+  .janela-recursos .imp-inventario {
+    min-width: 0;
+    font-size: 12px;
+  }
+  .janela-recursos .imp-inventario input,
+  .janela-recursos .imp-inventario select,
+  .janela-recursos .imp-inventario button {
+    min-width: 0;
+    font-size: 12px;
+  }
+  .janela-recursos .imp-item-nota {
+    font-size: 12px;
+  }
+}
+
+/* v1.3.40.21 — tamanho de abertura aprovado: ficha estreita, alta moderada,
+   com scroll interno e redimensionamento livre pelo mestre. */
+.janela-recursos:not(.minimizada) {
+  height: min(605px, calc(100dvh - 132px));
+}
+
+/* v1.3.4.56.16 — organização compacta por abas no Ímpeto A01. */
+.janela-recursos .hx-ficha-personagem {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+  max-width: 100%;
+}
+.janela-recursos .hx-ficha-personagem-cabecalho {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 9px 12px;
+  border: 1px solid rgba(203, 169, 118, 0.33);
+  background: #2e2930;
+  border-radius: 8px;
+}
+.janela-recursos .hx-ficha-personagem-cabecalho strong {
+  font:
+    700 13px Cinzel,
+    Georgia,
+    serif;
+  color: #efd8ab;
+}
+.janela-recursos .hx-ficha-personagem-cabecalho small {
+  font-size: 10px;
+  color: #c0b9ba;
+}
+.janela-recursos .hx-ficha-personagem-abas {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 5px;
+  min-width: 0;
+}
+.janela-recursos .hx-ficha-personagem-abas button {
+  min-width: 0;
+  min-height: 37px;
+  padding: 8px 4px !important;
+  font-size: 11px !important;
+  white-space: normal;
+  line-height: 1.25;
+  border: 1px solid #655846;
+  border-radius: 7px;
+  background: #24232a;
+  color: #dbccb5;
+  cursor: pointer;
+}
+.janela-recursos .hx-ficha-personagem-abas button[aria-selected='true'] {
+  color: #ffdfaf;
+  background: #57412f;
+  border-color: #d4af7d;
+  box-shadow: inset 0 -2px #d2a46f;
+}
+.janela-recursos .hx-ficha-personagem-conteudo {
+  min-width: 0;
+  max-width: 100%;
+}
+.janela-recursos .hx-ficha-personagem-conteudo .impeto-a01-painel {
+  min-width: 0;
+}
+@container (max-width:440px) {
+  .janela-recursos .hx-ficha-abas {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .janela-recursos .hx-ficha-personagem-abas button {
+    font-size: 11px !important;
+  }
+}
+
+/* v1.3.40.23 — dimensões exclusivas do token em pé na Mesa 3D. */
+.token-dimensoes-3d {
+  display: grid;
+  gap: 11px;
+  padding: 12px;
+  border: 1px solid #755d3c80;
+  border-radius: 10px;
+  background: #1d1b1a;
+}
+.token-dimensoes-3d > label {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 6px;
+  color: #e3cfab;
+  font-size: 12px;
+}
+.token-dimensoes-3d > label strong {
+  color: #edc891;
+}
+.token-dimensoes-3d input[type='range'] {
+  grid-column: 1/-1;
+  width: 100%;
+  accent-color: #bf9a67;
+}
+.token-dimensoes-3d button {
+  width: max-content;
+  max-width: 100%;
+  background: #352b25;
+  border: 1px solid #8e714b;
+  color: #f1d5a9;
+  border-radius: 7px;
+  padding: 9px 12px;
+}

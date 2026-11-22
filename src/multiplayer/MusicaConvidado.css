@@ -1,0 +1,104 @@
+/* v29.15.30.19: controles dentro da janela flutuante do jogador (Apoio). */
+.pm-jogo .pm-jogo-janela.janela-musica {
+  width: min(365px, calc(100vw - 24px));
+  height: auto;
+  min-height: 41px;
+  max-height: min(410px, calc(100dvh - 100px));
+  resize: both;
+}
+.pm-jogo .pm-jogo-janela.janela-musica .janela-conteudo {
+  padding: 12px;
+  overflow: auto;
+}
+.pm-musica-convidado {
+  display: grid;
+  gap: 11px;
+  min-width: 0;
+  color: #e8daca;
+  font-family: inherit;
+}
+.pm-musica-convidado audio {
+  display: none;
+}
+.pm-musica-faixa {
+  display: grid;
+  gap: 5px;
+  padding: 12px;
+  border: 1px solid #745b43;
+  border-radius: 8px;
+  background: #161d27;
+  min-width: 0;
+}
+.pm-musica-faixa small {
+  font-size: 10px;
+  color: #c7aa82;
+  letter-spacing: 0.05em;
+  font-weight: 750;
+}
+.pm-musica-faixa b {
+  font-size: 13px;
+  color: #fff0d5;
+  overflow-wrap: anywhere;
+}
+.pm-jogo .pm-musica-ativar {
+  background: #8d663f;
+  color: #fff5de;
+  border: 1px solid #dbad72;
+  border-radius: 7px;
+  padding: 10px;
+  font-weight: 800;
+}
+.pm-musica-vol {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr auto;
+  align-items: center;
+  gap: 9px;
+  font-size: 11px;
+}
+.pm-musica-vol input {
+  width: 100%;
+  accent-color: #c59a6d;
+  cursor: pointer;
+}
+.pm-musica-vol strong {
+  font-variant-numeric: tabular-nums;
+  color: #f2d8ac;
+}
+.pm-jogo .pm-musica-mut {
+  background: #282c37;
+  border: 1px solid #655b50;
+  color: #ead5b5;
+  border-radius: 6px;
+  padding: 8px;
+}
+.pm-musica-nota {
+  color: #bcb5a8;
+  font-size: 10px;
+  line-height: 1.5;
+}
+.pm-musica-erro {
+  font-size: 11px;
+  color: #ffc4ba;
+  margin: 0;
+}
+.pm-jogo .pm-jogo-superior-acoes .pm-jogo-trocar-visao-unica {
+  min-width: 94px;
+  padding: 8px 12px;
+  white-space: nowrap;
+  font-weight: 800;
+  border-radius: 6px;
+}
+.pm-jogo .pm-jogo-superior-acoes .pm-jogo-trocar-visao-unica:not(:disabled):hover {
+  background: #403229;
+  border-color: #c9a26b;
+}
+.pm-jogo .pm-jogo-superior-acoes .pm-jogo-trocar-visao-unica:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+@media (max-width: 620px) {
+  .pm-jogo .pm-jogo-janela.janela-musica {
+    width: min(365px, calc(100vw - 20px));
+    resize: none;
+  }
+}

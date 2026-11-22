@@ -1,0 +1,123 @@
+/* Ponte visual discreta: mantém integralmente a identidade do Criador de Fichas original. */
+.integracao-criador {
+  max-width: 1050px;
+  margin: 18px auto 8px;
+  padding: 12px 18px;
+  border: 1px solid rgba(220, 180, 110, 0.35);
+  border-radius: 14px;
+  background: #151b26f0;
+  position: relative;
+  z-index: 3;
+  color: #eadcc7;
+  box-shadow: 0 10px 32px #0005;
+}
+.integracao-criador-topo {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-bottom: 11px;
+}
+.integracao-voltar {
+  font-size: 13px;
+  color: #edc991 !important;
+  text-decoration: none;
+  font-weight: 700;
+}
+.integracao-label {
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  color: #b99f71;
+  font-weight: 750;
+}
+.integracao-acoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+.integracao-acoes button,
+.integracao-acoes a,
+.integracao-acoes label {
+  border: 1px solid #73624d;
+  background: #262d37;
+  border-radius: 8px;
+  cursor: pointer;
+  font:
+    700 12px/1.25 system-ui,
+    sans-serif;
+  padding: 10px 14px;
+  color: #e8ddcb;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 38px;
+}
+.integracao-acoes button:hover,
+.integracao-acoes a:hover,
+.integracao-acoes label:hover {
+  background: #383e46;
+}
+.integracao-acoes .integracao-salvar {
+  color: #241b12;
+  background: #e4be81;
+  border-color: #e4be81;
+  margin-left: auto;
+}
+.integracao-acoes .integracao-salvar:disabled {
+  opacity: 0.65;
+  cursor: wait;
+}
+.integracao-estado {
+  font:
+    12px/1.5 system-ui,
+    sans-serif;
+  color: #b9c5ce;
+  margin: 9px 0 0;
+}
+@media (max-width: 650px) {
+  .integracao-criador {
+    margin: 10px 10px 0;
+    padding: 11px;
+  }
+  .integracao-acoes {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .integracao-acoes button,
+  .integracao-acoes a,
+  .integracao-acoes label {
+    font-size: 11px;
+    padding: 8px;
+  }
+  .integracao-acoes .integracao-salvar {
+    margin-left: 0;
+  }
+}
+
+.integracao-criador-topo .integracao-label {
+  margin-left: auto;
+}
+.integracao-estado a {
+  color: #e9c488;
+  text-underline-offset: 3px;
+  margin-left: 9px;
+}
+
+/* v1.3.4 — Identifica o gerador especializado sem alterar o editor original. */
+.integracao-escopo {
+  font:
+    12px/1.55 system-ui,
+    sans-serif;
+  color: #d2d7dc;
+  background: #202735;
+  border: 1px solid #635d58;
+  border-radius: 9px;
+  padding: 10px 13px;
+  margin: 0 0 12px;
+}
+.integracao-escopo strong {
+  color: #f3cf9c;
+}

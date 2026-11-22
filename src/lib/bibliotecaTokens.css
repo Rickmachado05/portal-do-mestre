@@ -1,0 +1,74 @@
+.biblioteca-tokens-mestre {
+  background: #18191d;
+  border-color: #514b46;
+}
+.biblioteca-tokens-mestre .biblioteca-idle-lista {
+  grid-template-columns: repeat(auto-fill, minmax(148px, 1fr));
+  max-height: 440px;
+}
+.biblioteca-tokens-mestre .biblioteca-idle-preview {
+  height: 124px;
+}
+.biblioteca-tokens-mestre .biblioteca-idle-config label {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.biblioteca-tokens-mestre .biblioteca-idle-config select {
+  min-width: 94px;
+}
+.biblioteca-tokens-mestre .biblioteca-idle-cartao {
+  background: #212126;
+}
+
+/* Tema consistente também para a seção Tokens do menu do mestre. */
+.biblioteca-tokens-mestre {
+  color-scheme: dark;
+}
+.biblioteca-tokens-mestre :is(input:not([type='checkbox']):not([type='file']), select) {
+  background: #15171b !important;
+  color: #e6ddd0 !important;
+  border: 1px solid #685b4b !important;
+  border-radius: 7px !important;
+  padding: 9px 11px !important;
+  font:
+    500 12px system-ui,
+    sans-serif !important;
+  box-shadow: none !important;
+  min-height: 36px !important;
+  box-sizing: border-box;
+}
+.biblioteca-tokens-mestre input::placeholder {
+  color: #969087 !important;
+}
+.biblioteca-tokens-mestre input[type='checkbox'] {
+  accent-color: #c09c72;
+}
+.biblioteca-tokens-mestre button {
+  background: #302b2b !important;
+  color: #e6d7c0 !important;
+  border: 1px solid #75634f !important;
+  border-radius: 7px !important;
+  padding: 8px 11px !important;
+  font:
+    600 12px system-ui,
+    sans-serif !important;
+  cursor: pointer;
+}
+.biblioteca-tokens-mestre button:hover:not(:disabled) {
+  background: #41352f !important;
+  border-color: #a18a70 !important;
+}
+.biblioteca-tokens-mestre button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.biblioteca-tokens-mestre .biblioteca-idle-excluir {
+  color: #e6afaa !important;
+  border-color: #775654 !important;
+  background: #342626 !important;
+}
+.biblioteca-tokens-mestre :is(button, input, select):focus-visible {
+  outline: 2px solid #d1af7d !important;
+  outline-offset: 2px;
+}

@@ -1,0 +1,303 @@
+/* v1.3.32 — o refino v1.3.31 agora é compartilhado pelas Mesas 2D e 3D.
+   Grupos recolhíveis, controles auxiliares separados e zoom com área própria.
+   Sem interferir nos componentes de janelas, tokens ou regras de sessão. */
+:is(.mesa-app, .pm-jogo) .atalhos-direita {
+  top: 76px;
+  right: 12px;
+  bottom: 264px;
+  width: 132px;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 0 3px 8px 1px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: #856e50 transparent;
+  overscroll-behavior: contain;
+}
+:is(.mesa-app, .pm-jogo) .hx-dock-grupo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: none;
+  padding: 6px;
+  border-radius: 9px;
+  border: 1px solid rgba(178, 147, 101, 0.25);
+  background: linear-gradient(165deg, rgba(23, 26, 32, 0.9), rgba(12, 18, 25, 0.84));
+  box-shadow: 0 5px 14px rgba(0, 0, 0, 0.17);
+}
+:is(.mesa-app, .pm-jogo) .atalhos-direita .hx-dock-cabecalho {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 25px;
+  width: 100%;
+  padding: 3px 5px;
+  background: transparent;
+  border: 0;
+  border-radius: 5px;
+  box-shadow: none;
+  text-align: left;
+  cursor: pointer;
+}
+:is(.mesa-app, .pm-jogo) .atalhos-direita .hx-dock-cabecalho > span {
+  display: inline;
+  width: auto;
+  font-size: 9px;
+  line-height: 1.1;
+  color: #c8ad80;
+  font-weight: 800;
+  letter-spacing: 1.1px;
+}
+:is(.mesa-app, .pm-jogo) .atalhos-direita .hx-dock-cabecalho > span:last-child {
+  color: #ad936d;
+  font-size: 13px;
+  letter-spacing: 0;
+}
+:is(.mesa-app, .pm-jogo) .atalhos-direita .hx-dock-cabecalho:hover,
+:is(.mesa-app, .pm-jogo) .atalhos-direita .hx-dock-cabecalho:focus-visible {
+  background: #4b3b3080;
+}
+:is(.mesa-app, .pm-jogo) .hx-dock-itens {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+}
+:is(.mesa-app, .pm-jogo) .atalhos-direita .hx-dock-itens > button {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+  min-height: 36px;
+  margin: 0;
+  padding: 7px 6px;
+  gap: 6px;
+  background: #1a1e26d9;
+  border: 1px solid rgba(160, 133, 95, 0.35);
+  border-radius: 6px;
+  box-shadow: none;
+  transition:
+    background 0.16s,
+    border-color 0.16s;
+}
+:is(.mesa-app, .pm-jogo) .atalhos-direita .hx-dock-itens > button:hover,
+:is(.mesa-app, .pm-jogo) .atalhos-direita .hx-dock-itens > button:focus-visible {
+  border-color: #bc9a68;
+  background: #39323a;
+}
+:is(.mesa-app, .pm-jogo) .atalhos-direita .hx-dock-itens > button.ativo {
+  border-color: #ccaa7b;
+  background: #403229;
+  box-shadow: inset 2px 0 #c9a26b;
+}
+:is(.mesa-app, .pm-jogo) .atalhos-direita .hx-dock-itens > button > span {
+  width: 18px;
+  flex: none;
+  text-align: center;
+  color: #d6b17d;
+  font-size: 15px;
+}
+:is(.mesa-app, .pm-jogo) .atalhos-direita .hx-dock-itens > button > strong {
+  display: block;
+  min-width: 0;
+  overflow-wrap: break-word;
+  text-align: left;
+  font-size: 10px;
+  line-height: 1.25;
+  color: #e3d8c5;
+}
+/* Controles auxiliares em área própria abaixo do menu: sem sobrepor Clima nem zoom. */
+:is(.mesa-app, .pm-jogo) .hd-dados-central {
+  right: 13px;
+  bottom: 164px;
+  width: 127px;
+  max-width: 127px;
+}
+:is(.mesa-app, .pm-jogo) .hd-dados-acoes {
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+  align-items: stretch;
+}
+:is(.mesa-app, .pm-jogo) .hd-dados-acoes .hd-editor-abrir {
+  width: 100%;
+  min-height: 36px;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 7px 5px;
+  font-size: 10px;
+  text-align: center;
+  border-color: #816a50;
+  border-radius: 7px;
+  background: #221f2be8;
+}
+:is(.mesa-app, .pm-jogo) .hd-dados-acoes .hd-editor-abrir > span:first-child {
+  font-size: 16px;
+}
+:is(.mesa-app, .pm-jogo) .hd-dados-central > .hd-editor-painel:not(.hd-biblioteca-painel) {
+  right: 145px;
+  bottom: 0;
+}
+:is(.mesa-app, .pm-jogo) .hd-biblioteca-painel.hd-biblioteca-recolhida {
+  right: 155px;
+  bottom: 160px;
+}
+:is(.mesa-app, .pm-jogo) .navegacao-mapa {
+  right: 13px;
+  bottom: 95px;
+  width: 127px;
+  min-height: 45px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 3px;
+  border-color: #8f7958;
+  background: #171a22e8;
+}
+:is(.mesa-app, .pm-jogo) .navegacao-mapa button {
+  min-width: 28px;
+  padding: 6px 5px;
+}
+:is(.mesa-app, .pm-jogo) .navegacao-mapa span {
+  min-width: 23px;
+}
+:is(.mesa-app, .pm-jogo) .barra-ferramentas-mapa {
+  max-width: calc(100vw - 365px);
+  overflow-x: auto;
+  overflow-y: hidden;
+  overscroll-behavior-inline: contain;
+  scrollbar-width: thin;
+  scrollbar-color: #685744 transparent;
+  box-shadow: 0 6px 20px #0006;
+}
+/* Tamanho de janela não interfere no acesso às ferramentas da direita. */
+@media (max-width: 1120px) {
+  :is(.mesa-app, .pm-jogo) .atalhos-direita {
+    right: 8px;
+    width: 117px;
+    bottom: 245px;
+  }
+  :is(.mesa-app, .pm-jogo) .atalhos-direita .hx-dock-itens > button > strong {
+    display: block;
+    font-size: 9px;
+  }
+  :is(.mesa-app, .pm-jogo) .atalhos-direita .hx-dock-itens > button {
+    justify-content: flex-start;
+  }
+  :is(.mesa-app, .pm-jogo) .hd-dados-central {
+    right: 8px;
+    width: 110px;
+    max-width: 110px;
+    bottom: 152px;
+  }
+  :is(.mesa-app, .pm-jogo) .navegacao-mapa {
+    right: 8px;
+    width: 110px;
+    bottom: 86px;
+  }
+  :is(.mesa-app, .pm-jogo) .barra-ferramentas-mapa {
+    max-width: calc(100vw - 290px);
+  }
+}
+@media (max-width: 780px) {
+  :is(.mesa-app, .pm-jogo) .atalhos-direita {
+    top: 66px;
+    right: 5px;
+    bottom: 227px;
+    width: 100px;
+    gap: 6px;
+  }
+  :is(.mesa-app, .pm-jogo) .hx-dock-grupo {
+    padding: 4px;
+  }
+  :is(.mesa-app, .pm-jogo) .hx-dock-cabecalho {
+    min-height: 23px;
+  }
+  :is(.mesa-app, .pm-jogo) .atalhos-direita .hx-dock-itens > button {
+    min-height: 32px;
+    padding: 5px 4px;
+  }
+  :is(.mesa-app, .pm-jogo) .hd-dados-central {
+    right: 5px;
+    width: 96px;
+    max-width: 96px;
+    bottom: 141px;
+  }
+  :is(.mesa-app, .pm-jogo) .hd-dados-acoes .hd-editor-abrir {
+    min-height: 32px;
+    padding: 5px 4px;
+  }
+  :is(.mesa-app, .pm-jogo) .hd-dados-central > .hd-editor-painel:not(.hd-biblioteca-painel) {
+    right: 105px;
+  }
+  :is(.mesa-app, .pm-jogo) .navegacao-mapa {
+    right: 5px;
+    width: 96px;
+    bottom: 78px;
+    min-height: 41px;
+  }
+  :is(.mesa-app, .pm-jogo) .barra-ferramentas-mapa {
+    max-width: calc(100vw - 205px);
+  }
+}
+@media (max-width: 520px) {
+  :is(.mesa-app, .pm-jogo) .atalhos-direita {
+    width: 65px;
+    bottom: 201px;
+  }
+  :is(.mesa-app, .pm-jogo) .hx-dock-grupo {
+    padding: 3px;
+  }
+  :is(.mesa-app, .pm-jogo) .atalhos-direita .hx-dock-cabecalho > span:first-child {
+    font-size: 7px;
+    letter-spacing: 0;
+  }
+  :is(.mesa-app, .pm-jogo) .atalhos-direita .hx-dock-itens > button {
+    justify-content: center;
+    padding: 5px 2px;
+  }
+  :is(.mesa-app, .pm-jogo) .atalhos-direita .hx-dock-itens > button > strong {
+    display: none;
+  }
+  :is(.mesa-app, .pm-jogo) .hd-dados-central {
+    width: 61px;
+    max-width: 61px;
+    bottom: 125px;
+  }
+  :is(.mesa-app, .pm-jogo) .hd-dados-acoes .hd-editor-abrir > span:last-child {
+    display: none;
+  }
+  :is(.mesa-app, .pm-jogo) .hd-dados-acoes .hd-editor-abrir {
+    min-height: 28px;
+    padding: 4px;
+  }
+  :is(.mesa-app, .pm-jogo) .hd-dados-central > .hd-editor-painel:not(.hd-biblioteca-painel) {
+    right: 70px;
+  }
+  :is(.mesa-app, .pm-jogo) .navegacao-mapa {
+    width: 61px;
+    bottom: 65px;
+  }
+  :is(.mesa-app, .pm-jogo) .navegacao-mapa span {
+    display: none;
+  }
+  :is(.mesa-app, .pm-jogo) .barra-ferramentas-mapa {
+    max-width: calc(100vw - 150px);
+  }
+}
+@media (max-width: 520px) {
+  :is(.mesa-app, .pm-jogo) .navegacao-mapa {
+    width: 73px;
+  }
+  :is(.mesa-app, .pm-jogo) .navegacao-mapa button {
+    min-width: 18px;
+    padding: 5px 1px;
+    font-size: 13px;
+  }
+}
