@@ -247,7 +247,7 @@ export default function MultiplayerMestre({campanhaId,campanha,modo='cabecalho'}
             <p>{auxiliar?.estado==='pronto'?'Servidor e Cloudflare conectados.':auxiliar?.estado==='iniciando'?auxiliar.mensagem:auxiliar?.estado==='erro'?auxiliar.mensagem:auxiliar?.estado==='parado'?'Auxiliar detectado no Windows e aguardando você iniciar a sala.':verificandoAuxiliar?'Verificando a conexão com o Windows…':auxiliarIndisponivel?'Não foi possível acessar o auxiliar local. Isso também pode ser uma permissão bloqueada no navegador.':'Ao abrir este painel, o Portal verifica se o auxiliar está acessível.'}</p>
             {detalheAuxiliar&&<p className="pm-mp-nota">{detalheAuxiliar}</p>}
             <button type="button" className="pm-mp-auxiliar-abrir" disabled={verificandoAuxiliar||processando} onClick={()=>void verificarAuxiliar()}>{verificandoAuxiliar?'Verificando…':'Verificar auxiliar'}</button>
-            {auxiliarIndisponivel&&<button type="button" className="pm-mp-auxiliar-abrir" onClick={abrirAuxiliarInstalado}>Abrir auxiliar instalado no Windows</button>
+            {auxiliarIndisponivel&&<button type="button" className="pm-mp-auxiliar-abrir" onClick={abrirAuxiliarInstalado}>Abrir auxiliar instalado no Windows</button>}
             {auxiliar?.estado==='pronto'&&<button type="button" className="pm-mp-auxiliar-desligar" disabled={desligandoAuxiliar||processando} onClick={()=>void desligarServidor()}>{desligandoAuxiliar?'Desligando…':'Desligar servidor e Tunnel'}</button>}
           </div>}
           <div className="pm-mp-instalar">
