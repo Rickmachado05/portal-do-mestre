@@ -28,7 +28,7 @@ No ZIP há um script opcional que **pede sua confirmação** antes de baixar o e
 powershell -NoProfile -ExecutionPolicy Bypass -File .\\BAIXAR_CLOUDFLARED.ps1
 ```
 
-Como alternativa, baixe o executável oficial manualmente, renomeie para `cloudflared.exe` e coloque-o na mesma pasta do instalador.
+**Importante ao baixar manualmente:** renomeie o executável para **`cloudflared.exe`** e coloque-o na **pasta principal do Auxiliar do Mestre extraída do ZIP**, ao lado de `INSTALAR_AUXILIAR_DO_MESTRE.ps1` e `BAIXAR_CLOUDFLARED.ps1` (não dentro da subpasta `scripts` ou outra pasta). O script de download acima já salva o arquivo com o nome e no local corretos.
 
 ## 3. Instalar o auxiliar uma vez
 
