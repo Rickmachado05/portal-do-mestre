@@ -168,3 +168,12 @@
 .pm-mp-auxiliar-abrir{background:#2f4658;color:#f4e3c5}
 .pm-mp-auxiliar-desligar{background:#4b3136;color:#f8d8d6}
 .pm-mp-auxiliar button:disabled{opacity:.6;cursor:not-allowed}
+
+/* v29.15.30.26 — download público do kit do mestre */
+.pm-mp-instalar{margin:16px 0 18px;padding:14px;background:#142532;border:1px solid #60727e;border-radius:10px;color:#edd7b7}
+.pm-mp-instalar strong{font:700 13px Inter,system-ui,sans-serif;color:#f1d6ae}
+.pm-mp-instalar p{font-size:12px!important;margin:6px 0 12px!important}
+.pm-mp-instalar-links{display:flex;gap:8px;flex-wrap:wrap}
+.pm-mp-instalar-links a{display:inline-flex;align-items:center;justify-content:center;padding:9px 12px;min-height:37px;background:#bd955c;border:1px solid #e1b985;color:#162130;border-radius:7px;font:800 12px Inter,system-ui,sans-serif;text-decoration:none;flex:1 1 155px}
+.pm-mp-instalar-links a+a{color:#f4dfbd;background:#22394a;border-color:#748c9b}
+.pm-mp-instalar-links a:hover{filter:brightness(1.12)}

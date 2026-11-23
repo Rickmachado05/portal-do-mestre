@@ -1,0 +1,32 @@
+PORTAL DO MESTRE — AUXILIAR WINDOWS (MESTRES)
+============================================
+O kit permite que voce hospede a sua mesa usando o SEU computador.
+JOGADORES NAO INSTALAM NADA. Eles entram somente pelo convite.
+
+1. Extraia este ZIP para uma pasta permanente no Windows.
+2. Instale Node.js LTS 22+ em https://nodejs.org/en/download.
+3. No PowerShell da pasta extraida, baixe o Cloudflare oficial:
+   powershell -NoProfile -ExecutionPolicy Bypass -File .\BAIXAR_CLOUDFLARED.ps1
+   O script pede sua confirmacao. Como alternativa, coloque cloudflared.exe
+   na pasta, obtido do site oficial da Cloudflare.
+4. Confira os scripts e instale uma unica vez:
+   powershell -NoProfile -ExecutionPolicy Bypass -File .\INSTALAR_AUXILIAR_DO_MESTRE.ps1
+5. No mesmo computador, abra https://portal-do-mestre.vercel.app,
+   abra uma campanha e clique em Multiplayer > Iniciar sala multiplayer.
+6. Se necessario, permita acesso ao proprio PC (loopback) para o dominio oficial.
+7. Copie o LINK DE CONVITE e envie aos jogadores. Mantenha o PC ligado.
+
+O pacote nao inclui Node.js nem cloudflared.exe. A hospedagem depende
+do PC do mestre, da internet e dos limites do Cloudflare Quick Tunnel.
+O auxiliar atende apenas 127.0.0.1:8790; o servidor fica em 127.0.0.1:8787.
+
+DIAGNOSTICO (PowerShell):
+ Test-NetConnection 127.0.0.1 -Port 8790
+ Log: .portal-multiplayer-sessoes\auxiliar-mestre.log
+
+DESINSTALAR:
+ powershell -NoProfile -ExecutionPolicy Bypass -File .\DESINSTALAR_AUXILIAR_DO_MESTRE.ps1
+ Encerre o processo auxiliar antes de apagar os arquivos.
+
+Documentacao: https://portal-do-mestre.vercel.app/como-hospedar.html
+Codigo-fonte: https://github.com/Rickmachado05/portal-do-mestre

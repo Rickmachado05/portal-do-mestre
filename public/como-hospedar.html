@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Como instalar o Auxiliar do Mestre e hospedar gratuitamente sua mesa RPG pelo próprio computador.">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<title>Como hospedar — Portal do Mestre</title>
+<style>
+:root{font-family:Inter,system-ui,Segoe UI,sans-serif;color:#ede7da;background:#0c1520;color-scheme:dark}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 10% 0%,#27404b,transparent 42%),#0c1520;line-height:1.65;min-height:100vh}
+main{max-width:920px;margin:auto;padding:35px 20px 75px}
+a{color:#f0cca0}a:hover{color:#ffe5bc}h1,h2{font-family:Georgia,serif;font-weight:400;color:#f5dfb9;line-height:1.2}
+h1{font-size:clamp(32px,5vw,50px);margin:25px 0 12px}h2{font-size:25px}
+.eyebrow{color:#d6b078;text-transform:uppercase;letter-spacing:.14em;font-size:11px;font-weight:800}
+.lead{font-size:17px;color:#c5d0d2;max-width:780px}
+.panel{padding:22px;border:1px solid #4d6672;border-radius:12px;background:#172735;margin:20px 0}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px}
+.grid .panel{margin:4px 0}.grid h2{margin-top:0}
+.btn{display:inline-flex;align-items:center;justify-content:center;border-radius:8px;padding:13px 16px;margin:5px 8px 5px 0;background:#bd955c;border:1px solid #e0b782;color:#11202a;text-decoration:none;font-weight:800}
+.btn.secondary{background:#253e4b;color:#f5dfb9;border-color:#8395a4}
+ol{padding-left:24px}li{margin:7px 0 16px}pre{white-space:pre-wrap;overflow-wrap:anywhere;padding:12px;background:#0b1822;border:1px solid #3e5663;border-radius:7px;font-size:12px}
+code{color:#ffe1a9;overflow-wrap:anywhere}.note{border-left:3px solid #d0a66f;padding:13px;background:#203343;border-radius:5px}
+.muted,footer{font-size:13px;color:#afc0ca}footer{margin-top:32px}
+</style>
+</head>
+<body><main>
+<a href="/">← Voltar ao Portal do Mestre</a>
+<p class="eyebrow">Portal do Mestre · Hospedagem comunitária</p>
+<h1>Hospede sua mesa gratuitamente</h1>
+<p class="lead">Qualquer mestre pode usar o Portal e abrir uma sessão online usando o próprio PC Windows. O site fica na Vercel; o servidor multiplayer da sua mesa fica no seu computador, acessível aos convidados por Cloudflare Tunnel.</p>
+<div class="grid"><section class="panel"><h2>Para mestres</h2><p>Baixe e instale uma vez o Auxiliar do Mestre. Depois basta iniciar a sala pelo Portal.</p></section><section class="panel"><h2>Para jogadores</h2><p>Não precisam baixar nenhum arquivo. Basta abrir o link de convite enviado pelo mestre.</p></section></div>
+<section class="panel">
+<p class="eyebrow">Windows 10/11 · x64</p>
+<h2>Instalação do Auxiliar do Mestre</h2>
+<a class="btn" href="/downloads/auxiliar-do-mestre-windows.zip" download="auxiliar-do-mestre-windows.zip">↓ Baixar Auxiliar do Mestre (.zip)</a>
+<a class="btn secondary" href="https://github.com/Rickmachado05/portal-do-mestre" target="_blank" rel="noopener noreferrer">Ver código no GitHub</a>
+<ol>
+<li><strong>Baixe e extraia</strong> o ZIP em uma pasta permanente, como <code>Documentos\PortalMestreAuxiliar</code>. Não execute os scripts dentro do arquivo comprimido.</li>
+<li>Instale <a href="https://nodejs.org/en/download" target="_blank" rel="noopener noreferrer">Node.js LTS 22 ou superior</a>, se ainda não tiver.</li>
+<li>Abra um <strong>PowerShell na pasta extraída</strong> e obtenha o Cloudflare Tunnel oficial. O kit contém um script que pede confirmação antes do download:
+<pre>powershell -NoProfile -ExecutionPolicy Bypass -File .\BAIXAR_CLOUDFLARED.ps1</pre>
+<span class="muted">Também é possível baixar o <code>cloudflared.exe</code> manualmente pela <a href="https://developers.cloudflare.com/cloudflare-one/networks/connectors/cloudflare-tunnel/downloads/" target="_blank" rel="noopener noreferrer">Cloudflare oficial</a>.</span></li>
+<li>Confira os arquivos e instale o auxiliar uma única vez:
+<pre>powershell -NoProfile -ExecutionPolicy Bypass -File .\INSTALAR_AUXILIAR_DO_MESTRE.ps1</pre>
+<span class="muted">Ele registra um pequeno agente de inicialização para seu usuário Windows; o servidor e o túnel só começam quando você iniciar uma sessão.</span></li>
+<li>Abra <a href="https://portal-do-mestre.vercel.app">o Portal do Mestre</a> neste mesmo PC, entre na campanha e clique em <strong>Multiplayer → Iniciar sala multiplayer</strong>. Se o navegador pedir permissão de rede local, autorize para o site oficial.</li>
+<li>Copie o <strong>link de convite</strong> e envie aos jogadores. Mantenha o PC ligado durante a sessão.</li>
+</ol>
+<p class="note"><strong>Importante:</strong> o kit não inclui o Node.js nem o executável da Cloudflare. Ele não fornece hospedagem permanente na nuvem; depende do seu computador e de sua conexão com a internet.</p>
+</section>
+<section class="panel">
+<h2>Dúvidas frequentes</h2>
+<p><strong>Meu jogador precisa instalar algo?</strong> Não; só abre o convite enviado pelo mestre.</p>
+<p><strong>Tem mensalidade?</strong> A hospedagem local não exige servidor central pago, mas está sujeita aos termos e limites do Cloudflare Quick Tunnel.</p>
+<p><strong>Auxiliar não encontrado?</strong> No PowerShell, execute <code>Test-NetConnection 127.0.0.1 -Port 8790</code>; verifique a permissão local do navegador e o log <code>.portal-multiplayer-sessoes\auxiliar-mestre.log</code>.</p>
+<p><strong>Como desinstalo?</strong> Execute <code>DESINSTALAR_AUXILIAR_DO_MESTRE.ps1</code> com PowerShell na pasta extraída e encerre o agente antes de apagar os arquivos.</p>
+<p><strong>Já tenho o projeto no VS Code.</strong> Continue utilizando sua instalação. O kit é para outros mestres que precisam apenas da hospedagem.</p>
+<a href="https://github.com/Rickmachado05/portal-do-mestre/blob/main/GUIA_HOSPEDAGEM_PUBLICA_WINDOWS.md" target="_blank" rel="noopener noreferrer">Ler o guia técnico completo no GitHub</a>
+</section>
+<footer>Projeto independente de portfólio. Campanhas e backups permanecem sob controle do mestre. Evite compartilhar arquivos ou credenciais privadas da sessão.</footer>
+</main></body></html>

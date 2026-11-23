@@ -210,6 +210,14 @@ export default function MultiplayerMestre({campanhaId,campanha,modo='cabecalho'}
             {auxiliarIndisponivel&&<button type="button" className="pm-mp-auxiliar-abrir" onClick={abrirAuxiliarInstalado}>Abrir auxiliar instalado no Windows</button>}
             {auxiliar?.estado==='pronto'&&<button type="button" className="pm-mp-auxiliar-desligar" disabled={desligandoAuxiliar||processando} onClick={()=>void desligarServidor()}>{desligandoAuxiliar?'Desligando…':'Desligar servidor e Tunnel'}</button>}
           </div>}
+          <div className="pm-mp-instalar">
+            <strong>Quer hospedar como mestre em outro computador?</strong>
+            <p>O Portal é gratuito. Baixe o Auxiliar do Mestre uma vez no Windows. Jogadores só precisam do convite.</p>
+            <div className="pm-mp-instalar-links">
+              <a href="/downloads/auxiliar-do-mestre-windows.zip" download="auxiliar-do-mestre-windows.zip">↓ Baixar auxiliar (.zip)</a>
+              <a href="/como-hospedar.html" target="_blank" rel="noopener noreferrer">Como hospedar uma mesa</a>
+            </div>
+          </div>
           <p>Inicie uma sala para gerar o convite. O mestre precisa manter o PC ligado durante a sessão.</p>
           <button type="button" disabled={processando} onClick={()=>void criar()}>{processando?'Iniciando servidor e sala…':'＋ Iniciar sala multiplayer'}</button>
         </div>:<>

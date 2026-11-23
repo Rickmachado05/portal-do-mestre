@@ -8,5 +8,6 @@ node_modules/
 dist/
 .vercel/
 .git/
-scripts/
 logs/
+# Os scripts são usados na compilação para gerar o ZIP público do auxiliar.
+# Apenas dist/ é servido; o diretório scripts/ não se torna público como rota.

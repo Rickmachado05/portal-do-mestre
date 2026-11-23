@@ -2,7 +2,21 @@
 
 Portal virtual para mesas de RPG, com mesas 2D e 3D, personagens, inventário, fichas, diário, música, chat e multiplayer de convidados.
 
-**Versão de referência:** v29.15.30.25 (auxiliar local para iniciar o multiplayer pelo botão da Vercel). Projeto pessoal de portfólio.
+**Versão de referência:** v29.15.30.26 — hospedagem comunitária pelo PC do mestre. Projeto pessoal de portfólio.
+
+## Para jogar ou mestrar
+
+**Jogadores:** abrem somente o link de convite enviado pelo mestre. Não instalam nada.
+
+**Mestres:** criam campanhas e mesas em https://portal-do-mestre.vercel.app. Para disponibilizar sessões multiplayer pela internet, devem instalar uma única vez o **Auxiliar do Mestre** no próprio Windows. O site inicia o servidor e o Cloudflare Tunnel pelo botão Multiplayer; o PC do mestre precisa permanecer ligado.
+
+- **[Baixar o Auxiliar do Mestre (.zip)](https://portal-do-mestre.vercel.app/downloads/auxiliar-do-mestre-windows.zip)**
+- **[Tutorial no próprio Portal](https://portal-do-mestre.vercel.app/como-hospedar.html)**
+- **[Guia de instalação para outros mestres](GUIA_HOSPEDAGEM_PUBLICA_WINDOWS.md)**
+
+O kit inclui os scripts de hospedagem, sem o frontend React completo. **Node.js LTS 22+ e cloudflared são dependências separadas**, obtidas das fontes oficiais. Cada mesa hospedada localmente não consome capacidade de um servidor multiplayer central pago. O Quick Tunnel tem limitações e exige internet no PC do mestre.
+
+**Privacidade:** a campanha é armazenada no navegador do mestre e as sessões podem gerar dados locais no computador dele; nenhuma campanha é enviada ao GitHub pelo instalador. Faça backups.
 
 ## Organização
 
@@ -11,7 +25,7 @@ Portal virtual para mesas de RPG, com mesas 2D e 3D, personagens, inventário, f
 - `scripts/`: servidor de sessão, integração Cloudflare e testes.
 - `tests/`, `_tests/`, `testes/`: verificações automatizadas e ferramentas de homologação.
 - `*.config.*`, `package*.json`, `vercel.json`: configurações de compilação/publicação.
-- `0*.bat`: iniciadores para uso local no Windows.
+- `scripts/auxiliar-mestre/`: auxiliar Windows, instalador e gerador do kit de hospedagem.
 
 Os relatórios antigos de desenvolvimento foram **separados deste repositório**, sem apagar seu histórico. O pacote de arquivo histórico é independente.
 
@@ -26,23 +40,13 @@ npm run dev
 
 Para simular o servidor multiplayer na sua rede, use os scripts existentes definidos em `package.json`.
 
-## Iniciar multiplayer pelo Portal (preferencial: v29.15.30.25)
+## Hospedagem multiplayer
 
-No PC do mestre, execute uma única vez `INSTALAR_AUXILIAR_DO_MESTRE.ps1` conforme as instruções de `GUIA_v29_15_30_25_AUXILIAR_NO_WINDOWS.md`. Isso instala um auxiliar para este usuário do Windows; **o Tunnel não é iniciado automaticamente no login**. Depois, abra o Portal na Vercel e clique em **Iniciar sala multiplayer**. O auxiliar inicia Node, Cloudflare e entrega a URL ao navegador para gerar o convite. Se solicitado, autorize o acesso do site a aplicativos na própria máquina (loopback) no navegador.
+Para um mestre que ainda não tem o projeto em seu computador, o caminho recomendado é o **kit compacto no site**, acompanhado do tutorial e do guia. O instalador funciona somente no Windows; os jogadores não o utilizam.
 
-O método antigo com `.bat` continua disponível como alternativa. O auxiliar não deve rodar simultaneamente com o servidor iniciado pelo `02` ou pelo iniciador unificado anterior, pois ambos usam a mesma porta 8787.
+Para desenvolvimento, o servidor continua disponível como `npm run server:multiplayer`. A hospedagem anterior pelo Tunnel ou pelo auxiliar já instalado no seu PC continua compatível; **não execute dois servidores na porta 8787 ao mesmo tempo**.
 
-## Sessão pública via Cloudflare Tunnel (PC do mestre)
-
-No Windows, use os iniciadores na seguinte ordem:
-
-1. `01_COMPILAR_PORTAL_CLOUDFLARE.bat`
-2. `02_INICIAR_SERVIDOR_CLOUDFLARE.bat`
-3. `03_ABRIR_TUNNEL_GRATUITO.bat`
-
-O executável `cloudflared.exe` **não faz parte deste repositório**. Instale-o separadamente com a distribuição oficial da Cloudflare ou deixe-o na pasta do Portal. Em redes com bloqueio UDP, pode ser necessário usar `--protocol http2` (o iniciador já foi ajustado para essa possibilidade).
-
-O servidor local utiliza `http://127.0.0.1:8787` por padrão. Mantenha as janelas do servidor e do túnel abertas durante a sessão.
+O arquivo para download é produzido durante `npm run cloudflare:build` por `scripts/gerar-kit-publico.mjs`, diretamente das fontes versionadas. Ele é publicado pela Vercel em `/downloads/auxiliar-do-mestre-windows.zip` (não contém executáveis de terceiros).
 
 ## Publicação na Vercel
 
@@ -53,7 +57,7 @@ Configurações incluídas em `vercel.json`:
 - Output Directory: `dist`
 - Root Directory: pasta que contém `package.json`
 
-Depois de publicar, execute `04_CONFIGURAR_VERCEL.bat` no PC do mestre para autorizar o domínio do frontend no servidor local. Consulte `GUIA_v29_15_30_23_VERCEL_PUBLICACAO.md` para o fluxo completo de convites e conexão ao Tunnel.
+O kit público autoriza o domínio oficial da Vercel. Instalações personalizadas devem configurar sua própria origem autorizada; consulte `GUIA_v29_15_30_23_VERCEL_PUBLICACAO.md` para os detalhes técnicos.
 
 **Arquitetura atual:** Vercel serve o frontend estático; Cloudflare Tunnel expõe o servidor multiplayer executado no computador do mestre. A Vercel **não** hospeda o servidor de sessão persistente dessa versão.
 

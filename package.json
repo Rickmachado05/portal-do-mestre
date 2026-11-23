@@ -31,7 +31,7 @@
     "test:editor-luz": "node scripts/teste-editor-luz-compacto-v29-8-2.cjs",
     "test:backup": "node scripts/teste-backup-v29-15-4.cjs",
     "test:homologacao-seis": "node --test scripts/multiplayer-homologacao-seis-v29-15-28.test.mjs",
-    "cloudflare:build": "vite build",
+    "cloudflare:build": "node scripts/gerar-kit-publico.mjs && vite build",
     "cloudflare:start": "node scripts/iniciar-cloudflare.mjs",
     "test:musica": "node --test scripts/multiplayer-musica-sessao.test.mjs scripts/multiplayer-musica-websocket.test.mjs",
     "test:vercel": "node --test scripts/multiplayer-vercel-deploy.test.mjs",
