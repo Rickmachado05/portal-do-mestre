@@ -68,3 +68,12 @@ export function pararSessaoPeloAuxiliar() {
 export function abrirAuxiliarInstalado() {
   window.location.href = 'portalmestre://abrir';
 }
+
+/** Diagnóstico honesto: falta de processo e bloqueio do navegador podem parecer iguais. */
+export function explicarFalhaAuxiliar(falha: unknown): string {
+  if (falha instanceof Error && falha.name === 'AbortError')
+    return 'O auxiliar não respondeu a tempo em 127.0.0.1:8790. Verifique se está em execução no Windows.';
+  if (falha instanceof TypeError)
+    return 'O navegador não conseguiu acessar 127.0.0.1:8790. O auxiliar pode estar parado ou a permissão de rede local/loopback do Chrome/Edge pode estar bloqueada para este site.';
+  return falha instanceof Error ? falha.message : 'Falha desconhecida ao acessar o auxiliar do Windows.';
+}

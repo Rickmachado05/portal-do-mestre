@@ -22,6 +22,10 @@ O auxiliar atende apenas 127.0.0.1:8790; o servidor fica em 127.0.0.1:8787.
 
 DIAGNOSTICO (PowerShell):
  Test-NetConnection 127.0.0.1 -Port 8790
+ Invoke-RestMethod http://127.0.0.1:8790/v1/status -Headers @{Origin='https://portal-do-mestre.vercel.app'}
+ No Portal: Multiplayer > Verificar auxiliar
+ Se o Windows responde, mas o site nao: confira permissao de acesso
+ ao loopback/rede local para o dominio do Portal no Chrome/Edge.
  Log: .portal-multiplayer-sessoes\auxiliar-mestre.log
 
 DESINSTALAR:

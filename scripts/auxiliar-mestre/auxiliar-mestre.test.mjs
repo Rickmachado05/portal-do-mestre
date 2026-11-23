@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdtempSync, writeFileSync, chmodSync, rmSync } from 'node:fs';
+import { mkdtempSync, writeFileSync, chmodSync, rmSync, readFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { createServer as netServer } from 'node:net';
@@ -110,4 +110,16 @@ test('recusa iniciar se o servidor antigo ocupa a porta e preserva o estado cont
     await agente.fechar();
     await new Promise(ok => ocupante.close(ok));
   }
+});
+
+test('instalador verifica o processo e o Portal diferencia bloqueio local de instalacao', () => {
+  const install = readFileSync(join(RAIZ, 'INSTALAR_AUXILIAR_DO_MESTRE.ps1'), 'utf8');
+  const painel = readFileSync(join(RAIZ, 'src', 'multiplayer', 'MultiplayerMestre.tsx'), 'utf8');
+  const ponte = readFileSync(join(RAIZ, 'src', 'multiplayer', 'auxiliarMestre.ts'), 'utf8');
+  assert.match(install, /Invoke-RestMethod/);
+  assert.match(install, /127\.0\.0\.1:8790\/v1\/status/);
+  assert.match(painel, /statusAuxiliarMestre\(\)/);
+  assert.match(painel, /Verificar auxiliar/);
+  assert.match(ponte, /targetAddressSpace:\s*'loopback'/);
+  assert.match(ponte, /explicarFalhaAuxiliar/);
 });

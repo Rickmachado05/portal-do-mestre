@@ -53,7 +53,7 @@ code{color:#ffe1a9;overflow-wrap:anywhere}.note{border-left:3px solid #d0a66f;pa
 <h2>Dúvidas frequentes</h2>
 <p><strong>Meu jogador precisa instalar algo?</strong> Não; só abre o convite enviado pelo mestre.</p>
 <p><strong>Tem mensalidade?</strong> A hospedagem local não exige servidor central pago, mas está sujeita aos termos e limites do Cloudflare Quick Tunnel.</p>
-<p><strong>Auxiliar não encontrado?</strong> No PowerShell, execute <code>Test-NetConnection 127.0.0.1 -Port 8790</code>; verifique a permissão local do navegador e o log <code>.portal-multiplayer-sessoes\auxiliar-mestre.log</code>.</p>
+<p><strong>Auxiliar não encontrado?</strong> No Portal, clique em <strong>Verificar auxiliar</strong>. No PowerShell, confira <code>Test-NetConnection 127.0.0.1 -Port 8790</code> e <code>Invoke-RestMethod http://127.0.0.1:8790/v1/status -Headers @{Origin='https://portal-do-mestre.vercel.app'}</code>. Se o Windows responder mas o site não, revise a permissão de acesso à rede local/loopback do Chrome ou Edge para este site. Confira também <code>.portal-multiplayer-sessoes\auxiliar-mestre.log</code>.</p>
 <p><strong>Como desinstalo?</strong> Execute <code>DESINSTALAR_AUXILIAR_DO_MESTRE.ps1</code> com PowerShell na pasta extraída e encerre o agente antes de apagar os arquivos.</p>
 <p><strong>Já tenho o projeto no VS Code.</strong> Continue utilizando sua instalação. O kit é para outros mestres que precisam apenas da hospedagem.</p>
 <a href="https://github.com/Rickmachado05/portal-do-mestre/blob/main/GUIA_HOSPEDAGEM_PUBLICA_WINDOWS.md" target="_blank" rel="noopener noreferrer">Ler o guia técnico completo no GitHub</a>

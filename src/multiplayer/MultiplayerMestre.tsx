@@ -12,7 +12,7 @@ import HistoricoRolagens from './HistoricoRolagens';
 import Rolagem3DMultiplayer from './Rolagem3DMultiplayer';
 import './Multiplayer.css';
 import {atualizarOrigemServidorMultiplayer,origemServidorMultiplayer} from './configuracaoServidor.mjs';
-import {abrirAuxiliarInstalado,iniciarSessaoPeloAuxiliar,pararSessaoPeloAuxiliar,suportaAuxiliarMestre,type StatusAuxiliar} from './auxiliarMestre';
+import {abrirAuxiliarInstalado,iniciarSessaoPeloAuxiliar,pararSessaoPeloAuxiliar,statusAuxiliarMestre,suportaAuxiliarMestre,explicarFalhaAuxiliar,type StatusAuxiliar} from './auxiliarMestre';
 
 type Props={campanhaId:string;campanha:string;modo?:'cartao'|'cabecalho'};
 /** O mestre guarda a credencial na sessão da aba; ela acompanha a navegação entre as mesas. */
@@ -37,9 +37,40 @@ export default function MultiplayerMestre({campanhaId,campanha,modo='cabecalho'}
   const [processando,setProcessando]=useState(false);
   const [auxiliar,setAuxiliar]=useState<StatusAuxiliar|null>(null);
   const [auxiliarIndisponivel,setAuxiliarIndisponivel]=useState(false);
+  const [detalheAuxiliar,setDetalheAuxiliar]=useState('');
+  const [verificandoAuxiliar,setVerificandoAuxiliar]=useState(false);
   const [desligandoAuxiliar,setDesligandoAuxiliar]=useState(false);
   const [copiado,setCopiado]=useState(false);
   const [pedidosItens,setPedidosItens]=useState(0);
+  useEffect(()=>{
+    if(!aberto||credencial||processando||!suportaAuxiliarMestre())return;
+    let ativo=true;
+    setVerificandoAuxiliar(true);
+    void statusAuxiliarMestre()
+      .then(resposta=>{
+        if(!ativo)return;
+        setAuxiliar(resposta);setAuxiliarIndisponivel(false);setDetalheAuxiliar('');
+      })
+      .catch(falha=>{
+        if(!ativo)return;
+        setAuxiliar(null);setAuxiliarIndisponivel(true);
+        setDetalheAuxiliar(explicarFalhaAuxiliar(falha));
+      })
+      .finally(()=>{if(ativo)setVerificandoAuxiliar(false);});
+    return()=>{ativo=false;};
+  },[aberto,credencial,processando]);
+
+  async function verificarAuxiliar(){
+    setVerificandoAuxiliar(true);setDetalheAuxiliar('');
+    try{
+      const resposta=await statusAuxiliarMestre();
+      setAuxiliar(resposta);setAuxiliarIndisponivel(false);
+    }catch(falha){
+      setAuxiliar(null);setAuxiliarIndisponivel(true);
+      setDetalheAuxiliar(explicarFalhaAuxiliar(falha));
+    }finally{setVerificandoAuxiliar(false);}
+  }
+
   useEffect(()=>{
     const aoMudar=(evento:Event)=>setPedidosItens((evento as CustomEvent<{quantidade:number}>).detail?.quantidade||0);
     window.addEventListener('portal-mp-pedidos',aoMudar);
@@ -121,17 +152,24 @@ export default function MultiplayerMestre({campanhaId,campanha,modo='cabecalho'}
       // Na Vercel, primeiro tentamos iniciar automaticamente o servidor no PC do mestre.
       // Se o auxiliar não estiver instalado ou acessível, o modo manual continua funcionando.
       if(suportaAuxiliarMestre() && /\.vercel\.app$/i.test(window.location.hostname)){
+        let auxiliarRespondeu=false;
         try{
-          const tunnel=await iniciarSessaoPeloAuxiliar(status=>{setAuxiliar(status);setAuxiliarIndisponivel(false);});
+          const tunnel=await iniciarSessaoPeloAuxiliar(status=>{
+            auxiliarRespondeu=true;
+            setAuxiliar(status);setAuxiliarIndisponivel(false);setDetalheAuxiliar('');
+          });
           atualizarOrigemServidorMultiplayer(tunnel);
           setServidorDigitado(tunnel);
           setAuxiliarIndisponivel(false);
         }catch(falha){
-          setAuxiliarIndisponivel(true);
+          const detalhe=explicarFalhaAuxiliar(falha);
+          setAuxiliarIndisponivel(!auxiliarRespondeu);
+          setDetalheAuxiliar(detalhe);
           // Não substituímos um Tunnel manual válido por erro do programa local.
           if(!origemServidorMultiplayer()){
-            const detalhe=falha instanceof Error?falha.message:'O auxiliar não respondeu.';
-            throw new Error(`O auxiliar do mestre não está disponível. Instale-o uma vez no Windows e clique em "Abrir auxiliar", ou configure o Cloudflare manualmente. Detalhe: ${detalhe}`);
+            throw new Error(auxiliarRespondeu
+              ? `O auxiliar foi detectado, mas não conseguiu iniciar a hospedagem: ${detalhe}`
+              : `Não foi possível conectar ao auxiliar em 127.0.0.1:8790: ${detalhe} Use "Verificar auxiliar" e confira a permissão local do Chrome/Edge.`);
           }
         }
       }
@@ -206,8 +244,10 @@ export default function MultiplayerMestre({campanhaId,campanha,modo='cabecalho'}
         {!credencial?<div className="pm-mp-vazio">
           {suportaAuxiliarMestre()&&<div className="pm-mp-auxiliar" role="status">
             <strong>Hospedagem no seu PC</strong>
-            <p>{auxiliar?.estado==='pronto'?'Servidor e Cloudflare conectados.':auxiliar?.estado==='iniciando'?auxiliar.mensagem:auxiliarIndisponivel?'Auxiliar local não encontrado. Instale-o uma vez ou abra-o pelo botão abaixo.':'Ao iniciar a sala, o Portal tentará ligar seu servidor e Cloudflare automaticamente.'}</p>
-            {auxiliarIndisponivel&&<button type="button" className="pm-mp-auxiliar-abrir" onClick={abrirAuxiliarInstalado}>Abrir auxiliar instalado no Windows</button>}
+            <p>{auxiliar?.estado==='pronto'?'Servidor e Cloudflare conectados.':auxiliar?.estado==='iniciando'?auxiliar.mensagem:auxiliar?.estado==='erro'?auxiliar.mensagem:auxiliar?.estado==='parado'?'Auxiliar detectado no Windows e aguardando você iniciar a sala.':verificandoAuxiliar?'Verificando a conexão com o Windows…':auxiliarIndisponivel?'Não foi possível acessar o auxiliar local. Isso também pode ser uma permissão bloqueada no navegador.':'Ao abrir este painel, o Portal verifica se o auxiliar está acessível.'}</p>
+            {detalheAuxiliar&&<p className="pm-mp-nota">{detalheAuxiliar}</p>}
+            <button type="button" className="pm-mp-auxiliar-abrir" disabled={verificandoAuxiliar||processando} onClick={()=>void verificarAuxiliar()}>{verificandoAuxiliar?'Verificando…':'Verificar auxiliar'}</button>
+            {auxiliarIndisponivel&&<button type="button" className="pm-mp-auxiliar-abrir" onClick={abrirAuxiliarInstalado}>Abrir auxiliar instalado no Windows</button>
             {auxiliar?.estado==='pronto'&&<button type="button" className="pm-mp-auxiliar-desligar" disabled={desligandoAuxiliar||processando} onClick={()=>void desligarServidor()}>{desligandoAuxiliar?'Desligando…':'Desligar servidor e Tunnel'}</button>}
           </div>}
           <div className="pm-mp-instalar">
