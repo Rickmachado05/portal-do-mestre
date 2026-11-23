@@ -23,12 +23,15 @@ test('Vercel: HTML das várias páginas não deve ser substituído pelo Portal n
  const config=JSON.parse(readFileSync(resolve('vercel.json'),'utf8'));
  assert.equal(config.outputDirectory,'dist');
  assert.equal(config.buildCommand,'npm run cloudflare:build');
- for(const pagina of ['mesa','mesa3d','convidado','caderno','mesas','perfil','criador']){
+ for(const pagina of ['mesa','mesa3d','convidado','caderno','mesas','perfil','criador','tokens']){
    for(const caminho of [`/${pagina}`,`/${pagina}/`]){
      assert(config.rewrites.some(r=>r.source===caminho&&r.destination===`/${pagina}/index.html`),caminho);
    }
  }
  assert(!config.rewrites.some(r=>r.source==='/(.*)'&&r.destination==='/index.html'));
+ const htmlTokens=readFileSync(resolve('tokens/index.html'),'utf8');
+ assert(htmlTokens.includes('/src/portal/main.tsx'),'A página de tokens deve reutilizar o Portal');
+ assert(readFileSync(resolve('vite.config.ts'),'utf8').includes("./tokens/index.html"),'Vite precisa gerar tokens/index.html');
 });
 
 test('Vercel: CORS restrito ao site explicitamente autorizado; APIs e tokens preservados',async()=>{

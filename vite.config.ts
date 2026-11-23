@@ -19,6 +19,7 @@ export default defineConfig({
         personagens: fileURLToPath(new URL('./personagens/index.html', import.meta.url)),
         dados: fileURLToPath(new URL('./dados/index.html', import.meta.url)),
         itens: fileURLToPath(new URL('./itens/index.html', import.meta.url)),
+        tokens: fileURLToPath(new URL('./tokens/index.html', import.meta.url)),
         miniaturas: fileURLToPath(new URL('./miniaturas/index.html', import.meta.url)),
         mesa: fileURLToPath(new URL('./mesa/index.html', import.meta.url)),
         mesa3d: fileURLToPath(new URL('./mesa3d/index.html', import.meta.url)),

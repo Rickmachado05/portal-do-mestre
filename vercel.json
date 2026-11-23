@@ -33,6 +33,10 @@
       "destination": "/itens/index.html"
     },
     {
+      "source": "/tokens",
+      "destination": "/tokens/index.html"
+    },
+    {
       "source": "/miniaturas",
       "destination": "/miniaturas/index.html"
     },
@@ -79,6 +83,10 @@
     {
       "source": "/itens/",
       "destination": "/itens/index.html"
+    },
+    {
+      "source": "/tokens/",
+      "destination": "/tokens/index.html"
     },
     {
       "source": "/miniaturas/",
