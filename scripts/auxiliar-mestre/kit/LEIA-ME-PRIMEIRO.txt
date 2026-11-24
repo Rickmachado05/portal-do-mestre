@@ -47,9 +47,9 @@ ENCERRAMENTO COMPLETO:
 DIAGNOSTICO (PowerShell):
  Test-NetConnection 127.0.0.1 -Port 8790
  Invoke-RestMethod http://127.0.0.1:8790/v1/status -Headers @{Origin='https://portal-do-mestre.vercel.app'}
- No Portal: Multiplayer > Verificar auxiliar
+ No Portal: Multiplayer > Opcoes avancadas e diagnostico > Verificar auxiliar
  Se o Windows responde, mas o site nao: confira permissao de acesso
- ao loopback/rede local para o dominio do Portal no Chrome/Edge.
+ ao loopback/rede local para o dominio do Portal no seu navegador.
  Log: .portal-multiplayer-sessoes\auxiliar-mestre.log
 
 DESINSTALAR:

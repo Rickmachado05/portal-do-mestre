@@ -55,7 +55,7 @@ export async function aguardarAuxiliarMestre(tempoMaximo = 25000, consultar = st
       await esperar(Math.min(800, Math.max(0, limite - Date.now())));
     }
   } while (Date.now() < limite);
-  throw new Error('O auxiliar não respondeu após a abertura. Autorize a abertura do Portal do Mestre no navegador, confira a instalação e a permissão de rede local. Se necessário, use Abrir auxiliar instalado no Windows e tente novamente.');
+  throw new Error('O auxiliar não respondeu após a abertura. Autorize a abertura do Portal do Mestre no navegador, confira a instalação e a permissão de rede local. Consulte Como hospedar / instalar e tente iniciar a sala novamente.');
 }
 
 export async function iniciarSessaoPeloAuxiliar(atualizar?: (status: StatusAuxiliar) => void): Promise<string> {
@@ -91,6 +91,6 @@ export function explicarFalhaAuxiliar(falha: unknown): string {
   if (falha instanceof Error && falha.name === 'AbortError')
     return 'O auxiliar não respondeu a tempo em 127.0.0.1:8790. Verifique se está em execução no Windows.';
   if (falha instanceof TypeError)
-    return 'O navegador não conseguiu acessar 127.0.0.1:8790. O auxiliar pode estar parado ou a permissão de rede local/loopback do Chrome/Edge pode estar bloqueada para este site.';
+    return 'O navegador não conseguiu acessar 127.0.0.1:8790. O auxiliar pode estar parado ou a permissão de acesso à rede local do seu navegador pode estar bloqueada para este site.';
   return falha instanceof Error ? falha.message : 'Falha desconhecida ao acessar o auxiliar do Windows.';
 }

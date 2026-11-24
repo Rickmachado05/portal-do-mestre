@@ -168,3 +168,12 @@ test('endereco antigo nao bloqueia abertura automatica e modo manual e explicito
  assert.match(painel,/onClick=\{\(\)=>void criar\(true\)\}/);
  assert.doesNotMatch(painel,/const abrirAgora=[^;]*origemServidorMultiplayer/);
 });
+
+test('painel compacto preserva o modo manual apenas nas opções avançadas',()=>{
+ const painel=readFileSync(join(RAIZ,'src','multiplayer','MultiplayerMestre.tsx'),'utf8');
+ const avancado=painel.slice(painel.indexOf('<details className="pm-mp-avancado">'),painel.indexOf('</details>',painel.indexOf('<details className="pm-mp-avancado">')));
+ assert.match(avancado,/Iniciar sala com servidor manual/);
+ assert.match(avancado,/Verificar auxiliar/);
+ assert.doesNotMatch(painel,/Abrir auxiliar instalado no Windows|Salvar endereço do servidor|Firefox ou Edge|Sala de teste/);
+ assert.match(painel,/navegador de preferência/);
+});

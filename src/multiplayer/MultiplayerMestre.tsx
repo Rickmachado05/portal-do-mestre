@@ -43,7 +43,6 @@ export default function MultiplayerMestre({campanhaId,campanha,modo='cabecalho'}
   const [processando,setProcessando]=useState(false);
   const [abrindoAuxiliar,setAbrindoAuxiliar]=useState(false);
   const [auxiliar,setAuxiliar]=useState<StatusAuxiliar|null>(null);
-  const [auxiliarIndisponivel,setAuxiliarIndisponivel]=useState(false);
   const [detalheAuxiliar,setDetalheAuxiliar]=useState('');
   const [verificandoAuxiliar,setVerificandoAuxiliar]=useState(false);
   const [desligandoAuxiliar,setDesligandoAuxiliar]=useState(false);
@@ -57,11 +56,11 @@ export default function MultiplayerMestre({campanhaId,campanha,modo='cabecalho'}
     void statusAuxiliarMestre()
       .then(resposta=>{
         if(!ativo)return;
-        setAuxiliar(resposta);setAuxiliarIndisponivel(false);setDetalheAuxiliar('');
+        setAuxiliar(resposta);setDetalheAuxiliar('');
       })
       .catch(()=>{
         if(!ativo)return;
-        setAuxiliar(null);setAuxiliarIndisponivel(true);
+        setAuxiliar(null);
         // A sondagem inicial também falha quando o auxiliar está fechado normalmente.
         setDetalheAuxiliar('');
       })
@@ -73,9 +72,9 @@ export default function MultiplayerMestre({campanhaId,campanha,modo='cabecalho'}
     setAuxiliarEncerrado(false);setVerificandoAuxiliar(true);setDetalheAuxiliar('');
     try{
       const resposta=await statusAuxiliarMestre();
-      setAuxiliar(resposta);setAuxiliarIndisponivel(false);
+      setAuxiliar(resposta);
     }catch(falha){
-      setAuxiliar(null);setAuxiliarIndisponivel(true);
+      setAuxiliar(null);
       setDetalheAuxiliar(explicarFalhaAuxiliar(falha));
     }finally{setVerificandoAuxiliar(false);}
   }
@@ -178,26 +177,26 @@ export default function MultiplayerMestre({campanhaId,campanha,modo='cabecalho'}
         try{
           if(abrirAgora){
             const detectado=await aguardarAuxiliarMestre();
-            auxiliarRespondeu=true;setAuxiliar(detectado);setAuxiliarIndisponivel(false);
+            auxiliarRespondeu=true;setAuxiliar(detectado);
             setAbrindoAuxiliar(false);
           }
           const tunnel=await iniciarSessaoPeloAuxiliar(status=>{
             auxiliarRespondeu=true;
-            setAuxiliar(status);setAuxiliarIndisponivel(false);setDetalheAuxiliar('');
+            setAuxiliar(status);setDetalheAuxiliar('');
           });
           auxiliarOrigem=tunnel;
           setAuxiliarEncerrado(false);
           atualizarOrigemServidorMultiplayer(tunnel);
           setServidorDigitado(tunnel);
-          setAuxiliarIndisponivel(false);
+          
         }catch(falha){
           const detalhe=explicarFalhaAuxiliar(falha);
-          setAuxiliarIndisponivel(!auxiliarRespondeu);
+          
           setDetalheAuxiliar(detalhe);
           if(!auxiliarRespondeu)setAuxiliar(null);
           throw new Error(auxiliarRespondeu
             ? `O auxiliar foi detectado, mas não conseguiu iniciar a hospedagem: ${detalhe}`
-            : `Não foi possível conectar ao auxiliar em 127.0.0.1:8790: ${detalhe} Abra o auxiliar instalado no Windows e confira a permissão local do Chrome/Edge.`);
+            : `Não foi possível conectar ao auxiliar em 127.0.0.1:8790: ${detalhe} Confira a instalação e a permissão de acesso à rede local do seu navegador. Consulte Como hospedar / instalar se necessário.`);
         }
       }
       if(/\.vercel\.app$/i.test(window.location.hostname)&&!origemServidorMultiplayer())
@@ -239,7 +238,7 @@ export default function MultiplayerMestre({campanhaId,campanha,modo='cabecalho'}
         const resposta=await pararSessaoPeloAuxiliar();
         if(resposta.estado==='erro')throw new Error(resposta.mensagem);
         if(local?.tunnel&&origem===local.tunnel){atualizarOrigemServidorMultiplayer('');setServidorDigitado('');}
-        setAuxiliar(null);setAuxiliarIndisponivel(true);setAuxiliarEncerrado(true);setDetalheAuxiliar('');
+        setAuxiliar(null);setAuxiliarEncerrado(true);setDetalheAuxiliar('');
       }else if(ativa){
         setDetalheAuxiliar('Sala encerrada. Se o servidor foi iniciado manualmente, feche-o no computador que o hospeda.');
       }
@@ -267,49 +266,21 @@ export default function MultiplayerMestre({campanhaId,campanha,modo='cabecalho'}
   return <>
     {credencial&&aoVivo&&createPortal(<DadosAoVivoOverlay key={aoVivo.id} stream={aoVivo.stream} resultado={resultadoAoVivo} onPrimeiroFrame={()=>{assistidasAoVivo.current.add(aoVivo.id);setUltimaAnimacao(null);}} onFechar={()=>setAoVivo(null)}/>,document.body)}
     {credencial&&ultimaAnimacao&&createPortal(<Rolagem3DMultiplayer key={ultimaAnimacao.id} rolagem={ultimaAnimacao} videoUrl={videoAtual?.rolagemId===ultimaAnimacao.id?videoAtual.url:undefined} onFechar={()=>{setUltimaAnimacao(null);setVideoAtual(null);if(videoRef.current){URL.revokeObjectURL(videoRef.current);videoRef.current=null;}}}/>,document.body)}
-    <button type="button" className={`pm-mp-trigger ${modo==='cartao'?'pm-mp-trigger-cartao':''}`} onClick={()=>setAberto(true)} title="Hospedar sala multiplayer de teste">◉ <span>{credencial?'Multiplayer ativo':'Multiplayer'}{pedidosItens>0?` · ${pedidosItens} pedido(s)`:''}</span></button>
+    <button type="button" className={`pm-mp-trigger ${modo==='cartao'?'pm-mp-trigger-cartao':''}`} onClick={()=>setAberto(true)} title="Hospedar sala multiplayer">◉ <span>{credencial?'Multiplayer ativo':'Multiplayer'}{pedidosItens>0?` · ${pedidosItens} pedido(s)`:''}</span></button>
     {aberto&&createPortal(<div className="pm-mp-sobreposicao" onMouseDown={e=>{if(e.currentTarget===e.target)setAberto(false);}}>
       <section className="pm-mp-modal" role="dialog" aria-modal="true" aria-label="Multiplayer — painel do mestre">
-        <header className="pm-mp-topo"><div><small>PORTAL DO MESTRE · MULTIPLAYER</small><h2>Sala de teste</h2></div><button type="button" aria-label="Fechar painel" onClick={()=>setAberto(false)}>×</button></header>
+        <header className="pm-mp-topo"><div><small>PORTAL DO MESTRE · MULTIPLAYER</small><h2>Multiplayer</h2></div><button type="button" aria-label="Fechar painel" onClick={()=>setAberto(false)}>×</button></header>
         <p className="pm-mp-campanha">Campanha: <strong>{campanha}</strong></p>
-        <div className="pm-mp-config-servidor">
-          <label className="pm-mp-link">Servidor da sessão (Cloudflare Tunnel)
-            <input value={servidorDigitado} onChange={e=>setServidorDigitado(e.target.value)}
-              placeholder="https://exemplo.trycloudflare.com" aria-label="Endereço HTTPS do servidor multiplayer" spellCheck={false}/>
-          </label>
-          <button type="button" className="pm-mp-copiar" onClick={()=>{
-            try{atualizarOrigemServidorMultiplayer(servidorDigitado);window.location.reload();}
-            catch(e){setErro(e instanceof Error?e.message:'Endereço inválido.');}
-          }}>Salvar endereço do servidor</button>
-          {!credencial&&<button type="button" className="pm-mp-copiar" disabled={processando||desligandoAuxiliar||!servidorDigitado.trim()} onClick={()=>void criar(true)}>Iniciar sala com servidor manual</button>}
-          <p className="pm-mp-nota">Método manual alternativo: cole o endereço HTTPS do cloudflared e use o botão Iniciar sala com servidor manual. O botão principal sempre usa o auxiliar local, mesmo se houver um endereço salvo. Cada novo Quick Tunnel tem um endereço diferente.</p>
-        </div>
-        <p className="pm-mp-explicacao">Os convidados utilizam a mesma biblioteca de dados do Portal, com Ateliê, física e rolagens 3D de resultados oficiais do servidor. Tokens, fichas, rolagens e inventários autorizados continuam disponíveis. Cenas com neblina ainda bloqueiam movimento remoto.</p>
-        <aside className="pm-mp-aviso-hospedagem" role="note">
-          <strong>⚠ Importante: encerre a hospedagem ao terminar</strong>
-          <p>Fechar esta página, aba ou navegador não desliga o servidor, o Cloudflare nem o Auxiliar do Mestre. Ao terminar a sessão, clique em <b>Desligar servidor e auxiliar</b> antes de sair. Se fechar a página sem desligar, reabra o Portal para encerrar a hospedagem local.</p>
-        </aside>
-        {!credencial?<div className="pm-mp-vazio">
-          {suportaAuxiliarMestre()&&<div className="pm-mp-auxiliar" role="status">
-            <strong>Hospedagem no seu PC</strong>
-            <p>{abrindoAuxiliar?'Abrindo o auxiliar do Windows. Autorize a abertura no navegador, se solicitado.':auxiliarEncerrado?'Auxiliar encerrado. Clique em Iniciar sala multiplayer para abri-lo novamente.':auxiliar?.estado==='pronto'?'Servidor e Cloudflare conectados.':auxiliar?.estado==='iniciando'?auxiliar.mensagem:auxiliar?.estado==='erro'?auxiliar.mensagem:auxiliar?.estado==='parado'?'Auxiliar detectado no Windows e aguardando você iniciar a sala.':verificandoAuxiliar?'Verificando a conexão com o Windows…':auxiliarIndisponivel?'Auxiliar ainda não conectado. Clique em Iniciar sala multiplayer para abri-lo. Se não abrir, confira a instalação e a permissão de rede local.':'Ao abrir este painel, o Portal verifica se o auxiliar está acessível.'}</p>
-            {detalheAuxiliar&&<p className="pm-mp-nota">{detalheAuxiliar}</p>}
-            <button type="button" className="pm-mp-auxiliar-abrir" disabled={verificandoAuxiliar||processando||desligandoAuxiliar} onClick={()=>void verificarAuxiliar()}>{verificandoAuxiliar?'Verificando…':'Verificar auxiliar'}</button>
-            {auxiliarIndisponivel&&<button type="button" className="pm-mp-auxiliar-abrir" disabled={processando||desligandoAuxiliar} onClick={()=>{setAuxiliarEncerrado(false);abrirAuxiliarInstalado();}}>Abrir auxiliar instalado no Windows</button>}
-            {auxiliar?.estado==='parado'&&<button type="button" className="pm-mp-auxiliar-desligar" disabled={desligandoAuxiliar||processando||verificandoAuxiliar} onClick={()=>void desligarServidor()}>Fechar auxiliar em repouso</button>}
+        {!credencial?<div className="pm-mp-vazio pm-mp-inicio">
+          {suportaAuxiliarMestre()&&<div className="pm-mp-status-hospedagem" role="status">
+            <span><i className={auxiliar?.estado==='pronto'?'online':''}/> <strong>Hospedagem no seu PC</strong></span>
+            <p>{abrindoAuxiliar?'Abrindo auxiliar. Autorize a abertura, se solicitada.':desligandoAuxiliar?'Encerrando a hospedagem…':auxiliar?.estado==='pronto'?'Servidor conectado.':auxiliar?.estado==='iniciando'?auxiliar.mensagem:auxiliar?.estado==='erro'?auxiliar.mensagem:processando?'Iniciando servidor e sala…':auxiliarEncerrado?'Hospedagem encerrada.':verificandoAuxiliar?'Verificando conexão…':auxiliar?.estado==='parado'?'Auxiliar disponível.':'Hospedagem desligada. O auxiliar será aberto ao iniciar.'}</p>
           </div>}
-          <div className="pm-mp-instalar">
-            <strong>Quer hospedar como mestre em outro computador?</strong>
-            <p>O Portal é gratuito. Mantenha o Auxiliar do Mestre atualizado no Windows; jogadores só precisam do convite.</p>
-            <div className="pm-mp-instalar-links">
-              <a href="/downloads/auxiliar-do-mestre-windows.zip" download="auxiliar-do-mestre-windows.zip">↓ Baixar auxiliar (.zip)</a>
-              <a href="/como-hospedar.html" target="_blank" rel="noopener noreferrer">Como hospedar uma mesa</a>
-            </div>
-          </div>
-          <p>Inicie uma sala para gerar o convite. O mestre precisa manter o PC ligado durante a sessão.</p>
-          {auxiliar&&auxiliar.estado!=='parado'?<button type="button" className="pm-mp-encerrar" style={{background:'#49282f',color:'#ffdbd6',borderColor:'#ab686a'}} disabled={processando||desligandoAuxiliar||verificandoAuxiliar} onClick={()=>void desligarServidor()}>{desligandoAuxiliar?'Desligando servidor e auxiliar…':'⏻ Desligar servidor e auxiliar'}</button>:<button type="button" disabled={processando||desligandoAuxiliar||verificandoAuxiliar} onClick={()=>void criar()}>{abrindoAuxiliar?'Abrindo auxiliar…':processando?'Iniciando servidor e sala…':'＋ Iniciar sala multiplayer'}</button>}
+          {auxiliar&&auxiliar.estado!=='parado'?<button type="button" className="pm-mp-encerrar" disabled={processando||desligandoAuxiliar||verificandoAuxiliar} onClick={()=>void desligarServidor()}>{desligandoAuxiliar?'Desligando…':'⏻ Desligar servidor e auxiliar'}</button>:<button type="button" disabled={processando||desligandoAuxiliar||verificandoAuxiliar} onClick={()=>void criar()}>{abrindoAuxiliar?'Abrindo auxiliar…':processando?'Iniciando servidor e sala…':'＋ Iniciar sala multiplayer'}</button>}
+          <p className="pm-mp-inicio-ajuda">O convite será gerado automaticamente. Mantenha seu PC ligado durante a sessão.</p>
         </div>:<>
           <div className="pm-mp-indicadores"><span><i className={status==='Conectado'?'online':''}/> {status}</span><span>Código: <strong>{credencial.codigo}</strong></span></div>
+          <button type="button" className="pm-mp-encerrar" disabled={processando||desligandoAuxiliar||verificandoAuxiliar} onClick={()=>void desligarServidor()}>{desligandoAuxiliar?'Desligando…':'⏻ Desligar servidor e auxiliar'}</button>
           <label className="pm-mp-link">Link de convite<input readOnly value={urlConvite(credencial.codigo)} onFocus={e=>e.currentTarget.select()} aria-label="Link para os convidados"/></label>
           <button type="button" className="pm-mp-copiar" onClick={()=>void copiar()}>{copiado?'✓ Link copiado':'▣ Copiar link'}</button>
           <div className="pm-mp-lista-titulo"><h3>Participantes</h3><span>{convidados.filter(p=>p.conectado).length} online</span></div>
@@ -338,11 +309,34 @@ export default function MultiplayerMestre({campanhaId,campanha,modo='cabecalho'}
           </div>}
           <p className="pm-mp-nota">✉ Use o botão <strong>Chat</strong> da Mesa 2D ou 3D para conversar com todos os participantes da sala.</p>
           <HistoricoRolagens rolagens={rolagens} compacto/>
-          <button type="button" className="pm-mp-encerrar" disabled={processando||desligandoAuxiliar||verificandoAuxiliar} onClick={()=>void desligarServidor()}>{desligandoAuxiliar?'Desligando…':'⏻ Desligar servidor e auxiliar'}</button>
         </>}
         {erro&&<p role="alert" className="pm-mp-erro">{erro}</p>}
         {credencial&&erroFichas&&<p role="alert" className="pm-mp-erro">{erroFichas} <a href="/como-hospedar.html" target="_blank" rel="noopener noreferrer">Como atualizar o Auxiliar</a></p>}
-        <p className="pm-mp-nota">Teste local: abra o convite no Firefox ou Edge e atribua um personagem acima. O mestre deve manter a mesa aberta. A ficha permanece protegida contra edição remota. Os números das rolagens são compartilhados, mas não atualizam HP ou Mana. As transferências e o uso de itens são processados na campanha do mestre. Animações 3D sincronizadas e integração completa da visão individual virão depois.</p>
+        <aside className="pm-mp-aviso-hospedagem" role="note">
+          <strong>⚠ Encerre a hospedagem ao terminar</strong>
+          <p>Fechar esta página, aba ou navegador não desliga o servidor, o Cloudflare nem o auxiliar. Use <b>Desligar servidor e auxiliar</b> antes de sair.</p>
+        </aside>
+        {credencial&&<p className="pm-mp-inicio-ajuda">Envie o convite aos jogadores para abrirem em seu navegador de preferência. Atribua um personagem a cada convidado e mantenha a mesa aberta durante a sessão.</p>}
+        {!credencial&&<div className="pm-mp-ajuda-hospedagem">
+          <a href="/como-hospedar.html" target="_blank" rel="noopener noreferrer">Como hospedar / instalar</a>
+          <a href="/downloads/auxiliar-do-mestre-windows.zip" download="auxiliar-do-mestre-windows.zip">Baixar auxiliar (.zip)</a>
+        </div>}
+        {!credencial&&<details className="pm-mp-avancado">
+          <summary>Opções avançadas e diagnóstico</summary>
+          {suportaAuxiliarMestre()&&<div className="pm-mp-auxiliar">
+            <button type="button" className="pm-mp-auxiliar-abrir" disabled={verificandoAuxiliar||processando||desligandoAuxiliar} onClick={()=>void verificarAuxiliar()}>{verificandoAuxiliar?'Verificando…':'Verificar auxiliar'}</button>
+            {detalheAuxiliar&&<p className="pm-mp-nota">{detalheAuxiliar}</p>}
+            {auxiliar?.estado==='parado'&&<button type="button" className="pm-mp-auxiliar-desligar" disabled={desligandoAuxiliar||processando||verificandoAuxiliar} onClick={()=>void desligarServidor()}>Fechar auxiliar em repouso</button>}
+          </div>}
+          <div className="pm-mp-config-servidor">
+            <label className="pm-mp-link">Servidor manual (Cloudflare Tunnel)
+              <input value={servidorDigitado} onChange={e=>setServidorDigitado(e.target.value)}
+                placeholder="https://exemplo.trycloudflare.com" aria-label="Endereço HTTPS do servidor multiplayer" spellCheck={false}/>
+            </label>
+            <button type="button" className="pm-mp-copiar" disabled={processando||desligandoAuxiliar||!servidorDigitado.trim()} onClick={()=>void criar(true)}>Iniciar sala com servidor manual</button>
+            <p className="pm-mp-inicio-ajuda">Somente para quem já iniciou o servidor e o túnel manualmente. Não é necessário no modo automático.</p>
+          </div>
+        </details>}
       </section>
     </div>,document.body)}
   </>;
