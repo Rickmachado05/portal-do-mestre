@@ -225,7 +225,7 @@ export default function CaixaTestesDados({ aberto }: { aberto: boolean }) {
             ✧
           </span>
         </div>
-        <div className="hx-test-stage-corner">HEXATOMBE · ÁREA DE TESTES</div>
+        <div className="hx-test-stage-corner">PORTAL DO MESTRE · ÁREA DE TESTES</div>
       </div>
       <div className="hx-test-feedback" role="status" aria-live="polite">
         <div>

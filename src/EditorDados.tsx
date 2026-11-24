@@ -167,7 +167,7 @@ export default function EditorDados({
           <div className="hd-biblioteca-titulo">
             <span aria-hidden="true">◈</span>
             <div>
-              <small>HEXATOMBE · ATELIÊ</small>
+              <small>PORTAL DO MESTRE · ATELIÊ</small>
               <strong id="hd-library-title">Biblioteca de dados</strong>
             </div>
           </div>
@@ -212,7 +212,7 @@ export default function EditorDados({
         <section className="hd-editor-painel" aria-label="Configurações de física dos dados">
           <header className="hd-editor-topo">
             <div>
-              <small>HEXATOMBE · SIMULAÇÃO</small>
+              <small>PORTAL DO MESTRE · SIMULAÇÃO</small>
               <h2>Física e iluminação</h2>
               <p>Ajustes preservados da mesa original</p>
             </div>

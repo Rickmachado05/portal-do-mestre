@@ -14,3 +14,9 @@
 .iu-resource-summary>div{min-width:0;display:grid;gap:5px;padding:10px 12px;border:1px solid var(--line);border-radius:7px;background:#281d32}
 .iu-resource-summary small{font-size:11px;color:var(--muted)}
 .iu-resource-summary b{font-size:18px;color:var(--gold);overflow-wrap:anywhere}
+
+/* Oculta somente a barra de rolagem externa do criador; mantém o scroll natural. */
+@media screen {
+  html:has(.iu-app) { scrollbar-width: none; }
+  html:has(.iu-app)::-webkit-scrollbar { display: none; }
+}
