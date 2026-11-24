@@ -546,11 +546,13 @@ button:active:not(:disabled) {
   font-family: Cinzel, Georgia, serif;
   font-size: 19px;
   font-weight: 700;
-  width: 51px;
-  height: 51px;
+  width: var(--tamanho-token, 70px);
+  height: var(--tamanho-token, 70px);
   border-radius: 50%;
   color: #fff1da;
-  overflow: hidden;
+  position: relative;
+  flex-shrink: 0;
+  overflow: visible;
 }
 .token-rosto img {
   width: 100%;
@@ -1685,8 +1687,8 @@ button:active:not(:disabled) {
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
-  width: 90%;
-  height: 90%;
+  width: 100%;
+  height: 100%;
   border: 2px solid var(--cor-token);
   border-radius: 50%;
   background: radial-gradient(circle, transparent 60%, #1116);
@@ -3898,10 +3900,10 @@ button:active:not(:disabled) {
 }
 .token.token-topview .token-arte {
   position: absolute;
-  width: 90%;
-  height: 90%;
-  left: 5%;
-  top: 5%;
+  width: calc(100% - 4px);
+  height: calc(100% - 4px);
+  left: 2px;
+  top: 2px;
   border-radius: 50%;
   z-index: 1;
 }
@@ -4628,3 +4630,6 @@ button:active:not(:disabled) {
     --hx-editor-left-safe: 90px;
   }
 }
+
+/* Tamanho real comum; a arte continua recortada, mas as alças ficam fora do círculo. */
+.token-tamanho-2d{display:grid;gap:8px;margin:8px 0;padding:10px;border:1px solid #76634c66;border-radius:6px}.token-tamanho-2d label{display:grid;gap:6px}.token-tamanho-2d input[type=range]{width:100%;min-width:0}.token:not(.token-topview) .token-transform-box{z-index:4}

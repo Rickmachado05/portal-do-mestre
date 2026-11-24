@@ -1578,6 +1578,8 @@ function App() {
     escala: number;
     anguloInicial: number;
     rotacaoInicial: number;
+    tamanhoInicial: number;
+    distanciaInicial: number;
   } | null>(null);
   const cenaAtual = campanha.cenas.find((c) => c.id === campanha.cenaAtivaId) || campanha.cenas[0];
   // Camadas ocultas permanecem acessíveis ao mestre como fantasmas.
@@ -4539,6 +4541,8 @@ function App() {
       centroY,
       escala: Math.max(0.05, escala),
       rotacaoInicial: token.rotacao,
+      tamanhoInicial: token.tamanho,
+      distanciaInicial: Math.max(Math.abs(e.clientX-centroX),Math.abs(e.clientY-centroY)),
       anguloInicial: Math.atan2(e.clientY - centroY, e.clientX - centroX),
     };
     e.currentTarget.setPointerCapture(e.pointerId);
@@ -4551,7 +4555,7 @@ function App() {
     if (t.modo === 'tamanho') {
       // Quatro cantos simétricos, como a moldura de seleção do Let's Role.
       const distancia = Math.max(Math.abs(e.clientX - t.centroX), Math.abs(e.clientY - t.centroY));
-      const tamanho = Math.round(limite((distancia * 2) / t.escala, 28, 460));
+      const tamanho = Math.round(limite(t.tamanhoInicial + ((distancia-t.distanciaInicial)*2)/t.escala, 18, 300));
       alterarToken(t.id, (p) => ({ ...p, tamanho }));
     } else {
       const angulo = Math.atan2(e.clientY - t.centroY, e.clientX - t.centroX);
@@ -8278,6 +8282,20 @@ function App() {
                       </p>
                     </div>
                   </details>
+                  {cenaAtual.tokens[selecionado.id] && (
+                    <div className="token-opcoes-conteudo token-tamanho-2d">
+                      <label>
+                        Tamanho na Mesa 2D <strong>{cenaAtual.tokens[selecionado.id].tamanho} px</strong>
+                        <input type="range" aria-label="Tamanho do token na Mesa 2D" min={18} max={300} step={1}
+                          disabled={Boolean(cenaAtual.tokens[selecionado.id].travado)}
+                          value={cenaAtual.tokens[selecionado.id].tamanho}
+                          onChange={e=>alterarToken(selecionado.id,t=>({...t,tamanho:Number(e.target.value)}))}/>
+                      </label>
+                      <button type="button" disabled={Boolean(cenaAtual.tokens[selecionado.id].travado)}
+                        onClick={()=>alterarToken(selecionado.id,t=>({...t,tamanho:70}))}>↶ Restaurar tamanho padrão (70 px)</button>
+                      <p className="aviso-pequeno">O tamanho é o mesmo para retratos, tokens e GIFs. O ajuste vale nesta cena e aparece também para os jogadores. Se estiver bloqueado, desmarque o bloqueio nas ferramentas do token.</p>
+                    </div>
+                  )}
                   {cenaAtual.tokens[selecionado.id] && (
                     <details className="token-opcoes-discretas dimensoes-token-3d-detalhes">
                       <summary>↔ Dimensões na Mesa 3D</summary>
