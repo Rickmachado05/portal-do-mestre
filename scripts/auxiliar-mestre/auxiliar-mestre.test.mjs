@@ -140,3 +140,11 @@ test('shutdown completo fecha a porta local, inclusive sem iniciar sessão',asyn
  await assert.rejects(()=>pedir(url+'/v1/status'));
  }finally{await agente.fechar();}
 });
+
+test('controle principal encerra sala e auxiliar em uma única operação',()=>{
+ const painel=readFileSync(join(RAIZ,'src','multiplayer','MultiplayerMestre.tsx'),'utf8');
+ assert.match(painel,/await solicitar\(\x60\$\{urlSala\(ativa.codigo\)\}\/encerrar/);
+ assert.match(painel,/await pararSessaoPeloAuxiliar\(\)/);
+ assert.match(painel,/auxiliarOrigem:tunnel|auxiliarOrigem=tunnel/);
+ assert.doesNotMatch(painel,/onClick=\{\(\)=>void encerrar\(\)\}/);
+});

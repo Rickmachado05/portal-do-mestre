@@ -29,6 +29,8 @@ export type CredencialSala = {
   codigo: string;
   token: string;
   papel: 'mestre' | 'convidado';
+  /** Origem do túnel aberto pelo auxiliar local; preserva a identificação após recarregar. */
+  auxiliarOrigem?: string;
   id?: string;
   apelido?: string;
 };

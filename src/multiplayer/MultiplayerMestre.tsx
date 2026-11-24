@@ -50,7 +50,7 @@ export default function MultiplayerMestre({campanhaId,campanha,modo='cabecalho'}
   const [copiado,setCopiado]=useState(false);
   const [pedidosItens,setPedidosItens]=useState(0);
   useEffect(()=>{
-    if(!aberto||credencial||processando||!suportaAuxiliarMestre())return;
+    if(!aberto||processando||desligandoAuxiliar||!suportaAuxiliarMestre())return;
     let ativo=true;
     setVerificandoAuxiliar(true);
     void statusAuxiliarMestre()
@@ -65,7 +65,7 @@ export default function MultiplayerMestre({campanhaId,campanha,modo='cabecalho'}
       })
       .finally(()=>{if(ativo)setVerificandoAuxiliar(false);});
     return()=>{ativo=false;};
-  },[aberto,credencial,processando]);
+  },[aberto,credencial,processando,desligandoAuxiliar]);
 
   async function verificarAuxiliar(){
     setAuxiliarEncerrado(false);setVerificandoAuxiliar(true);setDetalheAuxiliar('');
@@ -155,6 +155,7 @@ export default function MultiplayerMestre({campanhaId,campanha,modo='cabecalho'}
 
   async function criar(){
     setErro('');setErroFichas('');setProcessando(true);
+    let auxiliarOrigem:string|undefined;
     try{
       // Na Vercel, primeiro tentamos iniciar automaticamente o servidor no PC do mestre.
       // Se o auxiliar não estiver instalado ou acessível, o modo manual continua funcionando.
@@ -165,6 +166,8 @@ export default function MultiplayerMestre({campanhaId,campanha,modo='cabecalho'}
             auxiliarRespondeu=true;
             setAuxiliar(status);setAuxiliarIndisponivel(false);setDetalheAuxiliar('');
           });
+          auxiliarOrigem=tunnel;
+          setAuxiliarEncerrado(false);
           atualizarOrigemServidorMultiplayer(tunnel);
           setServidorDigitado(tunnel);
           setAuxiliarIndisponivel(false);
@@ -187,30 +190,44 @@ export default function MultiplayerMestre({campanhaId,campanha,modo='cabecalho'}
       const resposta=await solicitar<{codigo:string;token:string;sala:ResumoSala}>(`${urlRaizMultiplayer()}/salas`,{
         method:'POST',body:JSON.stringify({campanhaId,campanha}),
       });
-      const nova:CredencialSala={codigo:resposta.codigo,token:resposta.token,papel:'mestre'};
+      const nova:CredencialSala={codigo:resposta.codigo,token:resposta.token,papel:'mestre',...(auxiliarOrigem?{auxiliarOrigem}: {})};
       salvarCredencial(chaveMestre(campanhaId),nova);setCredencial(nova);setSala(resposta.sala);window.dispatchEvent(new Event('portal-multiplayer-sala'));
     }catch(e){setErro(e instanceof Error?e.message:'Não foi possível criar a sala.');}
     finally{setProcessando(false);}
   }
+  function limparSalaEncerrada(){
+    limparCredencial(chave);setCredencial(null);setSala(null);setMesa(null);setRolagens([]);setUltimaAnimacao(null);setAoVivo(null);setErroFichas('');setStatus('Encerrada');window.dispatchEvent(new Event('portal-multiplayer-sala'));
+  }
   async function desligarServidor(){
-    if(credencial||!window.confirm('Encerrar o auxiliar, servidor e Cloudflare completamente? Outras salas deste servidor também serão desligadas.'))return;
+    if(processando||desligandoAuxiliar)return;
+    const ativa=credencial;
+    if(!window.confirm(ativa?'Encerrar a sala e desligar a hospedagem local, incluindo o auxiliar e o Cloudflare? Os convidados serão desconectados.':'Desligar o servidor, Cloudflare e auxiliar deste PC?'))return;
     setDesligandoAuxiliar(true);setErro('');
     try{
-      if(!auxiliar?.encerramentoCompleto)throw new Error('Auxiliar antigo: atualize o ZIP e use ENCERRAR_AUXILIAR_DO_MESTRE.ps1 para encerrar a versão anterior.');
-      const resposta=await pararSessaoPeloAuxiliar();
-      if(resposta.estado==='erro')throw new Error(resposta.mensagem);
-      setAuxiliar(null);setAuxiliarIndisponivel(true);setAuxiliarEncerrado(true);setDetalheAuxiliar('');
-    }catch(e){setErro(e instanceof Error?e.message:'Não foi possível encerrar o auxiliar.');}
+      const origem=origemServidorMultiplayer();
+      let local:StatusAuxiliar|null=null;
+      if(suportaAuxiliarMestre()){
+        try{local=await statusAuxiliarMestre();}catch(e){if(ativa?.auxiliarOrigem||(!ativa&&auxiliar))throw new Error('Não foi possível acessar o auxiliar para confirmar o desligamento. '+explicarFalhaAuxiliar(e));}
+      }
+      // Uma sala manual não pode desligar um auxiliar que hospeda outro endereço.
+      const pertence=Boolean(local && (ativa ? (local.tunnel && local.tunnel===origem) || (ativa.auxiliarOrigem===origem && !local.tunnel) : true));
+      if(ativa?.auxiliarOrigem && !pertence)throw new Error('O auxiliar desta sala não foi localizado. Confira a hospedagem antes de encerrar.');
+      if(pertence&&!local?.encerramentoCompleto)throw new Error('Atualize o ZIP do Auxiliar para permitir o encerramento completo.');
+      if(ativa){
+        try{await solicitar(`${urlSala(ativa.codigo)}/encerrar`,{method:'POST',headers:autorizar(ativa.token),signal:AbortSignal.timeout(6000)});}
+        catch(e){if(!pertence&&!credencialRevogada(e))throw e;}
+        limparSalaEncerrada();
+      }
+      if(pertence){
+        const resposta=await pararSessaoPeloAuxiliar();
+        if(resposta.estado==='erro')throw new Error(resposta.mensagem);
+        if(local?.tunnel&&origem===local.tunnel){atualizarOrigemServidorMultiplayer('');setServidorDigitado('');}
+        setAuxiliar(null);setAuxiliarIndisponivel(true);setAuxiliarEncerrado(true);setDetalheAuxiliar('');
+      }else if(ativa){
+        setDetalheAuxiliar('Sala encerrada. Se o servidor foi iniciado manualmente, feche-o no computador que o hospeda.');
+      }
+    }catch(e){setErro(e instanceof Error?e.message:'Não foi possível desligar a hospedagem.');}
     finally{setDesligandoAuxiliar(false);}
-  }
-  async function encerrar(){
-    if(!credencial)return;
-    setProcessando(true);setErro('');
-    try{
-      await solicitar(`${urlSala(credencial.codigo)}/encerrar`,{method:'POST',headers:autorizar(credencial.token)});
-      limparCredencial(chave);setCredencial(null);setSala(null);setRolagens([]);setUltimaAnimacao(null);setAoVivo(null);setStatus('Encerrada');window.dispatchEvent(new Event('portal-multiplayer-sala'));
-    }catch(e){setErro(e instanceof Error?e.message:'Não foi possível encerrar a sala.');}
-    finally{setProcessando(false);}
   }
   async function atribuir(pessoaId:string,personagemId:string){
     if(!credencial||atribuindo)return;
@@ -259,7 +276,7 @@ export default function MultiplayerMestre({campanhaId,campanha,modo='cabecalho'}
             {detalheAuxiliar&&<p className="pm-mp-nota">{detalheAuxiliar}</p>}
             <button type="button" className="pm-mp-auxiliar-abrir" disabled={verificandoAuxiliar||processando} onClick={()=>void verificarAuxiliar()}>{verificandoAuxiliar?'Verificando…':'Verificar auxiliar'}</button>
             {auxiliarIndisponivel&&<button type="button" className="pm-mp-auxiliar-abrir" onClick={()=>{setAuxiliarEncerrado(false);abrirAuxiliarInstalado();}}>Abrir auxiliar instalado no Windows</button>}
-            {auxiliar&&<button type="button" className="pm-mp-auxiliar-desligar" disabled={desligandoAuxiliar||processando} onClick={()=>void desligarServidor()}>{desligandoAuxiliar?'Desligando…':'Desligar servidor e auxiliar'}</button>}
+            {auxiliar?.estado==='parado'&&<button type="button" className="pm-mp-auxiliar-desligar" disabled={desligandoAuxiliar||processando||verificandoAuxiliar} onClick={()=>void desligarServidor()}>Fechar auxiliar em repouso</button>}
           </div>}
           <div className="pm-mp-instalar">
             <strong>Quer hospedar como mestre em outro computador?</strong>
@@ -270,7 +287,7 @@ export default function MultiplayerMestre({campanhaId,campanha,modo='cabecalho'}
             </div>
           </div>
           <p>Inicie uma sala para gerar o convite. O mestre precisa manter o PC ligado durante a sessão.</p>
-          <button type="button" disabled={processando} onClick={()=>void criar()}>{processando?'Iniciando servidor e sala…':'＋ Iniciar sala multiplayer'}</button>
+          {auxiliar&&auxiliar.estado!=='parado'?<button type="button" className="pm-mp-encerrar" style={{background:'#49282f',color:'#ffdbd6',borderColor:'#ab686a'}} disabled={processando||desligandoAuxiliar||verificandoAuxiliar} onClick={()=>void desligarServidor()}>{desligandoAuxiliar?'Desligando servidor e auxiliar…':'⏻ Desligar servidor e auxiliar'}</button>:<button type="button" disabled={processando||desligandoAuxiliar||verificandoAuxiliar} onClick={()=>void criar()}>{processando?'Iniciando servidor e sala…':'＋ Iniciar sala multiplayer'}</button>}
         </div>:<>
           <div className="pm-mp-indicadores"><span><i className={status==='Conectado'?'online':''}/> {status}</span><span>Código: <strong>{credencial.codigo}</strong></span></div>
           <label className="pm-mp-link">Link de convite<input readOnly value={urlConvite(credencial.codigo)} onFocus={e=>e.currentTarget.select()} aria-label="Link para os convidados"/></label>
@@ -301,7 +318,7 @@ export default function MultiplayerMestre({campanhaId,campanha,modo='cabecalho'}
           </div>}
           <p className="pm-mp-nota">✉ Use o botão <strong>Chat</strong> da Mesa 2D ou 3D para conversar com todos os participantes da sala.</p>
           <HistoricoRolagens rolagens={rolagens} compacto/>
-          <button type="button" className="pm-mp-encerrar" disabled={processando} onClick={()=>void encerrar()}>Encerrar sala de teste</button>
+          <button type="button" className="pm-mp-encerrar" disabled={processando||desligandoAuxiliar||verificandoAuxiliar} onClick={()=>void desligarServidor()}>{desligandoAuxiliar?'Desligando…':'⏻ Desligar servidor e auxiliar'}</button>
         </>}
         {erro&&<p role="alert" className="pm-mp-erro">{erro}</p>}
         {credencial&&erroFichas&&<p role="alert" className="pm-mp-erro">{erroFichas} <a href="/como-hospedar.html" target="_blank" rel="noopener noreferrer">Como atualizar o Auxiliar</a></p>}
