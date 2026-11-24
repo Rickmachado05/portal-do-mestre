@@ -152,11 +152,19 @@ test('controle principal encerra sala e auxiliar em uma única operação',()=>{
 test('iniciar sala abre o auxiliar por gesto direto e apresenta lembrete de encerramento',()=>{
  const painel=readFileSync(join(RAIZ,'src','multiplayer','MultiplayerMestre.tsx'),'utf8');
  const ponte=readFileSync(join(RAIZ,'src','multiplayer','auxiliarMestre.ts'),'utf8');
- const criar=painel.slice(painel.indexOf('async function criar()'),painel.indexOf('function limparSalaEncerrada()'));
+ const criar=painel.slice(painel.indexOf('async function criar(manual=false)'),painel.indexOf('function limparSalaEncerrada()'));
  assert.ok(criar.indexOf('abrirAuxiliarInstalado();')>=0);
  assert.ok(criar.indexOf('abrirAuxiliarInstalado();')<criar.indexOf('await aguardarAuxiliarMestre()'));
  assert.ok(criar.indexOf('await aguardarAuxiliarMestre()')<criar.indexOf('await iniciarSessaoPeloAuxiliar'));
  assert.match(ponte,/tempoMaximo = 25000/);
  assert.match(painel,/Fechar esta página, aba ou navegador não desliga/);
  assert.match(painel,/Desligar servidor e auxiliar/);
+});
+
+test('endereco antigo nao bloqueia abertura automatica e modo manual e explicito',()=>{
+ const painel=readFileSync(join(RAIZ,'src','multiplayer','MultiplayerMestre.tsx'),'utf8');
+ assert.match(painel,/const abrirAgora=usaAuxiliar&&!auxiliar;/);
+ assert.match(painel,/const usaAuxiliar=!manual && suportaAuxiliarMestre/);
+ assert.match(painel,/onClick=\{\(\)=>void criar\(true\)\}/);
+ assert.doesNotMatch(painel,/const abrirAgora=[^;]*origemServidorMultiplayer/);
 });

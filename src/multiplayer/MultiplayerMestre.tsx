@@ -59,10 +59,11 @@ export default function MultiplayerMestre({campanhaId,campanha,modo='cabecalho'}
         if(!ativo)return;
         setAuxiliar(resposta);setAuxiliarIndisponivel(false);setDetalheAuxiliar('');
       })
-      .catch(falha=>{
+      .catch(()=>{
         if(!ativo)return;
         setAuxiliar(null);setAuxiliarIndisponivel(true);
-        setDetalheAuxiliar(explicarFalhaAuxiliar(falha));
+        // A sondagem inicial também falha quando o auxiliar está fechado normalmente.
+        setDetalheAuxiliar('');
       })
       .finally(()=>{if(ativo)setVerificandoAuxiliar(false);});
     return()=>{ativo=false;};
@@ -154,21 +155,24 @@ export default function MultiplayerMestre({campanhaId,campanha,modo='cabecalho'}
     return()=>{ativo=false;desassinar();desassinarAoVivo();};
   },[credencial?.codigo,credencial?.token,chave]);
 
-  async function criar(){
+  async function criar(manual=false){
     if(processando||desligandoAuxiliar)return;
     setErro('');setErroFichas('');setProcessando(true);
-    const usaAuxiliar=suportaAuxiliarMestre() && /\.vercel\.app$/i.test(window.location.hostname);
+    const usaAuxiliar=!manual && suportaAuxiliarMestre() && /\.vercel\.app$/i.test(window.location.hostname);
     // O protocolo externo precisa ser aberto diretamente no clique, antes de qualquer await.
-    // Um endereço manual já configurado continua sendo uma alternativa explícita.
-    const abrirAgora=usaAuxiliar&&!auxiliar&&!origemServidorMultiplayer();
+    // Um Quick Tunnel salvo pode ter expirado. Só o botão manual escolhe esse modo.
+    const abrirAgora=usaAuxiliar&&!auxiliar;
     let auxiliarOrigem:string|undefined;
     try{
+      if(manual){
+        if(!servidorDigitado.trim())throw new Error('Informe o endereço HTTPS do servidor manual.');
+        atualizarOrigemServidorMultiplayer(servidorDigitado);
+      }
       if(abrirAgora){
         setAbrindoAuxiliar(true);setAuxiliarEncerrado(false);setDetalheAuxiliar('');
         abrirAuxiliarInstalado();
       }
-      // Na Vercel, primeiro tentamos iniciar automaticamente o servidor no PC do mestre.
-      // Se o auxiliar não estiver instalado ou acessível, o modo manual continua funcionando.
+      // Na Vercel, o botão principal usa sempre o auxiliar local. Não reaproveita túnel antigo em caso de falha.
       if(usaAuxiliar){
         let auxiliarRespondeu=false;
         try{
@@ -190,12 +194,10 @@ export default function MultiplayerMestre({campanhaId,campanha,modo='cabecalho'}
           const detalhe=explicarFalhaAuxiliar(falha);
           setAuxiliarIndisponivel(!auxiliarRespondeu);
           setDetalheAuxiliar(detalhe);
-          // Não substituímos um Tunnel manual válido por erro do programa local.
-          if(!origemServidorMultiplayer()){
-            throw new Error(auxiliarRespondeu
-              ? `O auxiliar foi detectado, mas não conseguiu iniciar a hospedagem: ${detalhe}`
-              : `Não foi possível conectar ao auxiliar em 127.0.0.1:8790: ${detalhe} Use "Verificar auxiliar" e confira a permissão local do Chrome/Edge.`);
-          }
+          if(!auxiliarRespondeu)setAuxiliar(null);
+          throw new Error(auxiliarRespondeu
+            ? `O auxiliar foi detectado, mas não conseguiu iniciar a hospedagem: ${detalhe}`
+            : `Não foi possível conectar ao auxiliar em 127.0.0.1:8790: ${detalhe} Abra o auxiliar instalado no Windows e confira a permissão local do Chrome/Edge.`);
         }
       }
       if(/\.vercel\.app$/i.test(window.location.hostname)&&!origemServidorMultiplayer())
@@ -279,9 +281,8 @@ export default function MultiplayerMestre({campanhaId,campanha,modo='cabecalho'}
             try{atualizarOrigemServidorMultiplayer(servidorDigitado);window.location.reload();}
             catch(e){setErro(e instanceof Error?e.message:'Endereço inválido.');}
           }}>Salvar endereço do servidor</button>
-          <p className="pm-mp-nota">Método manual alternativo: na Vercel, cole aqui o endereço HTTPS exibido pelo cloudflared.
-            Salve antes de iniciar a sala. Deixe em branco apenas ao usar o Portal e o servidor na mesma origem.
-            Cada novo Quick Tunnel tem um endereço diferente.</p>
+          {!credencial&&<button type="button" className="pm-mp-copiar" disabled={processando||desligandoAuxiliar||!servidorDigitado.trim()} onClick={()=>void criar(true)}>Iniciar sala com servidor manual</button>}
+          <p className="pm-mp-nota">Método manual alternativo: cole o endereço HTTPS do cloudflared e use o botão Iniciar sala com servidor manual. O botão principal sempre usa o auxiliar local, mesmo se houver um endereço salvo. Cada novo Quick Tunnel tem um endereço diferente.</p>
         </div>
         <p className="pm-mp-explicacao">Os convidados utilizam a mesma biblioteca de dados do Portal, com Ateliê, física e rolagens 3D de resultados oficiais do servidor. Tokens, fichas, rolagens e inventários autorizados continuam disponíveis. Cenas com neblina ainda bloqueiam movimento remoto.</p>
         <aside className="pm-mp-aviso-hospedagem" role="note">
@@ -291,7 +292,7 @@ export default function MultiplayerMestre({campanhaId,campanha,modo='cabecalho'}
         {!credencial?<div className="pm-mp-vazio">
           {suportaAuxiliarMestre()&&<div className="pm-mp-auxiliar" role="status">
             <strong>Hospedagem no seu PC</strong>
-            <p>{abrindoAuxiliar?'Abrindo o auxiliar do Windows. Autorize a abertura no navegador, se solicitado.':auxiliarEncerrado?'Auxiliar encerrado. Clique em Iniciar sala multiplayer para abri-lo novamente.':auxiliar?.estado==='pronto'?'Servidor e Cloudflare conectados.':auxiliar?.estado==='iniciando'?auxiliar.mensagem:auxiliar?.estado==='erro'?auxiliar.mensagem:auxiliar?.estado==='parado'?'Auxiliar detectado no Windows e aguardando você iniciar a sala.':verificandoAuxiliar?'Verificando a conexão com o Windows…':auxiliarIndisponivel?'Auxiliar não acessível. Iniciar sala multiplayer tentará abri-lo se não houver endereço manual configurado. Confira a permissão local se necessário.':'Ao abrir este painel, o Portal verifica se o auxiliar está acessível.'}</p>
+            <p>{abrindoAuxiliar?'Abrindo o auxiliar do Windows. Autorize a abertura no navegador, se solicitado.':auxiliarEncerrado?'Auxiliar encerrado. Clique em Iniciar sala multiplayer para abri-lo novamente.':auxiliar?.estado==='pronto'?'Servidor e Cloudflare conectados.':auxiliar?.estado==='iniciando'?auxiliar.mensagem:auxiliar?.estado==='erro'?auxiliar.mensagem:auxiliar?.estado==='parado'?'Auxiliar detectado no Windows e aguardando você iniciar a sala.':verificandoAuxiliar?'Verificando a conexão com o Windows…':auxiliarIndisponivel?'Auxiliar ainda não conectado. Clique em Iniciar sala multiplayer para abri-lo. Se não abrir, confira a instalação e a permissão de rede local.':'Ao abrir este painel, o Portal verifica se o auxiliar está acessível.'}</p>
             {detalheAuxiliar&&<p className="pm-mp-nota">{detalheAuxiliar}</p>}
             <button type="button" className="pm-mp-auxiliar-abrir" disabled={verificandoAuxiliar||processando||desligandoAuxiliar} onClick={()=>void verificarAuxiliar()}>{verificandoAuxiliar?'Verificando…':'Verificar auxiliar'}</button>
             {auxiliarIndisponivel&&<button type="button" className="pm-mp-auxiliar-abrir" disabled={processando||desligandoAuxiliar} onClick={()=>{setAuxiliarEncerrado(false);abrirAuxiliarInstalado();}}>Abrir auxiliar instalado no Windows</button>}
