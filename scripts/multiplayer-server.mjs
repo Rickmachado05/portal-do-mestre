@@ -813,7 +813,7 @@ export function criarAplicacaoMultiplayer({diretorioPersistencia=null,diretorioP
       if(diretorioPublico)return servirSite(req,res,diretorioPublico);
       erro(res,404,'Rota inexistente.');return;
     }
-    if(req.method==='GET' && rota===`${PREFIXO}/saude`){enviar(res,200,{ativo:true,etapa:8,versao:'29.15.28',recursos:{desenhoJogador:true,confirmacaoDesenhos:true,movimentoContinuo:true}});return;}
+    if(req.method==='GET' && rota===`${PREFIXO}/saude`){enviar(res,200,{ativo:true,etapa:8,versao:'29.15.28',recursos:{desenhoJogador:true,confirmacaoDesenhos:true,movimentoContinuo:true,fichaImpetoUniversal:true}});return;}
     if(req.method==='POST' && rota===`${PREFIXO}/salas`){
       if(salas.size>=LIMITE_SALAS){erro(res,429,'Limite de salas de teste atingido.');return;}
       try{

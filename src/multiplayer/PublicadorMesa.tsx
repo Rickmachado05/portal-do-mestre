@@ -1437,16 +1437,25 @@ export default function PublicadorMesa({
     const cred = lerCredencial(chaveMestre(campanhaId));
     if (!cred || cred.papel !== 'mestre') return;
     const controlador = new AbortController();
-    const atraso = window.setTimeout(() => {
-      void solicitar(`${urlSala(cred.codigo)}/fichas`, {
-        method: 'POST',
-        headers: autorizar(cred.token),
-        body: payloadFichas,
-        signal: controlador.signal,
-      }).catch(() => {
-        /* A próxima alteração da campanha ou reabertura retenta. */
-      });
-    }, 220);
+    let atraso: number;
+    let tentativas = 0;
+    const avisar = (mensagem: string) => window.dispatchEvent(new CustomEvent('portal-mp-fichas-status', {detail:{campanhaId,mensagem}}));
+    const publicar = async () => {
+      try {
+        await solicitar(`${urlSala(cred.codigo)}/fichas`, {
+          method: 'POST', headers: autorizar(cred.token), body: payloadFichas, signal: controlador.signal,
+        });
+        if (!controlador.signal.aborted) avisar('');
+      } catch (falha) {
+        if (controlador.signal.aborted) return;
+        const detalhe = falha instanceof Error ? falha.message : 'Falha desconhecida.';
+        const incompatibilidade = /Contrato Ímpeto inválido|Habilidades inválidas/i.test(detalhe);
+        avisar('Ficha não publicada: '+detalhe+(incompatibilidade?' Atualize o Auxiliar do Mestre, encerre o servidor antigo e inicie uma nova sala.':' Confira a conexão com o servidor.'));
+        console.warn('[Portal multiplayer] Fichas:', detalhe);
+        if (!incompatibilidade && ++tentativas < 4) atraso=window.setTimeout(publicar, 1800);
+      }
+    };
+    atraso=window.setTimeout(publicar, 220);
     return () => {
       window.clearTimeout(atraso);
       controlador.abort();

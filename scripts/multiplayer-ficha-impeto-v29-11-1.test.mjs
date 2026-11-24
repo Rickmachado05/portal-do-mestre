@@ -70,3 +70,21 @@ test('interface v29.11.1 mantém ambas as laterais e espelha as abas do mestre',
   for(const aba of ['Atributos','Habilidades','Personagem','Inventário','Token'])assert.match(ficha,new RegExp(`'${aba}'`));
   for(const detalhe of ['Perícias','Construção','Exploração','condicoes','exigeCA','onRolarAcao'])assert.ok(ficha.includes(detalhe),`Falta ${detalhe}`);
 });
+
+test('servidor aceita ficha universal e anuncia compatibilidade sem expor origem',async()=>{
+ const app=criarAplicacaoMultiplayer();
+ const addr=await app.escutar(0),base=`http://127.0.0.1:${addr.port}/api/multiplayer`;
+ const req=async(path,token,body)=>{const r=await fetch(base+path,{method:body?'POST':'GET',headers:{...(token?{Authorization:`Bearer ${token}`}:{}),...(body?{'Content-Type':'application/json'}:{})},...(body?{body:JSON.stringify(body)}:{})});return {status:r.status,dados:await r.json()};};
+ try{
+  assert.equal((await req('/saude')).dados.recursos.fichaImpetoUniversal,true);
+  const {codigo,token:mestre}=(await req('/salas',null,{campanha:'Ímpeto universal',campanhaId:'teste-universal'})).dados;
+  const sala='/salas/'+codigo,convidado=(await req(sala+'/entrar',null,{apelido:'Ana'})).dados;
+  await req(sala+'/mesa',mestre,{cenaId:'c1',cenaNome:'Arena',visibilidade:'total',tokens:[{id:'a',nome:'Morgana',tipo:'jogador',x:20,y:40,cor:'#1166aa'}]});
+  await req(sala+'/atribuir',mestre,{pessoaId:convidado.id,personagemId:'a'});
+  const f=personagem('a','Morgana');f.impeto.escala='universal-v1';f.hp=1000000;f.hpMax=1000000;f.mana=2000000;f.manaMax=1900000;f.impeto.investimento.hp=15000;
+  f.acoes=Array.from({length:14},(_,i)=>({...f.acoes[1],id:'skill-'+i,nome:'Habilidade '+i,fonte:'universal'}));
+  assert.equal((await req(sala+'/fichas',mestre,{personagens:[f]})).status,200);
+  const recebido=(await req(sala+'/ficha',convidado.token)).dados.ficha;
+  assert.equal(recebido.impeto.escala,'universal-v1');assert.equal(recebido.acoes.length,14);assert.equal(recebido.hp,1000000);assert.equal(recebido.mana,2000000);assert.doesNotMatch(JSON.stringify(recebido),/NÃO DIVULGAR/);
+ }finally{await app.fechar();}
+});

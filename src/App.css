@@ -539,10 +539,8 @@ button:active:not(:disabled) {
 }
 .token-rosto {
   background: radial-gradient(circle at 35% 20%, #4a4a50, #1e212a);
-  border: 3px solid var(--cor-token);
-  box-shadow:
-    0 0 0 2px #161415,
-    0 5px 20px #000d;
+  border: 2px solid var(--cor-token);
+  box-shadow: none;
   display: grid;
   place-items: center;
   font-family: Cinzel, Georgia, serif;
@@ -1698,8 +1696,7 @@ button:active:not(:disabled) {
 .token.token-topview.selecionado .token-rosto:before {
   border-color: #ffdd9e;
   box-shadow:
-    0 0 0 2px #1e161a,
-    0 0 19px #ffc474a3;
+    0 0 12px #ffc47480;
   opacity: 0.96;
 }
 .token.token-topview.turno-atual .token-rosto:before {
@@ -3962,8 +3959,7 @@ button:active:not(:disabled) {
 .token.token-topview.selecionado .token-rosto::before {
   border-color: var(--cor-token);
   box-shadow:
-    0 0 0 2px #1e161a,
-    0 0 19px #ffc474a3;
+    0 0 12px #ffc47480;
 }
 .token.token-topview.turno-atual .token-rosto::before {
   border-color: var(--cor-token);

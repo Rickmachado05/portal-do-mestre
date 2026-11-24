@@ -33,6 +33,12 @@ export default function MultiplayerMestre({campanhaId,campanha,modo='cabecalho'}
   const [atribuindo,setAtribuindo]=useState<string|null>(null);
   const [status,setStatus]=useState('Desconectado');
   const [erro,setErro]=useState('');
+  const [erroFichas,setErroFichas]=useState('');
+  useEffect(()=>{
+    const receber=(evento:Event)=>{const d=(evento as CustomEvent<{campanhaId:string;mensagem:string}>).detail;if(d?.campanhaId===campanhaId)setErroFichas(d.mensagem);};
+    window.addEventListener('portal-mp-fichas-status',receber);
+    return()=>window.removeEventListener('portal-mp-fichas-status',receber);
+  },[campanhaId]);
   const [servidorDigitado,setServidorDigitado]=useState(()=>origemServidorMultiplayer());
   const [processando,setProcessando]=useState(false);
   const [auxiliar,setAuxiliar]=useState<StatusAuxiliar|null>(null);
@@ -147,7 +153,7 @@ export default function MultiplayerMestre({campanhaId,campanha,modo='cabecalho'}
   },[credencial?.codigo,credencial?.token,chave]);
 
   async function criar(){
-    setErro('');setProcessando(true);
+    setErro('');setErroFichas('');setProcessando(true);
     try{
       // Na Vercel, primeiro tentamos iniciar automaticamente o servidor no PC do mestre.
       // Se o auxiliar não estiver instalado ou acessível, o modo manual continua funcionando.
@@ -175,6 +181,8 @@ export default function MultiplayerMestre({campanhaId,campanha,modo='cabecalho'}
       }
       if(/\.vercel\.app$/i.test(window.location.hostname)&&!origemServidorMultiplayer())
         throw new Error('Configure o auxiliar do mestre ou informe o endereço HTTPS do Cloudflare Tunnel.');
+      const saude=await solicitar<{recursos?:{fichaImpetoUniversal?:boolean}}>(`${urlRaizMultiplayer()}/saude`);
+      if(saude.recursos?.fichaImpetoUniversal!==true)throw new Error('O servidor local está desatualizado e não aceita fichas Ímpeto Universal. Encerre o servidor e Tunnel, baixe o ZIP atualizado do Auxiliar, extraia substituindo os arquivos na pasta atual e inicie novamente.');
       const resposta=await solicitar<{codigo:string;token:string;sala:ResumoSala}>(`${urlRaizMultiplayer()}/salas`,{
         method:'POST',body:JSON.stringify({campanhaId,campanha}),
       });
@@ -252,7 +260,7 @@ export default function MultiplayerMestre({campanhaId,campanha,modo='cabecalho'}
           </div>}
           <div className="pm-mp-instalar">
             <strong>Quer hospedar como mestre em outro computador?</strong>
-            <p>O Portal é gratuito. Baixe o Auxiliar do Mestre uma vez no Windows. Jogadores só precisam do convite.</p>
+            <p>O Portal é gratuito. Mantenha o Auxiliar do Mestre atualizado no Windows; jogadores só precisam do convite.</p>
             <div className="pm-mp-instalar-links">
               <a href="/downloads/auxiliar-do-mestre-windows.zip" download="auxiliar-do-mestre-windows.zip">↓ Baixar auxiliar (.zip)</a>
               <a href="/como-hospedar.html" target="_blank" rel="noopener noreferrer">Como hospedar uma mesa</a>
@@ -293,6 +301,7 @@ export default function MultiplayerMestre({campanhaId,campanha,modo='cabecalho'}
           <button type="button" className="pm-mp-encerrar" disabled={processando} onClick={()=>void encerrar()}>Encerrar sala de teste</button>
         </>}
         {erro&&<p role="alert" className="pm-mp-erro">{erro}</p>}
+        {credencial&&erroFichas&&<p role="alert" className="pm-mp-erro">{erroFichas} <a href="/como-hospedar.html" target="_blank" rel="noopener noreferrer">Como atualizar o Auxiliar</a></p>}
         <p className="pm-mp-nota">Teste local: abra o convite no Firefox ou Edge e atribua um personagem acima. O mestre deve manter a mesa aberta. A ficha permanece protegida contra edição remota. Os números das rolagens são compartilhados, mas não atualizam HP ou Mana. As transferências e o uso de itens são processados na campanha do mestre. Animações 3D sincronizadas e integração completa da visão individual virão depois.</p>
       </section>
     </div>,document.body)}

@@ -24,6 +24,12 @@ O pacote nao inclui Node.js nem cloudflared.exe. A hospedagem depende
 do PC do mestre, da internet e dos limites do Cloudflare Quick Tunnel.
 O auxiliar atende apenas 127.0.0.1:8790; o servidor fica em 127.0.0.1:8787.
 
+ATUALIZACAO PARA FICHAS IMPETO UNIVERSAL:
+ Encerre a sala e desligue o servidor e Tunnel pelo painel Multiplayer.
+ Baixe o ZIP atualizado e extraia na pasta atual, substituindo os arquivos.
+ Preserve cloudflared.exe na pasta principal. Se mudou de pasta, rode o instalador.
+ Inicie uma nova sala. Servidores antigos nao reconhecem a ficha universal.
+
 DIAGNOSTICO (PowerShell):
  Test-NetConnection 127.0.0.1 -Port 8790
  Invoke-RestMethod http://127.0.0.1:8790/v1/status -Headers @{Origin='https://portal-do-mestre.vercel.app'}

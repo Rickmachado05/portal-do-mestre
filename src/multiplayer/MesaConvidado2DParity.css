@@ -826,11 +826,9 @@
 }
 .pm-jogo.pm-jogo--modo2d .pm-jogo-token > .token-rosto {
   background: var(--fundo-token, #22252d);
-  border: 3px solid var(--cor-token);
+  border: 2px solid var(--cor-token);
   border-radius: 50%;
-  box-shadow:
-    0 0 0 2px #161415,
-    0 5px 20px #000d;
+  box-shadow: none;
   overflow: hidden;
 }
 .pm-jogo.pm-jogo--modo2d .pm-jogo-token.token-topview > .token-rosto {
@@ -842,9 +840,7 @@
 .pm-jogo.pm-jogo--modo2d .pm-jogo-token.meu > .token-rosto,
 .pm-jogo.pm-jogo--modo2d .pm-jogo-token.pm-mp-token-controlavel > .token-rosto,
 .pm-jogo.pm-jogo--modo2d .pm-jogo-token.pm-jogo-token-npc > .token-rosto {
-  box-shadow:
-    0 0 0 2px #161415,
-    0 5px 20px #000d;
+  box-shadow: none;
 }
 .pm-jogo.pm-jogo--modo2d .pm-jogo-token.token-topview.meu > .token-rosto,
 .pm-jogo.pm-jogo--modo2d .pm-jogo-token.token-topview.pm-mp-token-controlavel > .token-rosto,
