@@ -20,3 +20,7 @@ test('H06: combate, exceções reativas e exploração',()=>{
 test('JSON próprio, dados inválidos e orçamentos',()=>{
  const f=novaFicha();assert.deepEqual(importar(JSON.parse(JSON.stringify(f))),f);assert.throws(()=>importar({formato:'hexatombe-avatar-ficha'}));f.atributos.Força=99;assert.throws(()=>importar(f));f.atributos.Força=14;f.config.pa=1;assert(revisar(f).includes('PA: orçamento excedido.'));
 });
+
+test('alterar a escala de CA não concede PR negativos',()=>{
+ const f=novaFicha();f.config.ca=10;assert.equal(totais(f).pr,0);assert(revisar(f).includes('CA Base fora da escala escolhida.'));
+});

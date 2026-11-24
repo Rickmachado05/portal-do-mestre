@@ -61,7 +61,7 @@ export function custoAtributo(valor,base=8){
 }
 export const custoPA=f=>ATRIBUTOS.reduce((s,n)=>s+custoAtributo(f.atributos[n],f.config.baseAtributo),0);
 export const custoPT=f=>PERICIAS.reduce((s,n)=>s+f.pericias[n],0);
-export const custoPR=f=>f.recursos.hp+f.recursos.en+CA[f.recursos.ca-8]-CA[f.config.ca-8]+ATAQUE[f.recursos.ataque]+REGEN[f.recursos.regen];
+export const custoPR=f=>f.recursos.hp+f.recursos.en+Math.max(0,CA[f.recursos.ca-8]-CA[f.config.ca-8])+ATAQUE[f.recursos.ataque]+REGEN[f.recursos.regen];
 export function derivacaoValida(f){
   const d=f.derivacao;
   return !d.tipo||(f.config.derivacao&&ATRIBUTOS.includes(d.atributo)&&f.atributos[d.atributo]>=12&&d.justificativa.trim().length>0);

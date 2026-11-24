@@ -276,7 +276,7 @@ export default function GestaoPersonagens({ fichas, campanhas, onChange }: Props
   async function salvarNoAcervo(dados: FichaDados, id?: string, tokenPadrao?: Blob | null) {
     if (dados.impeto) {
       setFeedback(
-        'Fichas Ímpeto A01 só podem alterar a categoria aqui. Edite regras no Criador Avatar.',
+        'Fichas A01 legadas só podem alterar a categoria aqui. Exporte o JSON original para preservar as regras.',
       );
       return;
     }
@@ -461,16 +461,8 @@ export default function GestaoPersonagens({ fichas, campanhas, onChange }: Props
               ＋ Chefe
             </button>
           </div>
-          <a
-            className="hp-button hp-button-primary"
-            href="https://hexatombe-avatar.vercel.app/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            ＋ Personagem A01
-          </a>
-          <a className="hp-button hp-button-primary" href="/criador-impeto/">
-            ＋ Personagem Ímpeto
+          <a className="hp-button hp-button-primary" href="/criador/">
+            ＋ Criar personagem
           </a>
           <button
             className="hp-button hp-button-outline"
@@ -490,13 +482,7 @@ export default function GestaoPersonagens({ fichas, campanhas, onChange }: Props
         </div>
       </div>
       <p className="gm-module-hint" role="note">
-        Biblioteca única por sistema, organizada por função. Cadastre NPCs, inimigos e chefes aqui
-        ou importe uma ficha do{' '}
-        <a href="https://hexatombe-avatar.vercel.app/" target="_blank" rel="noopener noreferrer">
-          Criador Hexatombe: Avatar
-        </a>
-        . O <a href="/criador-impeto/">Criador Ímpeto universal</a> tem edição e exportação próprias nesta primeira versão. As fichas A01 mantêm a edição das regras no Criador; os demais registros podem ser
-        editados neste Portal.
+        Biblioteca única por sistema, organizada por função. Use o <a href="/criador/">Criador Ímpeto RPG</a> para novas fichas. A integração direta das fichas universais à biblioteca está em homologação; fichas existentes e importações legadas permanecem compatíveis.
       </p>
       <nav className="hx-mestre-categorias" role="group" aria-label="Categorias da biblioteca">
         {(['todos', 'jogador', 'npc', 'inimigo', 'chefe'] as const).map((p) => (
@@ -681,11 +667,9 @@ export default function GestaoPersonagens({ fichas, campanhas, onChange }: Props
           {!fichas.length && (
             <a
               className="hp-button hp-button-primary"
-              href="https://hexatombe-avatar.vercel.app/"
-              target="_blank"
-              rel="noopener noreferrer"
+              href="/criador/"
             >
-              Criar ficha Avatar A01
+              Criar ficha Ímpeto
             </a>
           )}
         </div>
@@ -1201,7 +1185,7 @@ export default function GestaoPersonagens({ fichas, campanhas, onChange }: Props
                   className="hx-character-exportar-origem"
                   onClick={() => exportarOrigemCriador(selecionada.dados.impeto!)}
                 >
-                  ↓ JSON para o Criador Avatar
+                  ↓ JSON original (ficha legada)
                 </button>
               )}
               {sistemaDaFicha(selecionada.dados) === 'impeto' && !selecionada.dados.impeto && (
@@ -1209,7 +1193,7 @@ export default function GestaoPersonagens({ fichas, campanhas, onChange }: Props
                   className="hp-button hp-button-primary"
                   href={`/criador/?ficha=${encodeURIComponent(selecionada.id)}`}
                 >
-                  Abrir no Gerador Ímpeto
+                  Editar ficha legada
                 </a>
               )}
             </footer>

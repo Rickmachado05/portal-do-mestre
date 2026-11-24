@@ -857,6 +857,7 @@ function App() {
     setSalvandoFicha(true);
     try {
       const anterior = fichaId ? await buscarFicha(fichaId) : undefined;
+      if (!anterior) throw Error('Para criar um personagem novo, use o Criador Ímpeto RPG universal.');
       if (anterior?.dados.impeto)
         throw Error(
           'Ficha A01 protegida. Edite seu JSON no criador atualizado e importe-o na biblioteca.',
@@ -1126,23 +1127,10 @@ function App() {
             <span className="integracao-label">CRIADOR DE FICHAS · SISTEMA ÍMPETO RPG</span>
           </div>
           <p className="integracao-escopo" role="note">
-            <strong>Gerador do sistema Ímpeto RPG.</strong> A apresentação visual Avatar é
-            preservada nesta versão. A biblioteca de personagens pertence ao Portal do Mestre e
-            poderá reunir outros sistemas no futuro.
+            <strong>Edição de ficha legada.</strong> Este editor existe somente para preservar personagens antigos. Novos personagens usam o Criador Ímpeto RPG universal.
           </p>
           <div className="integracao-acoes">
-            <a href="/criador/?nova=1">＋ Nova ficha</a>
-            <label htmlFor="integracao-importar-json">↥ Importar JSON</label>
-            <input
-              id="integracao-importar-json"
-              type="file"
-              accept=".json,application/json"
-              hidden
-              onChange={(e) => {
-                void importarJsonOriginal(e.target.files?.[0]);
-                e.target.value = '';
-              }}
-            />
+            <a href="/criador/">＋ Criar ficha Ímpeto</a>
             <button type="button" onClick={exportarJsonOriginal}>
               ↓ Exportar JSON
             </button>
