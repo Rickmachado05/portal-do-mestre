@@ -431,10 +431,11 @@ export async function solicitar<T>(url: string, opcoes: RequestInit = {}): Promi
         ...(opcoes.headers || {}),
       },
     });
-  } catch {
-    throw new Error(
-      'Servidor multiplayer indisponível. Inicie o projeto com npm run dev:multiplayer.',
-    );
+  } catch (falha) {
+    if(opcoes.signal?.aborted)throw new Error('A conexão com o servidor foi interrompida ou excedeu o tempo limite.');
+    if(typeof window!=='undefined' && window.location.hostname.endsWith('.vercel.app'))
+      throw new Error('Não foi possível acessar a API multiplayer pelo endereço público. Confira a conexão do Cloudflare e tente novamente.');
+    throw new Error('Servidor multiplayer indisponível. Confira se o servidor está em execução.');
   }
   const dados = await resposta.json().catch(() => ({}));
   if (!resposta.ok)

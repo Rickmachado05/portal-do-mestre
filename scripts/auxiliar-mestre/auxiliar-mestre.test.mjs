@@ -177,3 +177,11 @@ test('painel compacto preserva o modo manual apenas nas opções avançadas',()=
  assert.doesNotMatch(painel,/Abrir auxiliar instalado no Windows|Salvar endereço do servidor|Firefox ou Edge|Sala de teste/);
  assert.match(painel,/navegador de preferência/);
 });
+
+test('a sala aguarda a API pública e permite repetir a criação sem desligar',()=>{
+ const painel=readFileSync(join(RAIZ,'src','multiplayer','MultiplayerMestre.tsx'),'utf8');
+ assert.ok(painel.indexOf('await aguardarServidorPublico(consultarSaude)')<painel.indexOf('${raizPublica}/salas'));
+ assert.match(painel,/Tentar criar sala novamente/);
+ assert.match(painel,/Como instalar/);
+ assert.match(readFileSync(join(RAIZ,'public','como-hospedar.html'),'utf8'),/href="\/portal-do-mestre\.svg/);
+});

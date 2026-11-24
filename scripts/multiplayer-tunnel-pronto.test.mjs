@@ -1,0 +1,3 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {aguardarServidorPublico} from '../src/multiplayer/aguardarServidorPublico.mjs';
+test('aguarda a propagação do túnel sem repetir mutações',async()=>{let chamadas=0,pausas=0;const r=await aguardarServidorPublico(async()=>{if(++chamadas<3)throw Error('DNS');return {ativo:true,recursos:{fichaImpetoUniversal:true}}},{tentativas:4,esperar:async()=>{pausas++}});assert.equal(r.ativo,true);assert.equal(chamadas,3);assert.equal(pausas,2)});
+test('resposta HTML ou inválida não é saúde do Portal',async()=>{let chamadas=0;await assert.rejects(()=>aguardarServidorPublico(async()=>{chamadas++;return {}},{tentativas:3,esperar:async()=>{}}),/endereço público/);assert.equal(chamadas,3)});

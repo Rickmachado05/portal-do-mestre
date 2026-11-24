@@ -11,6 +11,7 @@ import {
 import HistoricoRolagens from './HistoricoRolagens';
 import Rolagem3DMultiplayer from './Rolagem3DMultiplayer';
 import './Multiplayer.css';
+import {aguardarServidorPublico} from './aguardarServidorPublico.mjs';
 import {atualizarOrigemServidorMultiplayer,origemServidorMultiplayer} from './configuracaoServidor.mjs';
 import {abrirAuxiliarInstalado,aguardarAuxiliarMestre,iniciarSessaoPeloAuxiliar,pararSessaoPeloAuxiliar,statusAuxiliarMestre,suportaAuxiliarMestre,explicarFalhaAuxiliar,type StatusAuxiliar} from './auxiliarMestre';
 
@@ -42,6 +43,7 @@ export default function MultiplayerMestre({campanhaId,campanha,modo='cabecalho'}
   const [servidorDigitado,setServidorDigitado]=useState(()=>origemServidorMultiplayer());
   const [processando,setProcessando]=useState(false);
   const [abrindoAuxiliar,setAbrindoAuxiliar]=useState(false);
+  const [verificandoServidorPublico,setVerificandoServidorPublico]=useState(false);
   const [auxiliar,setAuxiliar]=useState<StatusAuxiliar|null>(null);
   const [detalheAuxiliar,setDetalheAuxiliar]=useState('');
   const [verificandoAuxiliar,setVerificandoAuxiliar]=useState(false);
@@ -201,15 +203,19 @@ export default function MultiplayerMestre({campanhaId,campanha,modo='cabecalho'}
       }
       if(/\.vercel\.app$/i.test(window.location.hostname)&&!origemServidorMultiplayer())
         throw new Error('Configure o auxiliar do mestre ou informe o endereço HTTPS do Cloudflare Tunnel.');
-      const saude=await solicitar<{recursos?:{fichaImpetoUniversal?:boolean}}>(`${urlRaizMultiplayer()}/saude`);
+      const raizPublica=urlRaizMultiplayer();
+      setVerificandoServidorPublico(true);
+      const consultarSaude=()=>solicitar<{ativo?:boolean;recursos?:{fichaImpetoUniversal?:boolean}}>(`${raizPublica}/saude`,{signal:AbortSignal.timeout(4500)});
+      const saude=await aguardarServidorPublico(consultarSaude);
+      setVerificandoServidorPublico(false);
       if(saude.recursos?.fichaImpetoUniversal!==true)throw new Error('O servidor local está desatualizado e não aceita fichas Ímpeto Universal. Encerre o servidor e Tunnel, baixe o ZIP atualizado do Auxiliar, extraia substituindo os arquivos na pasta atual e inicie novamente.');
-      const resposta=await solicitar<{codigo:string;token:string;sala:ResumoSala}>(`${urlRaizMultiplayer()}/salas`,{
-        method:'POST',body:JSON.stringify({campanhaId,campanha}),
+      const resposta=await solicitar<{codigo:string;token:string;sala:ResumoSala}>(`${raizPublica}/salas`,{
+        method:'POST',body:JSON.stringify({campanhaId,campanha}),signal:AbortSignal.timeout(15000),
       });
       const nova:CredencialSala={codigo:resposta.codigo,token:resposta.token,papel:'mestre',...(auxiliarOrigem?{auxiliarOrigem}: {})};
       salvarCredencial(chaveMestre(campanhaId),nova);setCredencial(nova);setSala(resposta.sala);window.dispatchEvent(new Event('portal-multiplayer-sala'));
     }catch(e){setErro(e instanceof Error?e.message:'Não foi possível criar a sala.');}
-    finally{setAbrindoAuxiliar(false);setProcessando(false);}
+    finally{setVerificandoServidorPublico(false);setAbrindoAuxiliar(false);setProcessando(false);}
   }
   function limparSalaEncerrada(){
     limparCredencial(chave);setCredencial(null);setSala(null);setMesa(null);setRolagens([]);setUltimaAnimacao(null);setAoVivo(null);setErroFichas('');setStatus('Encerrada');window.dispatchEvent(new Event('portal-multiplayer-sala'));
@@ -274,10 +280,11 @@ export default function MultiplayerMestre({campanhaId,campanha,modo='cabecalho'}
         {!credencial?<div className="pm-mp-vazio pm-mp-inicio">
           {suportaAuxiliarMestre()&&<div className="pm-mp-status-hospedagem" role="status">
             <span><i className={auxiliar?.estado==='pronto'?'online':''}/> <strong>Hospedagem no seu PC</strong></span>
-            <p>{abrindoAuxiliar?'Abrindo auxiliar. Autorize a abertura, se solicitada.':desligandoAuxiliar?'Encerrando a hospedagem…':auxiliar?.estado==='pronto'?'Servidor conectado.':auxiliar?.estado==='iniciando'?auxiliar.mensagem:auxiliar?.estado==='erro'?auxiliar.mensagem:processando?'Iniciando servidor e sala…':auxiliarEncerrado?'Hospedagem encerrada.':verificandoAuxiliar?'Verificando conexão…':auxiliar?.estado==='parado'?'Auxiliar disponível.':'Hospedagem desligada. O auxiliar será aberto ao iniciar.'}</p>
+            <p>{abrindoAuxiliar?'Abrindo auxiliar. Autorize a abertura, se solicitada.':desligandoAuxiliar?'Encerrando a hospedagem…':verificandoServidorPublico?'Aguardando o Cloudflare liberar o acesso público…':processando&&auxiliar?.estado==='pronto'?'Criando sala e convite…':auxiliar?.estado==='pronto'?'Servidor iniciado. A sala ainda não foi criada.':auxiliar?.estado==='iniciando'?auxiliar.mensagem:auxiliar?.estado==='erro'?auxiliar.mensagem:processando?'Iniciando servidor e sala…':auxiliarEncerrado?'Hospedagem encerrada.':verificandoAuxiliar?'Verificando conexão…':auxiliar?.estado==='parado'?'Auxiliar disponível.':'Hospedagem desligada. O auxiliar será aberto ao iniciar.'}</p>
           </div>}
           {auxiliar&&auxiliar.estado!=='parado'?<button type="button" className="pm-mp-encerrar" disabled={processando||desligandoAuxiliar||verificandoAuxiliar} onClick={()=>void desligarServidor()}>{desligandoAuxiliar?'Desligando…':'⏻ Desligar servidor e auxiliar'}</button>:<button type="button" disabled={processando||desligandoAuxiliar||verificandoAuxiliar} onClick={()=>void criar()}>{abrindoAuxiliar?'Abrindo auxiliar…':processando?'Iniciando servidor e sala…':'＋ Iniciar sala multiplayer'}</button>}
-          <p className="pm-mp-inicio-ajuda">O convite será gerado automaticamente. Mantenha seu PC ligado durante a sessão.</p>
+          {auxiliar?.estado==='pronto'&&!credencial&&<button type="button" className="pm-mp-retentar" disabled={processando||desligandoAuxiliar||verificandoAuxiliar} onClick={()=>void criar()}>{verificandoServidorPublico?'Verificando acesso público…':processando?'Criando sala…':'↻ Tentar criar sala novamente'}</button>}
+          <p className="pm-mp-inicio-ajuda">O convite será gerado quando a sala estiver conectada. Mantenha seu PC ligado durante a sessão.</p>
         </div>:<>
           <div className="pm-mp-indicadores"><span><i className={status==='Conectado'?'online':''}/> {status}</span><span>Código: <strong>{credencial.codigo}</strong></span></div>
           <button type="button" className="pm-mp-encerrar" disabled={processando||desligandoAuxiliar||verificandoAuxiliar} onClick={()=>void desligarServidor()}>{desligandoAuxiliar?'Desligando…':'⏻ Desligar servidor e auxiliar'}</button>
@@ -317,10 +324,13 @@ export default function MultiplayerMestre({campanhaId,campanha,modo='cabecalho'}
           <p>Fechar esta página, aba ou navegador não desliga o servidor, o Cloudflare nem o auxiliar. Use <b>Desligar servidor e auxiliar</b> antes de sair.</p>
         </aside>
         {credencial&&<p className="pm-mp-inicio-ajuda">Envie o convite aos jogadores para abrirem em seu navegador de preferência. Atribua um personagem a cada convidado e mantenha a mesa aberta durante a sessão.</p>}
-        {!credencial&&<div className="pm-mp-ajuda-hospedagem">
-          <a href="/como-hospedar.html" target="_blank" rel="noopener noreferrer">Como hospedar / instalar</a>
-          <a href="/downloads/auxiliar-do-mestre-windows.zip" download="auxiliar-do-mestre-windows.zip">Baixar auxiliar (.zip)</a>
-        </div>}
+        {!credencial&&<section className="pm-mp-ajuda-hospedagem" aria-label="Instalação do auxiliar">
+          <strong>Primeira vez hospedando?</strong>
+          <div className="pm-mp-ajuda-acoes">
+            <a href="/como-hospedar.html" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5zM4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5M8 7h8M8 11h6"/></svg><span><b>Como instalar</b><small>Guia passo a passo</small></span></a>
+            <a href="/downloads/auxiliar-do-mestre-windows.zip" download="auxiliar-do-mestre-windows.zip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true"><path d="M12 3v12m-5-5 5 5 5-5M4 16v5h16v-5"/></svg><span><b>Baixar auxiliar</b><small>Windows · ZIP</small></span></a>
+          </div>
+        </section>
         {!credencial&&<details className="pm-mp-avancado">
           <summary>Opções avançadas e diagnóstico</summary>
           {suportaAuxiliarMestre()&&<div className="pm-mp-auxiliar">
