@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, useLayoutEffect } from 'react';
 import { formulaRolavelDaFicha } from '../hexatombe/rolagensDaFicha';
 import {
   permiteRolarEfeito,
@@ -143,6 +143,8 @@ export default function FichaConvidado({
   const [abaPersonagem, setAbaPersonagem] = useState<AbaPersonagem>('atributos');
   const [abaTecnicas, setAbaTecnicas] = useState<'combate' | 'exploracao'>('combate');
   const [filtro, setFiltro] = useState('todos');
+  const corpoRef = useRef<HTMLDivElement>(null);
+  useLayoutEffect(() => { if (corpoRef.current) corpoRef.current.scrollTop = 0; }, [aba, abaPersonagem, abaTecnicas, ficha?.id]);
   if (!atribuido)
     return <p className="pm-mp-nota">O mestre ainda não atribuiu um personagem a você.</p>;
   if (!ficha)
@@ -235,7 +237,7 @@ export default function FichaConvidado({
           </button>
         ))}
       </nav>
-      <div className="hx-ficha-corpo">
+      <div className="hx-ficha-corpo" ref={corpoRef}>
         {aba === 'atributos' && (
           <div
             className="hx-ficha-painel pm-jogo-atributos-limpos"

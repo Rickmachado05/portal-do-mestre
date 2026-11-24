@@ -199,3 +199,55 @@
 .pm-jogo .pm-jogo-janela.janela-recursos .pm-jogo-atributos-limpos {
   padding: 8px 3px 12px;
 }
+
+/* Cabeçalho e abas em fluxo normal. Apenas o conteúdo da aba rola.
+   Escopo do convidado: não altera a ficha do mestre nem outras janelas. */
+.pm-jogo .pm-jogo-janela.janela-recursos:not(.minimizada) {
+  height: min(605px, calc(100dvh - 132px));
+}
+.pm-jogo .pm-jogo-janela.janela-recursos > .janela-conteudo.pm-jogo-janela-corpo {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  flex: 1 1 auto;
+  overflow: auto;
+}
+.pm-jogo .pm-jogo-janela.janela-recursos .pm-jogo-ficha-mestre {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+  min-width: 0;
+}
+.pm-jogo .pm-jogo-janela.janela-recursos .pm-jogo-ficha-mestre > .cabecalho-ficha {
+  position: relative;
+  top: auto;
+  z-index: auto;
+  flex: 0 0 auto;
+}
+.pm-jogo .pm-jogo-janela.janela-recursos .pm-jogo-ficha-mestre > .hx-ficha-abas {
+  position: relative;
+  top: auto;
+  z-index: auto;
+  flex: 0 0 auto;
+}
+.pm-jogo .pm-jogo-janela.janela-recursos .pm-jogo-ficha-mestre > .hx-ficha-corpo {
+  flex: 1 1 auto;
+  min-height: 64px;
+  min-width: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: #7b6955 #15161b;
+  padding-right: 3px;
+}
+@media (max-height: 500px) {
+  .pm-jogo .pm-jogo-janela.janela-recursos .pm-jogo-ficha-mestre {
+    flex: 0 0 auto;
+  }
+  .pm-jogo .pm-jogo-janela.janela-recursos .pm-jogo-ficha-mestre > .hx-ficha-corpo {
+    flex: 0 0 auto;
+    overflow: visible;
+  }
+}
