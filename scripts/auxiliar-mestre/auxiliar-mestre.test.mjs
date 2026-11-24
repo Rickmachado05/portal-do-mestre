@@ -148,3 +148,15 @@ test('controle principal encerra sala e auxiliar em uma única operação',()=>{
  assert.match(painel,/auxiliarOrigem:tunnel|auxiliarOrigem=tunnel/);
  assert.doesNotMatch(painel,/onClick=\{\(\)=>void encerrar\(\)\}/);
 });
+
+test('iniciar sala abre o auxiliar por gesto direto e apresenta lembrete de encerramento',()=>{
+ const painel=readFileSync(join(RAIZ,'src','multiplayer','MultiplayerMestre.tsx'),'utf8');
+ const ponte=readFileSync(join(RAIZ,'src','multiplayer','auxiliarMestre.ts'),'utf8');
+ const criar=painel.slice(painel.indexOf('async function criar()'),painel.indexOf('function limparSalaEncerrada()'));
+ assert.ok(criar.indexOf('abrirAuxiliarInstalado();')>=0);
+ assert.ok(criar.indexOf('abrirAuxiliarInstalado();')<criar.indexOf('await aguardarAuxiliarMestre()'));
+ assert.ok(criar.indexOf('await aguardarAuxiliarMestre()')<criar.indexOf('await iniciarSessaoPeloAuxiliar'));
+ assert.match(ponte,/tempoMaximo = 25000/);
+ assert.match(painel,/Fechar esta página, aba ou navegador não desliga/);
+ assert.match(painel,/Desligar servidor e auxiliar/);
+});

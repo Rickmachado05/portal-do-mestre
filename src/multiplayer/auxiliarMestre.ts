@@ -43,6 +43,21 @@ export async function statusAuxiliarMestre() {
   return chamarAuxiliar('/v1/status');
 }
 
+/** Após o clique que abre o protocolo, aguarda o processo Windows responder.
+ * Não reabre o protocolo em cada tentativa; permissões continuam a cargo do navegador.
+ */
+export async function aguardarAuxiliarMestre(tempoMaximo = 25000, consultar = statusAuxiliarMestre, esperar = (ms: number) => new Promise<void>(resolve => window.setTimeout(resolve, ms))): Promise<StatusAuxiliar> {
+  const limite = Date.now() + tempoMaximo;
+  do {
+    try { return await consultar(); }
+    catch {
+      if (Date.now() >= limite) break;
+      await esperar(Math.min(800, Math.max(0, limite - Date.now())));
+    }
+  } while (Date.now() < limite);
+  throw new Error('O auxiliar não respondeu após a abertura. Autorize a abertura do Portal do Mestre no navegador, confira a instalação e a permissão de rede local. Se necessário, use Abrir auxiliar instalado no Windows e tente novamente.');
+}
+
 export async function iniciarSessaoPeloAuxiliar(atualizar?: (status: StatusAuxiliar) => void): Promise<string> {
   let resposta = await chamarAuxiliar('/v1/start', 'POST', 5000);
   atualizar?.(resposta);

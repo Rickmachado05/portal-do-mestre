@@ -177,3 +177,6 @@
 .pm-mp-instalar-links a{display:inline-flex;align-items:center;justify-content:center;padding:9px 12px;min-height:37px;background:#bd955c;border:1px solid #e1b985;color:#162130;border-radius:7px;font:800 12px Inter,system-ui,sans-serif;text-decoration:none;flex:1 1 155px}
 .pm-mp-instalar-links a+a{color:#f4dfbd;background:#22394a;border-color:#748c9b}
 .pm-mp-instalar-links a:hover{filter:brightness(1.12)}
+
+/* Lembrete de encerramento: fechar a aba não encerra processos locais. */
+.pm-mp-aviso-hospedagem{margin:12px 0;padding:12px 14px;border:1px solid #a78a54;border-left:3px solid #e2b66b;border-radius:8px;background:#33291e;color:#f4dfb8;font-size:12px;line-height:1.5}.pm-mp-aviso-hospedagem strong{display:block;color:#f3cf91;font-size:12px}.pm-mp-aviso-hospedagem p{margin:5px 0 0!important;color:#e8dcc9!important;font-size:12px!important}

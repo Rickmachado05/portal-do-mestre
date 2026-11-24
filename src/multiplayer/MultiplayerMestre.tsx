@@ -12,7 +12,7 @@ import HistoricoRolagens from './HistoricoRolagens';
 import Rolagem3DMultiplayer from './Rolagem3DMultiplayer';
 import './Multiplayer.css';
 import {atualizarOrigemServidorMultiplayer,origemServidorMultiplayer} from './configuracaoServidor.mjs';
-import {abrirAuxiliarInstalado,iniciarSessaoPeloAuxiliar,pararSessaoPeloAuxiliar,statusAuxiliarMestre,suportaAuxiliarMestre,explicarFalhaAuxiliar,type StatusAuxiliar} from './auxiliarMestre';
+import {abrirAuxiliarInstalado,aguardarAuxiliarMestre,iniciarSessaoPeloAuxiliar,pararSessaoPeloAuxiliar,statusAuxiliarMestre,suportaAuxiliarMestre,explicarFalhaAuxiliar,type StatusAuxiliar} from './auxiliarMestre';
 
 type Props={campanhaId:string;campanha:string;modo?:'cartao'|'cabecalho'};
 /** O mestre guarda a credencial na sessão da aba; ela acompanha a navegação entre as mesas. */
@@ -41,6 +41,7 @@ export default function MultiplayerMestre({campanhaId,campanha,modo='cabecalho'}
   },[campanhaId]);
   const [servidorDigitado,setServidorDigitado]=useState(()=>origemServidorMultiplayer());
   const [processando,setProcessando]=useState(false);
+  const [abrindoAuxiliar,setAbrindoAuxiliar]=useState(false);
   const [auxiliar,setAuxiliar]=useState<StatusAuxiliar|null>(null);
   const [auxiliarIndisponivel,setAuxiliarIndisponivel]=useState(false);
   const [detalheAuxiliar,setDetalheAuxiliar]=useState('');
@@ -154,14 +155,28 @@ export default function MultiplayerMestre({campanhaId,campanha,modo='cabecalho'}
   },[credencial?.codigo,credencial?.token,chave]);
 
   async function criar(){
+    if(processando||desligandoAuxiliar)return;
     setErro('');setErroFichas('');setProcessando(true);
+    const usaAuxiliar=suportaAuxiliarMestre() && /\.vercel\.app$/i.test(window.location.hostname);
+    // O protocolo externo precisa ser aberto diretamente no clique, antes de qualquer await.
+    // Um endereço manual já configurado continua sendo uma alternativa explícita.
+    const abrirAgora=usaAuxiliar&&!auxiliar&&!origemServidorMultiplayer();
     let auxiliarOrigem:string|undefined;
     try{
+      if(abrirAgora){
+        setAbrindoAuxiliar(true);setAuxiliarEncerrado(false);setDetalheAuxiliar('');
+        abrirAuxiliarInstalado();
+      }
       // Na Vercel, primeiro tentamos iniciar automaticamente o servidor no PC do mestre.
       // Se o auxiliar não estiver instalado ou acessível, o modo manual continua funcionando.
-      if(suportaAuxiliarMestre() && /\.vercel\.app$/i.test(window.location.hostname)){
+      if(usaAuxiliar){
         let auxiliarRespondeu=false;
         try{
+          if(abrirAgora){
+            const detectado=await aguardarAuxiliarMestre();
+            auxiliarRespondeu=true;setAuxiliar(detectado);setAuxiliarIndisponivel(false);
+            setAbrindoAuxiliar(false);
+          }
           const tunnel=await iniciarSessaoPeloAuxiliar(status=>{
             auxiliarRespondeu=true;
             setAuxiliar(status);setAuxiliarIndisponivel(false);setDetalheAuxiliar('');
@@ -193,7 +208,7 @@ export default function MultiplayerMestre({campanhaId,campanha,modo='cabecalho'}
       const nova:CredencialSala={codigo:resposta.codigo,token:resposta.token,papel:'mestre',...(auxiliarOrigem?{auxiliarOrigem}: {})};
       salvarCredencial(chaveMestre(campanhaId),nova);setCredencial(nova);setSala(resposta.sala);window.dispatchEvent(new Event('portal-multiplayer-sala'));
     }catch(e){setErro(e instanceof Error?e.message:'Não foi possível criar a sala.');}
-    finally{setProcessando(false);}
+    finally{setAbrindoAuxiliar(false);setProcessando(false);}
   }
   function limparSalaEncerrada(){
     limparCredencial(chave);setCredencial(null);setSala(null);setMesa(null);setRolagens([]);setUltimaAnimacao(null);setAoVivo(null);setErroFichas('');setStatus('Encerrada');window.dispatchEvent(new Event('portal-multiplayer-sala'));
@@ -269,13 +284,17 @@ export default function MultiplayerMestre({campanhaId,campanha,modo='cabecalho'}
             Cada novo Quick Tunnel tem um endereço diferente.</p>
         </div>
         <p className="pm-mp-explicacao">Os convidados utilizam a mesma biblioteca de dados do Portal, com Ateliê, física e rolagens 3D de resultados oficiais do servidor. Tokens, fichas, rolagens e inventários autorizados continuam disponíveis. Cenas com neblina ainda bloqueiam movimento remoto.</p>
+        <aside className="pm-mp-aviso-hospedagem" role="note">
+          <strong>⚠ Importante: encerre a hospedagem ao terminar</strong>
+          <p>Fechar esta página, aba ou navegador não desliga o servidor, o Cloudflare nem o Auxiliar do Mestre. Ao terminar a sessão, clique em <b>Desligar servidor e auxiliar</b> antes de sair. Se fechar a página sem desligar, reabra o Portal para encerrar a hospedagem local.</p>
+        </aside>
         {!credencial?<div className="pm-mp-vazio">
           {suportaAuxiliarMestre()&&<div className="pm-mp-auxiliar" role="status">
             <strong>Hospedagem no seu PC</strong>
-            <p>{auxiliarEncerrado?'Auxiliar encerrado. Abra-o novamente quando quiser hospedar.':auxiliar?.estado==='pronto'?'Servidor e Cloudflare conectados.':auxiliar?.estado==='iniciando'?auxiliar.mensagem:auxiliar?.estado==='erro'?auxiliar.mensagem:auxiliar?.estado==='parado'?'Auxiliar detectado no Windows e aguardando você iniciar a sala.':verificandoAuxiliar?'Verificando a conexão com o Windows…':auxiliarIndisponivel?'Não foi possível acessar o auxiliar local. Isso também pode ser uma permissão bloqueada no navegador.':'Ao abrir este painel, o Portal verifica se o auxiliar está acessível.'}</p>
+            <p>{abrindoAuxiliar?'Abrindo o auxiliar do Windows. Autorize a abertura no navegador, se solicitado.':auxiliarEncerrado?'Auxiliar encerrado. Clique em Iniciar sala multiplayer para abri-lo novamente.':auxiliar?.estado==='pronto'?'Servidor e Cloudflare conectados.':auxiliar?.estado==='iniciando'?auxiliar.mensagem:auxiliar?.estado==='erro'?auxiliar.mensagem:auxiliar?.estado==='parado'?'Auxiliar detectado no Windows e aguardando você iniciar a sala.':verificandoAuxiliar?'Verificando a conexão com o Windows…':auxiliarIndisponivel?'Auxiliar não acessível. Iniciar sala multiplayer tentará abri-lo se não houver endereço manual configurado. Confira a permissão local se necessário.':'Ao abrir este painel, o Portal verifica se o auxiliar está acessível.'}</p>
             {detalheAuxiliar&&<p className="pm-mp-nota">{detalheAuxiliar}</p>}
-            <button type="button" className="pm-mp-auxiliar-abrir" disabled={verificandoAuxiliar||processando} onClick={()=>void verificarAuxiliar()}>{verificandoAuxiliar?'Verificando…':'Verificar auxiliar'}</button>
-            {auxiliarIndisponivel&&<button type="button" className="pm-mp-auxiliar-abrir" onClick={()=>{setAuxiliarEncerrado(false);abrirAuxiliarInstalado();}}>Abrir auxiliar instalado no Windows</button>}
+            <button type="button" className="pm-mp-auxiliar-abrir" disabled={verificandoAuxiliar||processando||desligandoAuxiliar} onClick={()=>void verificarAuxiliar()}>{verificandoAuxiliar?'Verificando…':'Verificar auxiliar'}</button>
+            {auxiliarIndisponivel&&<button type="button" className="pm-mp-auxiliar-abrir" disabled={processando||desligandoAuxiliar} onClick={()=>{setAuxiliarEncerrado(false);abrirAuxiliarInstalado();}}>Abrir auxiliar instalado no Windows</button>}
             {auxiliar?.estado==='parado'&&<button type="button" className="pm-mp-auxiliar-desligar" disabled={desligandoAuxiliar||processando||verificandoAuxiliar} onClick={()=>void desligarServidor()}>Fechar auxiliar em repouso</button>}
           </div>}
           <div className="pm-mp-instalar">
@@ -287,7 +306,7 @@ export default function MultiplayerMestre({campanhaId,campanha,modo='cabecalho'}
             </div>
           </div>
           <p>Inicie uma sala para gerar o convite. O mestre precisa manter o PC ligado durante a sessão.</p>
-          {auxiliar&&auxiliar.estado!=='parado'?<button type="button" className="pm-mp-encerrar" style={{background:'#49282f',color:'#ffdbd6',borderColor:'#ab686a'}} disabled={processando||desligandoAuxiliar||verificandoAuxiliar} onClick={()=>void desligarServidor()}>{desligandoAuxiliar?'Desligando servidor e auxiliar…':'⏻ Desligar servidor e auxiliar'}</button>:<button type="button" disabled={processando||desligandoAuxiliar||verificandoAuxiliar} onClick={()=>void criar()}>{processando?'Iniciando servidor e sala…':'＋ Iniciar sala multiplayer'}</button>}
+          {auxiliar&&auxiliar.estado!=='parado'?<button type="button" className="pm-mp-encerrar" style={{background:'#49282f',color:'#ffdbd6',borderColor:'#ab686a'}} disabled={processando||desligandoAuxiliar||verificandoAuxiliar} onClick={()=>void desligarServidor()}>{desligandoAuxiliar?'Desligando servidor e auxiliar…':'⏻ Desligar servidor e auxiliar'}</button>:<button type="button" disabled={processando||desligandoAuxiliar||verificandoAuxiliar} onClick={()=>void criar()}>{abrindoAuxiliar?'Abrindo auxiliar…':processando?'Iniciando servidor e sala…':'＋ Iniciar sala multiplayer'}</button>}
         </div>:<>
           <div className="pm-mp-indicadores"><span><i className={status==='Conectado'?'online':''}/> {status}</span><span>Código: <strong>{credencial.codigo}</strong></span></div>
           <label className="pm-mp-link">Link de convite<input readOnly value={urlConvite(credencial.codigo)} onFocus={e=>e.currentTarget.select()} aria-label="Link para os convidados"/></label>

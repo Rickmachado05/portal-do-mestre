@@ -16,9 +16,9 @@ JOGADORES NAO INSTALAM NADA. Eles entram somente pelo convite.
 4. Confira os scripts e instale uma unica vez:
    powershell -NoProfile -ExecutionPolicy Bypass -File .\INSTALAR_AUXILIAR_DO_MESTRE.ps1
 5. No mesmo computador, abra https://portal-do-mestre.vercel.app,
-   abra uma campanha, abra o Multiplayer e, se o auxiliar estiver fechado,
-   clique em Abrir auxiliar instalado no Windows, depois Verificar auxiliar.
-   Clique em Iniciar sala multiplayer.
+   abra uma campanha e clique em Multiplayer > Iniciar sala multiplayer.
+   O botao abre o auxiliar automaticamente quando necessario. Autorize a
+   abertura no navegador, se solicitada.
 6. Se necessario, permita acesso ao proprio PC (loopback) para o dominio oficial.
 7. Copie o LINK DE CONVITE e envie aos jogadores. Mantenha o PC ligado.
 
@@ -34,7 +34,9 @@ ATUALIZACAO PARA FICHAS IMPETO UNIVERSAL:
 
 ENCERRAMENTO COMPLETO:
  Clique em Desligar servidor e auxiliar no Multiplayer.
- Para abrir novamente, use Abrir auxiliar instalado no Windows.
+ Para abrir novamente, clique em Iniciar sala multiplayer.
+ IMPORTANTE: fechar a aba, pagina ou navegador NAO encerra o servidor,
+ Cloudflare ou auxiliar. Desligue a hospedagem antes de sair.
  O botao principal inicia a sala e, quando ativa, encerra a sala, servidor,
  Cloudflare e auxiliar juntos. O auxiliar nao inicia mais junto com o Windows.
  Se necessario, execute na pasta do auxiliar:
