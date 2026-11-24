@@ -23,7 +23,7 @@ test('Vercel: HTML das várias páginas não deve ser substituído pelo Portal n
  const config=JSON.parse(readFileSync(resolve('vercel.json'),'utf8'));
  assert.equal(config.outputDirectory,'dist');
  assert.equal(config.buildCommand,'npm run cloudflare:build');
- for(const pagina of ['mesa','mesa3d','convidado','caderno','mesas','perfil','criador','tokens']){
+ for(const pagina of ['mesa','mesa3d','convidado','caderno','mesas','perfil','criador','tokens','criador-impeto']){
    for(const caminho of [`/${pagina}`,`/${pagina}/`]){
      assert(config.rewrites.some(r=>r.source===caminho&&r.destination===`/${pagina}/index.html`),caminho);
    }

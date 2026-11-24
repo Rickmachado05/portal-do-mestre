@@ -107,6 +107,14 @@
     {
       "source": "/criador/",
       "destination": "/criador/index.html"
+    },
+    {
+      "source": "/criador-impeto",
+      "destination": "/criador-impeto/index.html"
+    },
+    {
+      "source": "/criador-impeto/",
+      "destination": "/criador-impeto/index.html"
     }
   ]
 }

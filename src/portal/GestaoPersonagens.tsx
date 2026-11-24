@@ -469,6 +469,9 @@ export default function GestaoPersonagens({ fichas, campanhas, onChange }: Props
           >
             ＋ Personagem A01
           </a>
+          <a className="hp-button hp-button-primary" href="/criador-impeto/">
+            ＋ Personagem Ímpeto
+          </a>
           <button
             className="hp-button hp-button-outline"
             type="button"
@@ -492,7 +495,7 @@ export default function GestaoPersonagens({ fichas, campanhas, onChange }: Props
         <a href="https://hexatombe-avatar.vercel.app/" target="_blank" rel="noopener noreferrer">
           Criador Hexatombe: Avatar
         </a>
-        . As fichas A01 mantêm a edição das regras no Criador; os demais registros podem ser
+        . O <a href="/criador-impeto/">Criador Ímpeto universal</a> tem edição e exportação próprias nesta primeira versão. As fichas A01 mantêm a edição das regras no Criador; os demais registros podem ser
         editados neste Portal.
       </p>
       <nav className="hx-mestre-categorias" role="group" aria-label="Categorias da biblioteca">

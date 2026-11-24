@@ -25,6 +25,7 @@ export default defineConfig({
         mesa3d: fileURLToPath(new URL('./mesa3d/index.html', import.meta.url)),
         mesa3dviewer: fileURLToPath(new URL('./mesa3dviewer/index.html', import.meta.url)),
         criador: fileURLToPath(new URL('./criador/index.html', import.meta.url)),
+        criadorImpeto: fileURLToPath(new URL('./criador-impeto/index.html', import.meta.url)),
       },
     },
   },
