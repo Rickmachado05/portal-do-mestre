@@ -1306,7 +1306,7 @@ function App() {
       } else if (idAcao === 'passiva') {
         dados.passiveIcon = seguro;
         if (dados.editorOriginal) dados.editorOriginal.passiva.icone = seguro;
-      } else if (/^skill-[0-4]$/.test(idAcao)) {
+      } else if (/^skill-\d+$/.test(idAcao)) {
         const indice = Number(idAcao.slice(6));
         if (!dados.skills?.[indice]) return;
         dados.skills[indice].icon = seguro;
@@ -7777,7 +7777,7 @@ function App() {
                       fichas.some(
                         (f) =>
                           f.id === selecionado.fichaId &&
-                          !f.dados.impeto &&
+                          (!f.dados.impeto || f.dados.impeto.escala==='universal-v1') &&
                           papelDaFicha(f.dados) === 'jogador',
                       ) && (
                         <a
@@ -7837,26 +7837,26 @@ function App() {
                     fichas.some(
                       (f) =>
                         f.id === selecionado.fichaId &&
-                        !f.dados.impeto &&
+                        (!f.dados.impeto || f.dados.impeto.escala==='universal-v1') &&
                         papelDaFicha(f.dados) === 'jogador',
                     ) && (
                       <a
                         className="botao-abrir-criador hx-ficha-criador-link"
                         href={`/criador/?ficha=${encodeURIComponent(selecionado.fichaId)}`}
                       >
-                        ✧ Editar habilidades no Criador legado
+                        ✧ Editar habilidades no Criador
                       </a>
                     )}
                 </section>
               )}
               {abaFichaExibida === 'personagem' && fichaSelecionadaA01 && (
                 <section
-                  aria-label="Detalhes do personagem Ímpeto A01"
+                  aria-label="Detalhes do personagem Ímpeto"
                   className="hx-ficha-painel hx-ficha-personagem impeto-a01-detalhes"
                 >
                   <div className="hx-ficha-personagem-cabecalho">
                     <strong>Ficha do personagem</strong>
-                    <small>Ímpeto · Avatar A01</small>
+                    <small>Ímpeto · {fichaSelecionadaA01.escala==='universal-v1'?'Universal':'Avatar A01'}</small>
                   </div>
                   <nav
                     className="hx-ficha-personagem-abas"
@@ -9228,8 +9228,8 @@ function App() {
                         : '＋ Adicionar instância'}
                   </button>
                   {f.dados.impeto ? (
-                    <span title="Ficha A01: consulte as habilidades na Mesa ou use o JSON original no criador externo">
-                      Ficha A01
+                    <span title="Ficha Ímpeto: consulte as habilidades na mesa ou na biblioteca">
+                      {f.dados.impeto.escala==='universal-v1'?'Ímpeto Universal':'Ficha A01'}
                     </span>
                   ) : (
                     <a href="/personagens/">Ver na Biblioteca</a>

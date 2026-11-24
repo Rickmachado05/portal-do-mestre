@@ -149,7 +149,7 @@ export function revisar(f){
 }
 // A importação aceita apenas o novo formato e valida a estrutura antes de alterar o rascunho.
 export function importar(raw){
-  if(!objeto(raw)||raw.formato!==FORMATO||raw.versao!==1)throw Error('Selecione um JSON do Criador Ímpeto universal. Fichas Avatar continuam no criador próprio.');
+  if(!objeto(raw)||raw.formato!==FORMATO||raw.versao!==1)throw Error('Selecione um JSON do Criador Ímpeto universal. Fichas Avatar legadas continuam na biblioteca.');
   const f=novaFicha();
   for(const k of Object.keys(f).filter(k=>typeof f[k]==='string'&&k!=='formato')){
     if(!str(raw[k])&&k!=='foto')throw Error('Campo inválido: '+k);

@@ -121,7 +121,7 @@ export type Ativa = {
   fixo: number;
   empurraoAdicional: boolean;
   ativacao: 'principal' | 'buff' | 'reacao';
-  alvos: 1 | 2 | 3;
+  alvos: 1 | 2 | 3 | 4;
   distante: boolean;
   rodadasExtras: number;
   gatilho: string;
@@ -197,7 +197,7 @@ export type EstatisticasImpeto = {
 export type FichaPortalImpeto = {
   contrato: 1;
   sistema: typeof SISTEMA_IMPETO;
-  escala: 'avatar-a01';
+  escala: 'avatar-a01' | 'universal-v1';
   nome: string;
   foto: string;
   historia: string;

@@ -296,7 +296,7 @@ function normalizarFichas(entrada){
     return valor;
   };
   function normalizarImpeto(i){
-    if(!i || typeof i!=='object' || Array.isArray(i) || i.escala!=='avatar-a01')throw new Error('Contrato Ímpeto inválido.');
+    if(!i || typeof i!=='object' || Array.isArray(i) || !['avatar-a01','universal-v1'].includes(i.escala))throw new Error('Contrato Ímpeto inválido.');
     const lista=(v,nomes,max,campo)=>{
       if(!Array.isArray(v)||v.length!==nomes.length)throw new Error(`${campo} incompletos.`);
       return nomes.map((nome,indice)=>{
@@ -308,12 +308,12 @@ function normalizarFichas(entrada){
     const d=i.derivacao||{};const r=i.investimento||{};
     const tipo=['','resistencia','reserva','potencia'].includes(d.tipo)?d.tipo:'';
     return {
-      escala:'avatar-a01',
+      escala:i.escala,
       atributos:lista(i.atributos,nomesAtributos,99,'atributos'),
       pericias:lista(i.pericias,nomesPericias,4,'pericias'),
-      arquetipo:padrao(i.arquetipo,65),talento:padrao(i.talento,65),vantagem:padrao(i.vantagem,65),
+      arquetipo:padrao(i.arquetipo,65),talento:padrao(i.talento,65),vantagem:padrao(i.vantagem,i.escala==='universal-v1'?600:65),
       derivacao:{tipo,atributo:nomesAtributos.includes(d.atributo)?d.atributo:'',justificativa:padrao(d.justificativa,240)},
-      investimento:{hp:entre(r.hp,0,99,'PR HP'),energia:entre(r.energia,0,99,'PR EN'),
+      investimento:{hp:entre(r.hp,0,i.escala==='universal-v1'?Number.MAX_SAFE_INTEGER:99,'PR HP'),energia:entre(r.energia,0,i.escala==='universal-v1'?Number.MAX_SAFE_INTEGER:99,'PR EN'),
         ca:entre(r.ca,0,99,'PR CA'),ataqueDados:entre(r.ataqueDados,0,20,'PR ataque'),
         regeneracao:entre(r.regeneracao,0,20,'PR regeneração')},
     };
@@ -335,29 +335,32 @@ function normalizarFichas(entrada){
     if(!f || typeof f!=='object' || Array.isArray(f))throw new Error('Ficha inválida.');
     const id=padrao(f.id,120),nome=padrao(f.nome,80);
     if(!id||!nome||resultado.has(id))throw new Error('Personagem duplicado ou inválido.');
-    if(!Array.isArray(f.acoes)||f.acoes.length>12)throw new Error('Habilidades inválidas.');
+    const universal=f.impeto?.escala==='universal-v1';
+    const maxRecurso=universal?Number.MAX_SAFE_INTEGER:99999;
+    const maxCusto=universal?Number.MAX_SAFE_INTEGER:9999;
+    if(!Array.isArray(f.acoes)||f.acoes.length>(universal?1000:12))throw new Error('Habilidades inválidas.');
     const acoes=f.acoes.map(a=>{
       if(!a || typeof a!=='object'||Array.isArray(a))throw new Error('Habilidade inválida.');
       const categoria=padrao(a.categoria,25);
       if(!categorias.has(categoria))throw new Error('Categoria de habilidade inválida.');
       const acao={id:padrao(a.id,60),nome:padrao(a.nome,85),tipo:padrao(a.tipo,45),categoria};
       if(!acao.id||!acao.nome)throw new Error('Habilidade sem identificação.');
-      if(a.custo!==undefined)acao.custo=numeros(a,'custo',9999);
+      if(a.custo!==undefined)acao.custo=numeros(a,'custo',maxCusto);
       if(a.valor!==undefined)acao.valor=padrao(a.valor,100);
       if(a.descricao!==undefined)acao.descricao=padrao(a.descricao,1500);
       if(a.restricoes!==undefined)acao.restricoes=padrao(a.restricoes,750);
-      if(['a01','legado','manual'].includes(a.fonte))acao.fonte=a.fonte;
+      if(['a01','universal','legado','manual'].includes(a.fonte))acao.fonte=a.fonte;
       if(['principal','buff','reacao','exploracao','passiva'].includes(a.ativacao))acao.ativacao=a.ativacao;
-      if(a.pc!==undefined)acao.pc=numeros(a,'pc',9999);
-      if(a.px!==undefined)acao.px=numeros(a,'px',9999);
+      if(a.pc!==undefined)acao.pc=numeros(a,'pc',maxCusto);
+      if(a.px!==undefined)acao.px=numeros(a,'px',maxCusto);
       if(a.enIndefinida!==undefined)acao.enIndefinida=a.enIndefinida===true;
       if(a.exigeCA!==undefined)acao.exigeCA=a.exigeCA===true;
       return acao;
     });
     resultado.set(id,{
       id,nome,elemento:padrao(f.elemento,45),classe:padrao(f.classe,45),
-      hp:numeros(f,'hp',99999),hpMax:numeros(f,'hpMax',99999),
-      mana:numeros(f,'mana',99999),manaMax:numeros(f,'manaMax',99999),
+      hp:numeros(f,'hp',maxRecurso),hpMax:numeros(f,'hpMax',maxRecurso),
+      mana:numeros(f,'mana',maxRecurso),manaMax:numeros(f,'manaMax',maxRecurso),
       ca:numeros(f,'ca',999),escudo:numeros(f,'escudo',99999),
       temFicha:f.temFicha===true,acoes,
       ...(f.impeto!==undefined?{impeto:normalizarImpeto(f.impeto)}:{}),

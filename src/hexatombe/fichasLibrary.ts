@@ -2,6 +2,7 @@ import { normalizarIconeAcao } from './iconesAcao';
 import { normalizarAjusteRetrato, type AjusteRetrato } from '../lib/retratoAjuste';
 import { importarFichaHexatombe } from '../impeto/importador';
 import type { FichaPortalImpeto } from '../impeto/contrato';
+import { converterUniversal, reconhecerUniversal } from '../impeto/universal.mjs';
 
 /** Categoria para organizar fichas na biblioteca única de todos os sistemas.
  * Registros antigos sem papel são personagens de jogador.
@@ -204,7 +205,7 @@ function validarEditorOriginal(input: unknown): FichaDados['editorOriginal'] {
 export function validarFicha(input: unknown): FichaDados {
   if (!input || typeof input !== 'object' || Array.isArray(input))
     throw new Error('O JSON precisa conter uma ficha de personagem.');
-  const v = input as Record<string, unknown>;
+  const v = (reconhecerUniversal(input) ? converterUniversal(input) : input) as Record<string, unknown>;
   if (
     typeof v.name !== 'string' ||
     !v.name.trim() ||
@@ -224,13 +225,16 @@ export function validarFicha(input: unknown): FichaDados {
           if (!v.impeto || typeof v.impeto !== 'object' || Array.isArray(v.impeto))
             throw Error('Contrato Ímpeto inválido.');
           const dado = v.impeto as Record<string, unknown>;
+          if (dado.escala === 'universal-v1') return converterUniversal(dado.origem).impeto;
           if (dado.escala !== 'avatar-a01' || dado.origem === undefined)
             throw Error('Escala do Ímpeto não reconhecida.');
           return importarFichaHexatombe(dado.origem);
         })()
       : undefined;
-  const hpMax = n('hpMax', 1, 9999),
-    manaMax = n('manaMax', 0, 9999);
+  const universal = impeto?.escala === 'universal-v1';
+  const maxRecurso = universal ? Number.MAX_SAFE_INTEGER : 9999;
+  const hpMax = n('hpMax', 1, maxRecurso),
+    manaMax = n('manaMax', 0, maxRecurso);
   const photo =
     typeof v.photo === 'string' &&
     /^data:image\/(?:png|jpeg|webp|gif);base64,/i.test(v.photo) &&
@@ -255,14 +259,14 @@ export function validarFicha(input: unknown): FichaDados {
     fasesChefe: typeof v.fasesChefe === 'string' ? v.fasesChefe.slice(0, 3000) : '',
     planoEncontro: typeof v.planoEncontro === 'string' ? v.planoEncontro.slice(0, 3000) : '',
     hpMax,
-    hpCurrent: Math.min(n('hpCurrent', 0, 9999), hpMax),
+    hpCurrent: Math.min(n('hpCurrent', 0, maxRecurso), hpMax),
     manaMax,
     manaCurrent:
       impeto ||
       (papelDaFicha(v as { papel?: string }) !== 'jogador' &&
         (!v.sistemaId || v.sistemaId === 'impeto'))
-        ? n('manaCurrent', 0, 9999)
-        : Math.min(n('manaCurrent', 0, 9999), manaMax),
+        ? n('manaCurrent', 0, maxRecurso)
+        : Math.min(n('manaCurrent', 0, maxRecurso), manaMax),
     ca: n('ca', 0, 30),
     photo,
     impeto,
@@ -279,7 +283,7 @@ export function validarFicha(input: unknown): FichaDados {
       typeof v.basicShortDescription === 'string' ? v.basicShortDescription.slice(0, 140) : '',
     basicIcon: normalizarIconeAcao(v.basicIcon),
     skills: Array.isArray(v.skills)
-      ? v.skills.slice(0, 5).map((x) => {
+      ? (universal ? v.skills : v.skills.slice(0, 5)).map((x) => {
           const y = x && typeof x === 'object' ? (x as Record<string, unknown>) : {};
           const str = (k: string, max: number) =>
             typeof y[k] === 'string' ? (y[k] as string).slice(0, max) : '';
@@ -289,7 +293,7 @@ export function validarFicha(input: unknown): FichaDados {
             damage: str('damage', 80),
             effect: str('effect', 1800),
             limits: str('limits', 750),
-            cost: Math.min(9999, Math.max(0, Number(y.cost) || 0)),
+            cost: Math.min(maxRecurso, Math.max(0, Number(y.cost) || 0)),
             shortDescription: str('shortDescription', 140),
             icon: normalizarIconeAcao(y.icon),
           };
@@ -344,7 +348,7 @@ export function exportarFicha(ficha: FichaRegistro): void {
   );
   const a = document.createElement('a');
   a.href = url;
-  a.download = `hexatombe_ficha_${
+  a.download = `${ficha.dados.impeto?.escala === 'universal-v1' ? 'impeto' : 'hexatombe'}_ficha_${
     ficha.nome
       .normalize('NFD')
       .replace(/[\u0300-\u036f]/g, '')

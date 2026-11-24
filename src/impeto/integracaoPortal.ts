@@ -2,6 +2,7 @@
  * Não é uma conversão universal de sistema: o identificador Ímpeto permanece estável.
  */
 import { importarFichaHexatombe } from './importador';
+import { converterUniversal, reconhecerUniversal } from './universal.mjs';
 import { custoPC, custoEN, custoPassiva, custoPX, custoENPX } from './custos';
 import type { FichaPortalImpeto, Ativa, Exploracao } from './contrato';
 
@@ -62,6 +63,7 @@ export function formulaAtiva(a: Ativa): string {
 export const resumirCustoEN = (custo: number | null) =>
   custo === null ? 'EN a definir' : `${custo} EN`;
 export function converterFichaParaBiblioteca(fonte: unknown): CamposBibliotecaA01 {
+  if (reconhecerUniversal(fonte)) return converterUniversal(fonte) as CamposBibliotecaA01;
   const impeto = importarFichaHexatombe(fonte);
   const { estatisticas: e } = impeto;
   const skills = impeto.ativas.map((a) => ({
@@ -96,6 +98,7 @@ export function converterFichaParaBiblioteca(fonte: unknown): CamposBibliotecaA0
 }
 export function reconhecerFichaCriador(fonte: unknown): boolean {
   if (!fonte || typeof fonte !== 'object' || Array.isArray(fonte)) return false;
+  if (reconhecerUniversal(fonte)) return true;
   const objeto = fonte as Record<string, unknown>;
   const dados =
     objeto.ficha && typeof objeto.ficha === 'object' && !Array.isArray(objeto.ficha)
@@ -111,7 +114,7 @@ export function reconhecerFichaCriador(fonte: unknown): boolean {
 }
 export function exportarOrigemCriador(impeto: FichaPortalImpeto): void {
   const origem = impeto.origem;
-  const pacote =
+  const pacote = impeto.escala === 'universal-v1' ? origem :
     origem &&
     typeof origem === 'object' &&
     !Array.isArray(origem) &&
@@ -124,7 +127,7 @@ export function exportarOrigemCriador(impeto: FichaPortalImpeto): void {
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = `Avatar_A01_${
+  a.download = `${impeto.escala === 'universal-v1' ? 'Impeto' : 'Avatar_A01'}_${
     impeto.nome
       .normalize('NFD')
       .replace(/[\u0300-\u036f]/g, '')

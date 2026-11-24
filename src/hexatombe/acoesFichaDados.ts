@@ -1,4 +1,5 @@
 import type { FichaDados } from './fichasLibrary';
+import { acoesUniversais } from '../impeto/universal.mjs';
 import { categoriaDaHabilidade, type CategoriaAcao } from './logicaAcoesDaFicha';
 import { custoPC, custoPX, custoPassiva } from '../impeto/custos';
 import {
@@ -19,7 +20,7 @@ export type AcaoDaFicha = {
   valor?: string;
   custo?: number;
   icone?: string;
-  fonte?: 'a01' | 'legado' | 'manual';
+  fonte?: 'a01' | 'universal' | 'legado' | 'manual';
   ativacao?: 'principal' | 'buff' | 'reacao' | 'exploracao' | 'passiva';
   pc?: number;
   px?: number;
@@ -49,6 +50,7 @@ function categoriaA01(efeito: string): CategoriaAcao {
 }
 export function listarAcoesDaFicha(ficha?: FichaDados): AcaoDaFicha[] {
   if (!ficha) return [];
+  if (ficha.impeto?.escala === 'universal-v1') return acoesUniversais(ficha);
   if (ficha.impeto) {
     const f = ficha.impeto;
     return [

@@ -48,7 +48,7 @@ function CartaoAcao({
             <strong>{acao.titulo}</strong>
             <span>
               {acao.tipo}
-              {acao.fonte === 'a01'
+              {(acao.fonte === 'a01' || acao.fonte === 'universal')
                 ? ` · ${acao.enIndefinida ? 'EN a definir' : `${acao.custo ?? 0} EN`}${acao.pc !== undefined ? ` · ${acao.pc} PC` : ''}${acao.px !== undefined ? ` · ${acao.px} PX` : ''}`
                 : typeof acao.custo === 'number' && acao.custo > 0
                   ? ` · ${acao.custo} Mana/Foco`

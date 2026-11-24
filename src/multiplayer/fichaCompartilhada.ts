@@ -45,10 +45,10 @@ export function montarFichasCompartilhadas(
         nome: u.nome,
         elemento,
         classe,
-        hp: valor(u.hp, 99999),
-        hpMax: valor(u.hpMax, 99999),
-        mana: valor(u.mana, 99999),
-        manaMax: valor(u.manaMax, 99999),
+        hp: valor(u.hp, ficha?.impeto?.escala==='universal-v1'?Number.MAX_SAFE_INTEGER:99999),
+        hpMax: valor(u.hpMax, ficha?.impeto?.escala==='universal-v1'?Number.MAX_SAFE_INTEGER:99999),
+        mana: valor(u.mana, ficha?.impeto?.escala==='universal-v1'?Number.MAX_SAFE_INTEGER:99999),
+        manaMax: valor(u.manaMax, ficha?.impeto?.escala==='universal-v1'?Number.MAX_SAFE_INTEGER:99999),
         ca: valor(u.ca, 999),
         escudo: valor(u.escudo ?? 0, 99999),
         temFicha: Boolean(ficha),
@@ -56,7 +56,7 @@ export function montarFichasCompartilhadas(
         ...(ficha?.impeto
           ? {
               impeto: {
-                escala: 'avatar-a01' as const,
+                escala: ficha.impeto.escala,
                 atributos: NOMES_ATRIBUTOS.map((nome) => ({
                   nome,
                   valor: ficha.impeto!.atributos[nome],
@@ -93,7 +93,7 @@ export function montarFichasCompartilhadas(
 }
 function fichaAcoes(ficha?: FichaDados): FichaCompartilhada['acoes'] {
   return listarAcoesDaFicha(ficha)
-    .slice(0, 12)
+    .slice(0, ficha?.impeto?.escala==='universal-v1'?Infinity:12)
     .map((a) => ({
       id: a.id,
       nome: a.titulo,

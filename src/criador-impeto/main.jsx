@@ -2,8 +2,11 @@ import React, {useEffect,useRef,useState} from 'react';
 import {createRoot} from 'react-dom/client';
 import {ATRIBUTOS,GRUPOS,PERICIAS,TALENTOS,VANTAGENS,PADRAO,LIMITES,EFEITOS,CLASSES_PX,DADOS,novaFicha,habilidade,custoAtributo,custoAtiva,custoPassiva,custoExploracao,energiaAtiva,energiaExploracao,detalharCusto,recursosFinais,totais,revisar,importar} from './regras.mjs';
 import './style.css';
+import {buscarFicha,salvarOuAtualizarFicha} from '../hexatombe/fichasLibrary';
+import {converterUniversal} from '../impeto/universal.mjs';
 
 const STORAGE='portal-criador-impeto-universal-rascunho-v1';
+const EDIT_ID=new URLSearchParams(location.search).get('ficha');
 const TABS=['Identidade','Capacidades','Recursos','Combate','Exploração','Revisão'];
 const CONFIG=[
  ['baseAtributo','Base de cada atributo'],['tetoAtributo','Teto de atributo'],['pa','Pontos de Atributos (PA)'],['pr','Pontos de Recursos (PR)'],['pt','Pontos de Treinamento (PT)'],['pc','Pontos de Combate (PC)'],['px','Pontos de Exploração (PX)'],
@@ -122,6 +125,7 @@ function Resumo({f}){
 function carregar(){try{const s=localStorage.getItem(STORAGE);return s?importar(JSON.parse(s)):novaFicha()}catch{return novaFicha()}}
 function App(){
  const [f,setF]=useState(carregar),[tab,setTab]=useState(0),[notice,setNotice]=useState(''),[saved,setSaved]=useState(true);
+ const [fichaId,setFichaId]=useState(EDIT_ID),[carregando,setCarregando]=useState(Boolean(EDIT_ID)),[salvando,setSalvando]=useState(false);
  const [cap,setCap]=useState('atributos'),[escala,setEscala]=useState(null),[secaoEscala,setSecaoEscala]=useState('pontos');
  const dialogRef=useRef(null);
  const abrirEscala=()=>{setEscala({...f.config});setSecaoEscala('pontos');};
@@ -134,11 +138,29 @@ function App(){
  const deriv=(key,value)=>setF(prev=>({...prev,derivacao:{...prev.derivacao,[key]:value}}));
  const field=(key,label,area=false,placeholder='')=><Field label={label} value={f[key]} onChange={v=>update(key,v)} area={area} placeholder={placeholder}/>;
  const t=totais(f),e=recursosFinais(f),issues=revisar(f);
- useEffect(()=>{try{localStorage.setItem(STORAGE,JSON.stringify(f));setSaved(true)}catch{setSaved(false)}},[f]);
+ useEffect(()=>{if(!EDIT_ID)return;let ativo=true;void buscarFicha(EDIT_ID).then(r=>{if(!ativo)return;if(r?.dados.impeto?.escala!=='universal-v1')throw Error('Ficha universal não encontrada.');const base=importar(r.dados.impeto.origem);base.foto=r.dados.photo||'';try{const draft=localStorage.getItem(STORAGE+':'+EDIT_ID);setF(draft?importar(JSON.parse(draft)):base);}catch{setF(base);}setNotice('Editando '+r.nome+' na biblioteca.');}).catch(e=>{if(ativo){setNotice(e.message);setFichaId(null);}}).finally(()=>{if(ativo)setCarregando(false)});return()=>{ativo=false};},[]);
+ useEffect(()=>{if(carregando)return;try{localStorage.setItem(fichaId?STORAGE+':'+fichaId:STORAGE,JSON.stringify(f));setSaved(true)}catch{setSaved(false)}},[f,fichaId,carregando]);
+ async function salvarPortal(voltar=false){
+  if(salvando||carregando)return;
+  if(issues.length){setNotice('Revise a ficha antes de salvar na biblioteca.');navigate(TABS.length-1);return;}
+  setSalvando(true);
+  try{
+   const anterior=fichaId?await buscarFicha(fichaId):undefined;
+   if(fichaId&&anterior?.dados.impeto?.escala!=='universal-v1')throw Error('Ficha não encontrada ou incompatível.');
+   const dados=converterUniversal(f);
+   const prev=anterior?.dados;
+   const registro=await salvarOuAtualizarFicha({...prev,...dados,...(prev?{papel:prev.papel,temTokenPadrao:prev.temTokenPadrao,tokenPadraoAnimado:prev.tokenPadraoAnimado,retratoAjuste:prev.retratoAjuste,basicIcon:prev.basicIcon,passiveIcon:prev.passiveIcon,skills:dados.skills.map((h,i)=>({...h,icon:prev.skills?.[i]?.icon})),hpCurrent:Math.min(prev.hpCurrent,dados.hpMax),manaCurrent:prev.manaCurrent}: {})},fichaId||undefined);
+   setFichaId(registro.id);history.replaceState(null,'','/criador/?ficha='+encodeURIComponent(registro.id));try{localStorage.removeItem(STORAGE);localStorage.removeItem(STORAGE+':'+registro.id);}catch{}
+   setNotice('Ficha '+registro.nome+' salva na biblioteca.');
+   if(voltar)location.assign('/personagens/');
+  }catch(e){setNotice(e.message||'Não foi possível salvar a ficha.');}finally{setSalvando(false);}
+ }
+ function desvincularEdicao(){setFichaId(null);history.replaceState(null,'','/criador/');}
+
  const navigate=i=>{setTab(i);window.scrollTo({top:0,behavior:'auto'});};
  async function loadFile(file){
   if(!file)return;
-  try{if(file.size>4000000)throw Error('JSON acima do limite de 4 MB.');const data=importar(JSON.parse(await file.text()));setF(data);setNotice('Ficha importada para edição.');navigate(0)}catch(e){setNotice(e.message||'Não foi possível importar.')}
+  try{if(file.size>4000000)throw Error('JSON acima do limite de 4 MB.');const data=importar(JSON.parse(await file.text()));desvincularEdicao();setF(data);setNotice('Ficha importada para edição como novo personagem.');navigate(0)}catch(e){setNotice(e.message||'Não foi possível importar.')}
  }
  async function photo(file){
   if(!file)return;
@@ -151,10 +173,11 @@ function App(){
   setNotice(issues.length?'Rascunho JSON exportado. Ainda há pendências na revisão.':'Ficha JSON exportada.');
  }
  function imprimir(){navigate(TABS.length-1);setTimeout(()=>window.print(),100);}
+ if(carregando)return <main className="iu-panel"><p>Carregando ficha da biblioteca…</p></main>;
  return <div className="iu-app">
   <header className="iu-header"><a href="/personagens/">← Personagens do Portal</a><div className="iu-brand"><span>✦</span> ÍMPETO <small>RPG</small></div><button className="iu-button iu-quiet iu-scale-button" onClick={abrirEscala}>⚙ Escala de poder</button></header>
   <div className="iu-shell">
-   <section className="iu-workbar"><div className="iu-work-title"><div className="iu-kicker">ÍMPETO RPG 1.0 · EDIÇÃO DE PLAYTEST</div><h1>Criador de personagens</h1><div className="iu-draft"><strong>{f.nome||'Novo personagem'}</strong><span>{saved?'· Rascunho salvo':'· Armazenamento indisponível'}</span></div></div><div className="iu-actions"><button className="iu-button iu-quiet" onClick={()=>{if(window.confirm('Iniciar nova ficha? Exporte o rascunho atual antes de apagar, se quiser preservá-lo.')){setF(novaFicha());navigate(0);setCap('atributos');setNotice('Nova ficha iniciada.')}}}>＋ Nova ficha</button><button className="iu-button" onClick={()=>fileRef.current?.click()}>↥ Importar JSON</button><input ref={fileRef} type="file" accept=".json,application/json" hidden onChange={e=>{void loadFile(e.target.files?.[0]);e.target.value=''}}/><button className="iu-button" onClick={exportar}>↓ Exportar JSON</button><button className="iu-button iu-primary" onClick={imprimir}>Salvar PDF</button></div></section>
+   <section className="iu-workbar"><div className="iu-work-title"><div className="iu-kicker">ÍMPETO RPG 1.0 · EDIÇÃO DE PLAYTEST</div><h1>Criador de personagens</h1><div className="iu-draft"><strong>{f.nome||'Novo personagem'}</strong><span>{saved?'· Rascunho salvo':'· Armazenamento indisponível'}</span></div></div><div className="iu-actions"><button className="iu-button iu-quiet" onClick={()=>{if(window.confirm('Iniciar nova ficha? Exporte o rascunho atual antes de apagar, se quiser preservá-lo.')){desvincularEdicao();setF(novaFicha());navigate(0);setCap('atributos');setNotice('Nova ficha iniciada.')}}}>＋ Nova ficha</button><button className="iu-button" onClick={()=>fileRef.current?.click()}>↥ Importar JSON</button><input ref={fileRef} type="file" accept=".json,application/json" hidden onChange={e=>{void loadFile(e.target.files?.[0]);e.target.value=''}}/><button className="iu-button" onClick={exportar}>↓ Exportar JSON</button><button className="iu-button" onClick={imprimir}>Salvar PDF</button><button className="iu-button iu-primary" disabled={salvando} onClick={()=>void salvarPortal(false)}>{salvando?'Salvando…':fichaId?'Atualizar ficha':'Salvar no Portal'}</button><button className="iu-button" disabled={salvando} onClick={()=>void salvarPortal(true)}>Salvar e voltar</button></div></section>
    {notice&&<p className="iu-message" role="status">{notice}<button onClick={()=>setNotice('')} aria-label="Fechar aviso">×</button></p>}
    <div className="iu-budgets">{['pa','pr','pt','pc','px'].map(k=><Saldo key={k} code={k.toUpperCase()} used={t[k]} max={f.config[k]}/>)}</div>
    <nav className="iu-tabs" aria-label="Etapas da criação">{TABS.map((n,i)=><button key={n} aria-current={tab===i?'step':undefined} onClick={()=>navigate(i)}><span>{String(i+1).padStart(2,'0')}</span>{n}</button>)}</nav>
@@ -165,8 +188,8 @@ function App(){
    {tab===3&&<><Heading eyebrow="04 · PONTOS DE COMBATE" title="Construtor de combate" description="Ativas e passivas compartilham PC. Os preços H06/H04.1 são referências candidatas de playtest; efeitos especiais precisam da avaliação do mestre."/><SkillList f={f} tipo="ativas" onChange={v=>update('ativas',v)}/><SkillList f={f} tipo="passivas" onChange={v=>update('passivas',v)}/><p className="iu-note">Neste editor inicial estão os efeitos com tabela curta do livro. Outros buffs, debuffs, múltiplos componentes e poderes extraordinários precisam de avaliação específica; não são precificados automaticamente.</p></>}
    {tab===4&&<><Heading eyebrow="05 · PONTOS DE EXPLORAÇÃO" title="Construtor de exploração" description="PX compra capacidades especiais, não atos cotidianos. Ações de exploração não geram ações extras nem substituem o orçamento de combate."/><SkillList f={f} tipo="exploracao" onChange={v=>update('exploracao',v)}/><p className="iu-note">Classes: Pontual 4 PX, Especializada 8 PX, Complexa 12 PX, Ampla 18 PX e Extraordinária 28 PX. Alcance, alvo, duração e repetição aumentam o preço; resultados amplos exigem aprovação.</p></>}
    {tab===5&&<><Heading eyebrow="06 · CONFERÊNCIA" title="Revise a sua ficha" description="Confirme os orçamentos, as escolhas e as técnicas com o mestre. A ficha é um documento de playtest."/><div className={issues.length?'iu-review-alert':'iu-review-ok'}><h3>{issues.length?issues.length+' pendência(s) de criação':'Nenhuma pendência detectada pelos cálculos'}</h3>{issues.length?<ul>{issues.map((s,i)=><li key={i}>{s}</li>)}</ul>:<p>Os limites automáticos foram respeitados. A aprovação final das habilidades continua sendo do mestre.</p>}</div><Resumo f={f}/></>}
-   <div className="iu-bottom"><button className="iu-button iu-quiet" disabled={tab===0} onClick={()=>navigate(tab-1)}>← Anterior</button><span>{tab+1} de {TABS.length}</span>{tab<TABS.length-1?<button className="iu-button iu-primary" onClick={()=>navigate(tab+1)}>Continuar →</button>:<button className="iu-button iu-primary" onClick={exportar}>Exportar ficha JSON</button>}</div>
-   </main><aside className="iu-sidebar"><div className="iu-card"><div className="iu-kicker">RECURSOS DO PERSONAGEM</div><h3>{f.nome||'Sem nome'}</h3><div className="iu-stats"><div><span>HP máximo</span><b>{e.hp}</b></div><div><span>Energia de referência</span><b>{e.en}</b></div><div><span>CA Base</span><b>{e.ca}</b></div><div><span>Ataque Base</span><b>{e.dados}d6+{e.fixo}</b></div><div><span>Regeneração/rodada</span><b>+{e.regen}</b></div></div><p>CA Base fixa · Energia sem teto global.</p></div><div className="iu-card iu-scale-card"><div className="iu-kicker">ESCALA DE PODER</div><p>{Object.keys(PADRAO).every(k=>f.config[k]===PADRAO[k])?'Padrão do livro':'Configuração personalizada'}</p><button className="iu-button" onClick={abrirEscala}>⚙ Editar escala</button><p>Integração direta à biblioteca ainda em homologação. Exporte o JSON para preservar a ficha.</p></div></aside></div>
+   <div className="iu-bottom"><button className="iu-button iu-quiet" disabled={tab===0} onClick={()=>navigate(tab-1)}>← Anterior</button><span>{tab+1} de {TABS.length}</span>{tab<TABS.length-1?<button className="iu-button iu-primary" onClick={()=>navigate(tab+1)}>Continuar →</button>:<button className="iu-button iu-primary" disabled={salvando} onClick={()=>void salvarPortal(true)}>Salvar no Portal e voltar</button>}</div>
+   </main><aside className="iu-sidebar"><div className="iu-card"><div className="iu-kicker">RECURSOS DO PERSONAGEM</div><h3>{f.nome||'Sem nome'}</h3><div className="iu-stats"><div><span>HP máximo</span><b>{e.hp}</b></div><div><span>Energia de referência</span><b>{e.en}</b></div><div><span>CA Base</span><b>{e.ca}</b></div><div><span>Ataque Base</span><b>{e.dados}d6+{e.fixo}</b></div><div><span>Regeneração/rodada</span><b>+{e.regen}</b></div></div><p>CA Base fixa · Energia sem teto global.</p></div><div className="iu-card iu-scale-card"><div className="iu-kicker">ESCALA DE PODER</div><p>{Object.keys(PADRAO).every(k=>f.config[k]===PADRAO[k])?'Padrão do livro':'Configuração personalizada'}</p><button className="iu-button" onClick={abrirEscala}>⚙ Editar escala</button><p>Salve no Portal para vincular a ficha às campanhas. JSON e PDF continuam disponíveis.</p></div></aside></div>
    <footer className="iu-footer">✦ Ímpeto RPG 1.0 — Sistema de RPG Universal · Edição de playtest · Portal do Mestre</footer>
   </div>
   <dialog ref={dialogRef} className="iu-scale-dialog" onCancel={()=>setEscala(null)} onClose={()=>setEscala(null)} aria-labelledby="iu-scale-title">

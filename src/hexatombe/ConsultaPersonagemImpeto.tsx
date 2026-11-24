@@ -94,7 +94,7 @@ export default function ConsultaPersonagemImpeto({
               <span>Talento: {nomesTalentos[dados.talento] || dados.talento || 'Nenhum'}</span>
             </article>
             <article>
-              <small>VANTAGEM</small>
+              <small>VANTAGENS</small>
               <strong>{nomesVantagens[dados.vantagem] || dados.vantagem || 'Nenhuma'}</strong>
             </article>
             <article>

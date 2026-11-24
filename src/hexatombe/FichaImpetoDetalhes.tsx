@@ -5,6 +5,8 @@ import { pontosRecursos } from '../impeto/importador';
 import { custoPC, custoPX, custoPassiva, custoEN, custoENPX } from '../impeto/custos';
 import { formulaAtiva, tipoAtiva, resumirCustoEN } from '../impeto/integracaoPortal';
 import './FichaImpetoDetalhes.css';
+import {acoesUniversais,descricaoEscolhasUniversal,converterUniversal} from '../impeto/universal.mjs';
+import ConsultaPersonagemImpeto,{dadosConsultaMestre} from './ConsultaPersonagemImpeto';
 
 type SecaoDetalhes = 'atributos' | 'pericias' | 'escolhas' | 'tecnicas' | 'exploracao';
 
@@ -24,6 +26,16 @@ export default function FichaImpetoDetalhes({
       (secao !== 'tecnicas' && secao !== 'exploracao') ||
       (secao === 'tecnicas' && abaTecnicas === 'combate') ||
       (secao === 'exploracao' && abaTecnicas === 'exploracao'));
+  if(ficha.escala==='universal-v1'){
+    const info=descricaoEscolhasUniversal(ficha),dados=dadosConsultaMestre(ficha),acoes=acoesUniversais(converterUniversal(ficha.origem));
+    return <section className="impeto-a01-detalhes">{!secoes&&<div className="impeto-a01-versao"><strong>ÍMPETO RPG · Universal</strong><span>{['pa','pr','pt','pc','px'].map(k=>info.config[k]+' '+k.toUpperCase()).join(' · ')}</span></div>}
+      {ficha.requerRevisao&&<aside className="impeto-a01-avisos">{ficha.avisos.map((a,i)=><p key={i}>{a}</p>)}</aside>}
+      {(['atributos','pericias','escolhas'] as const).filter(mostrar).map(aba=><ConsultaPersonagemImpeto key={aba} dados={dados} aba={aba}/>)}
+      {mostrar('escolhas')&&<section className="impeto-a01-painel">{info.talento&&<p>{info.talento}</p>}{info.vantagens.map(v=><p key={v.nome}><b>{v.nome}:</b> {v.descricao}</p>)}{info.conceito&&<p>Conceito: {info.conceito}</p>}{info.equipamentos&&<p>Equipamentos: {info.equipamentos}</p>}</section>}
+      {usarSubabas&&<nav className="impeto-a01-subtabs" role="tablist"><button role="tab" aria-selected={abaTecnicas==='combate'} onClick={()=>setAbaTecnicas('combate')}>⚔ Combate</button><button role="tab" aria-selected={abaTecnicas==='exploracao'} onClick={()=>setAbaTecnicas('exploracao')}>✧ Exploração</button></nav>}
+      {(['tecnicas','exploracao'] as const).filter(mostrar).map(secao=><section key={secao} className="impeto-a01-painel"><h4>{secao==='tecnicas'?'Combate':'Exploração'}</h4><div className="impeto-a01-tecnicas">{acoes.filter(a=>secao==='tecnicas'?a.ativacao!=='exploracao':a.ativacao==='exploracao').map(a=><article key={a.id}><strong>{a.titulo}</strong><small>{a.tipo} · {a.ativacao} {a.pc!==undefined?' · '+a.pc+' PC':''}{a.px!==undefined?' · '+a.px+' PX':''}{a.enIndefinida?' · Custo especial':a.custo!==undefined?' · '+a.custo+' EN':''}</small>{a.valor&&<p>{a.valor}</p>}{a.descricao&&<p>{a.descricao}</p>}{a.restricoes&&<p>{a.restricoes}</p>}</article>)}</div></section>)}
+    </section>;
+  }
   const pc = ficha.ativas.reduce((total, a) => total + custoPC(a), 0) + custoPassiva(ficha.passiva);
   const px = ficha.exploracao.reduce((total, e) => total + custoPX(e), 0);
   const nomeD01: Record<string, string> = {

@@ -333,7 +333,7 @@ export default function FichaConvidado({
                   const teste =
                     acao.exigeCA ?? precisaTesteContraCA(acao.categoria as CategoriaAcao);
                   const custo =
-                    acao.fonte === 'a01'
+                    (acao.fonte === 'a01' || acao.fonte === 'universal')
                       ? acao.enIndefinida
                         ? 'EN a definir'
                         : `${acao.custo ?? 0} EN`
@@ -428,7 +428,7 @@ export default function FichaConvidado({
           >
             <div className="hx-ficha-personagem-cabecalho">
               <strong>Ficha do personagem</strong>
-              <small>Ímpeto · Avatar A01</small>
+              <small>Ímpeto · {impeto.escala==='universal-v1'?'Universal':'Avatar A01'}</small>
             </div>
             <nav className="hx-ficha-personagem-abas" role="tablist" aria-label="Detalhes da ficha">
               {(

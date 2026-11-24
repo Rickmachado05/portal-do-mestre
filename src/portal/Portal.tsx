@@ -355,7 +355,7 @@ export default function Portal() {
                         href={
                           sistemaDaFicha(f.dados) === 'impeto' &&
                           papelDaFicha(f.dados) === 'jogador' &&
-                          !f.dados.impeto
+                          (!f.dados.impeto || f.dados.impeto.escala==='universal-v1')
                             ? `/criador/?ficha=${encodeURIComponent(f.id)}`
                             : '/personagens/'
                         }

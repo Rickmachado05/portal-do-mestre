@@ -173,7 +173,7 @@ export default function GestaoPersonagens({ fichas, campanhas, onChange }: Props
       const f = await salvarFicha(novo);
       setFeedback(
         f.dados.impeto
-          ? `Ficha Ímpeto A01 de ${f.nome} importada com habilidades e recursos atualizados.`
+          ? `Ficha Ímpeto de ${f.nome} importada com habilidades e recursos atualizados.`
           : `Ficha legada de ${f.nome} importada.`,
       );
       await onChange();
@@ -321,7 +321,10 @@ export default function GestaoPersonagens({ fichas, campanhas, onChange }: Props
         name: nome,
         editorOriginal: original ? { ...original, nome } : undefined,
       };
-      if (f.dados.impeto) {
+      if (f.dados.impeto?.escala === 'universal-v1') {
+        const convertida = converterFichaParaBiblioteca({ ...(f.dados.impeto.origem as object), nome });
+        dados = { ...dados, ...convertida, skills: convertida.skills.map((h,i)=>({...h,icon:f.dados.skills?.[i]?.icon})),basicIcon:f.dados.basicIcon,passiveIcon:f.dados.passiveIcon };
+      } else if (f.dados.impeto) {
         const fonte = f.dados.impeto.origem;
         const originalPacote = fonte as Record<string, unknown>;
         const fichaInterna =
@@ -482,7 +485,7 @@ export default function GestaoPersonagens({ fichas, campanhas, onChange }: Props
         </div>
       </div>
       <p className="gm-module-hint" role="note">
-        Biblioteca única por sistema, organizada por função. Use o <a href="/criador/">Criador Ímpeto RPG</a> para novas fichas. A integração direta das fichas universais à biblioteca está em homologação; fichas existentes e importações legadas permanecem compatíveis.
+        Biblioteca única por sistema, organizada por função. Use o <a href="/criador/">Criador Ímpeto RPG</a> para criar e editar fichas universais, e vincule-as às campanhas aqui. Fichas legadas permanecem compatíveis.
       </p>
       <nav className="hx-mestre-categorias" role="group" aria-label="Categorias da biblioteca">
         {(['todos', 'jogador', 'npc', 'inimigo', 'chefe'] as const).map((p) => (
@@ -614,9 +617,9 @@ export default function GestaoPersonagens({ fichas, campanhas, onChange }: Props
                       Editar
                     </button>
                   )}
-                  {papelDaFicha(f.dados) === 'jogador' &&
+                  {(f.dados.impeto?.escala === 'universal-v1' || (papelDaFicha(f.dados) === 'jogador' &&
                     sistemaDaFicha(f.dados) === 'impeto' &&
-                    !f.dados.impeto && (
+                    !f.dados.impeto)) && (
                       <a
                         className="hp-button hp-button-primary"
                         href={`/criador/?ficha=${encodeURIComponent(f.id)}`}
@@ -785,7 +788,7 @@ export default function GestaoPersonagens({ fichas, campanhas, onChange }: Props
                     <span>{ROTULOS_PAPEL[papelDaFicha(selecionada.dados)]}</span>
                     <span>{descricaoElemento(selecionada.dados.element)}</span>
                     <span>{descricaoClasse(selecionada.dados.class)}</span>
-                    {selecionada.dados.impeto && <span>Avatar A01 · Playtest</span>}
+                    {selecionada.dados.impeto && <span>{selecionada.dados.impeto.escala==='universal-v1'?'Ímpeto Universal':'Avatar A01'} · Playtest</span>}
                   </div>
                   <small>Atualizada em {dataCurta(selecionada.atualizadoEm)}</small>
                   <small className="hx-character-retrato-ajuda">
@@ -934,11 +937,7 @@ export default function GestaoPersonagens({ fichas, campanhas, onChange }: Props
                     {selecionada.dados.impeto ? (
                       <>
                         <div className="hx-character-resumo-a01">
-                          <span>32 PA</span>
-                          <span>20 PR</span>
-                          <span>6 PT</span>
-                          <span>100 PC</span>
-                          <span>35 PX</span>
+                          {selecionada.dados.impeto.escala==='universal-v1' ? ['pa','pr','pt','pc','px'].map(k=><span key={k}>{(selecionada.dados.impeto!.origem as {config:Record<string,number>}).config[k]} {k.toUpperCase()}</span>) : <><span>32 PA</span><span>20 PR</span><span>6 PT</span><span>100 PC</span><span>35 PX</span></>}
                         </div>
                         <p className="hx-character-nota">
                           HP e CA são máximos/base da ficha. Energia é uma referência, não um teto:
@@ -1185,15 +1184,15 @@ export default function GestaoPersonagens({ fichas, campanhas, onChange }: Props
                   className="hx-character-exportar-origem"
                   onClick={() => exportarOrigemCriador(selecionada.dados.impeto!)}
                 >
-                  ↓ JSON original (ficha legada)
+                  ↓ JSON original do criador
                 </button>
               )}
-              {sistemaDaFicha(selecionada.dados) === 'impeto' && !selecionada.dados.impeto && (
+              {sistemaDaFicha(selecionada.dados) === 'impeto' && (!selecionada.dados.impeto || selecionada.dados.impeto.escala==='universal-v1') && (
                 <a
                   className="hp-button hp-button-primary"
                   href={`/criador/?ficha=${encodeURIComponent(selecionada.id)}`}
                 >
-                  Editar ficha legada
+                  {selecionada.dados.impeto?.escala==='universal-v1'?'Editar no Criador Ímpeto':'Editar ficha legada'}
                 </a>
               )}
             </footer>

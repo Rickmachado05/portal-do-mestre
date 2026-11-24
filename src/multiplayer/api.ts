@@ -101,7 +101,7 @@ export type MesaPublica = {
 };
 /** Dados estritamente de jogo da própria ficha Ímpeto, não a ficha integral do Criador. */
 export type FichaImpetoCompartilhada = {
-  escala: 'avatar-a01';
+  escala: 'avatar-a01' | 'universal-v1';
   atributos: Array<{ nome: string; valor: number }>;
   pericias: Array<{ nome: string; bonus: number }>;
   arquetipo: string;
@@ -132,7 +132,7 @@ export type AcaoFichaCompartilhada = {
   valor?: string;
   descricao?: string;
   restricoes?: string;
-  fonte?: 'a01' | 'legado' | 'manual';
+  fonte?: 'a01' | 'universal' | 'legado' | 'manual';
   ativacao?: 'principal' | 'buff' | 'reacao' | 'exploracao' | 'passiva';
   pc?: number;
   px?: number;
