@@ -138,20 +138,21 @@ function App(){
  const deriv=(key,value)=>setF(prev=>({...prev,derivacao:{...prev.derivacao,[key]:value}}));
  const field=(key,label,area=false,placeholder='')=><Field label={label} value={f[key]} onChange={v=>update(key,v)} area={area} placeholder={placeholder}/>;
  const t=totais(f),e=recursosFinais(f),issues=revisar(f);
- useEffect(()=>{if(!EDIT_ID)return;let ativo=true;void buscarFicha(EDIT_ID).then(r=>{if(!ativo)return;if(r?.dados.impeto?.escala!=='universal-v1')throw Error('Ficha universal não encontrada.');const base=importar(r.dados.impeto.origem);base.foto=r.dados.photo||'';try{const draft=localStorage.getItem(STORAGE+':'+EDIT_ID);setF(draft?importar(JSON.parse(draft)):base);}catch{setF(base);}setNotice('Editando '+r.nome+' na biblioteca.');}).catch(e=>{if(ativo){setNotice(e.message);setFichaId(null);}}).finally(()=>{if(ativo)setCarregando(false)});return()=>{ativo=false};},[]);
- useEffect(()=>{if(carregando)return;try{localStorage.setItem(fichaId?STORAGE+':'+fichaId:STORAGE,JSON.stringify(f));setSaved(true)}catch{setSaved(false)}},[f,fichaId,carregando]);
+ useEffect(()=>{if(!EDIT_ID)return;let ativo=true;void buscarFicha(EDIT_ID).then(r=>{if(!ativo)return;if(r?.dados.impeto?.escala!=='universal-v1')throw Error('Ficha universal não encontrada.');const base=importar(r.dados.impeto.origem);if(/^data:image\/(png|jpeg|webp);base64,/i.test(r.dados.photo||''))base.foto=r.dados.photo;try{const draft=JSON.parse(localStorage.getItem(STORAGE+':'+EDIT_ID)||'null');setF(draft?.atualizadoEm>r.atualizadoEm?importar(draft.ficha):base);}catch{setF(base);}setNotice('Editando '+r.nome+' na biblioteca.');}).catch(e=>{if(ativo){setNotice(e.message);setFichaId(null);}}).finally(()=>{if(ativo)setCarregando(false)});return()=>{ativo=false};},[]);
+ useEffect(()=>{if(carregando)return;try{localStorage.setItem(fichaId?STORAGE+':'+fichaId:STORAGE,JSON.stringify(fichaId?{atualizadoEm:new Date().toISOString(),ficha:f}:f));setSaved(true)}catch{setSaved(false)}},[f,fichaId,carregando]);
  async function salvarPortal(voltar=false){
   if(salvando||carregando)return;
-  if(issues.length){setNotice('Revise a ficha antes de salvar na biblioteca.');navigate(TABS.length-1);return;}
+  if(!f.nome.trim()){setNotice('Preencha o nome antes de salvar na biblioteca.');navigate(0);return;}
+  if(issues.length&&!window.confirm('Esta ficha contém '+issues.length+' pendência(s). Salvar como ficha em revisão para o mestre conferir?')){navigate(TABS.length-1);return;}
   setSalvando(true);
   try{
    const anterior=fichaId?await buscarFicha(fichaId):undefined;
    if(fichaId&&anterior?.dados.impeto?.escala!=='universal-v1')throw Error('Ficha não encontrada ou incompatível.');
    const dados=converterUniversal(f);
    const prev=anterior?.dados;
-   const registro=await salvarOuAtualizarFicha({...prev,...dados,...(prev?{papel:prev.papel,temTokenPadrao:prev.temTokenPadrao,tokenPadraoAnimado:prev.tokenPadraoAnimado,retratoAjuste:prev.retratoAjuste,basicIcon:prev.basicIcon,passiveIcon:prev.passiveIcon,skills:dados.skills.map((h,i)=>({...h,icon:prev.skills?.[i]?.icon})),hpCurrent:Math.min(prev.hpCurrent,dados.hpMax),manaCurrent:prev.manaCurrent}: {})},fichaId||undefined);
+   const registro=await salvarOuAtualizarFicha({...prev,...dados,...(prev?{papel:prev.papel,temTokenPadrao:prev.temTokenPadrao,tokenPadraoAnimado:prev.tokenPadraoAnimado,retratoAjuste:prev.retratoAjuste,...(prev.photo?.startsWith('data:image/gif;')&&f.foto===(anterior.dados.impeto.origem.foto||'')?{photo:prev.photo}:{}),basicIcon:prev.basicIcon,passiveIcon:prev.passiveIcon,skills:dados.skills.map((h,i)=>({...h,icon:prev.skills?.[i]?.icon})),hpCurrent:Math.min(prev.hpCurrent,dados.hpMax),manaCurrent:prev.manaCurrent}: {})},fichaId||undefined);
    setFichaId(registro.id);history.replaceState(null,'','/criador/?ficha='+encodeURIComponent(registro.id));try{localStorage.removeItem(STORAGE);localStorage.removeItem(STORAGE+':'+registro.id);}catch{}
-   setNotice('Ficha '+registro.nome+' salva na biblioteca.');
+   setNotice('Ficha '+registro.nome+' salva na biblioteca.'+(issues.length?' Aguardando revisão do mestre.':''));
    if(voltar)location.assign('/personagens/');
   }catch(e){setNotice(e.message||'Não foi possível salvar a ficha.');}finally{setSalvando(false);}
  }

@@ -2123,7 +2123,17 @@ export default function Mesa3DPrototipo() {
     if (existente) {
       setId(existente.id);
       setPainelAtivo('elenco');
-      setMensagemMesa('Este jogador já está na mesa. Selecione-o para continuar.');
+      if(registro.dados.impeto?.escala==='universal-v1'&&window.confirm('Atualizar a ficha de '+registro.nome+' na mesa? HP atual será limitado ao novo máximo e Energia atual preservada.')){
+        const d=registro.dados;
+        const ok=alterarMesaCompartilhada(campanhaId,(raw)=>{
+          if(!Array.isArray(raw.unidades))return false;
+          const u=(raw.unidades as Record<string,unknown>[]).find(x=>x.id===existente.id);
+          if(!u)return false;
+          Object.assign(u,{nome:d.name,elemento:d.element,hpMax:d.hpMax,hp:Math.min(Number(u.hp)||0,d.hpMax),manaMax:d.manaMax,ca:d.ca,turnoImpeto:undefined});
+          return true;
+        });
+        setMensagemMesa(ok?'Ficha atualizada. HP ajustado e Energia preservada.':'Não foi possível atualizar a ficha.');
+      }else setMensagemMesa('Este jogador já está na mesa. Selecione-o para continuar.');
       return;
     }
     const dados = registro.dados,

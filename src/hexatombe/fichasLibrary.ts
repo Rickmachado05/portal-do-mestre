@@ -235,6 +235,7 @@ export function validarFicha(input: unknown): FichaDados {
   const maxRecurso = universal ? Number.MAX_SAFE_INTEGER : 9999;
   const hpMax = n('hpMax', 1, maxRecurso),
     manaMax = n('manaMax', 0, maxRecurso);
+  if(universal && impeto && (hpMax!==impeto.estatisticas.hpMax||manaMax!==impeto.estatisticas.energiaReferencia||n('ca',0,30)!==impeto.estatisticas.caBase))throw Error('Recursos de referência não correspondem à ficha universal. Edite no Criador Ímpeto.');
   const photo =
     typeof v.photo === 'string' &&
     /^data:image\/(?:png|jpeg|webp|gif);base64,/i.test(v.photo) &&

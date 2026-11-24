@@ -665,7 +665,7 @@ export default function GestaoCampanhas({
             )}
             {form.sistemaId === 'impeto' &&
               form.escalaImpeto === 'livro-m042' &&
-              form.fichaIds.some((id) => fichas.some((f) => f.id === id && f.dados.impeto)) && (
+              form.fichaIds.some((id) => fichas.some((f) => f.id === id && f.dados.impeto?.escala==='avatar-a01')) && (
                 <p className="gm-campaign-system-hint">
                   Atenção: esta campanha usa a referência do livro, mas contém fichas Avatar A01. A
                   compatibilidade de sistema permite o vínculo; o mestre deve revisar a escala antes

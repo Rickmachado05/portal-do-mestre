@@ -50,7 +50,7 @@ export function montarFichasCompartilhadas(
         mana: valor(u.mana, ficha?.impeto?.escala==='universal-v1'?Number.MAX_SAFE_INTEGER:99999),
         manaMax: valor(u.manaMax, ficha?.impeto?.escala==='universal-v1'?Number.MAX_SAFE_INTEGER:99999),
         ca: valor(u.ca, 999),
-        escudo: valor(u.escudo ?? 0, 99999),
+        escudo: valor(u.escudo ?? 0, ficha?.impeto?.escala==='universal-v1'?Number.MAX_SAFE_INTEGER:99999),
         temFicha: Boolean(ficha),
         acoes: fichaAcoes(ficha),
         ...(ficha?.impeto

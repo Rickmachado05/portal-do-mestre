@@ -361,7 +361,7 @@ function normalizarFichas(entrada){
       id,nome,elemento:padrao(f.elemento,45),classe:padrao(f.classe,45),
       hp:numeros(f,'hp',maxRecurso),hpMax:numeros(f,'hpMax',maxRecurso),
       mana:numeros(f,'mana',maxRecurso),manaMax:numeros(f,'manaMax',maxRecurso),
-      ca:numeros(f,'ca',999),escudo:numeros(f,'escudo',99999),
+      ca:numeros(f,'ca',999),escudo:numeros(f,'escudo',maxRecurso),
       temFicha:f.temFicha===true,acoes,
       ...(f.impeto!==undefined?{impeto:normalizarImpeto(f.impeto)}:{}),
       ...(f.condicoes!==undefined?{condicoes:normalizarCondicoes(f.condicoes)}:{}),
