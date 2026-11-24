@@ -1,0 +1,13 @@
+/* Portal do Mestre: apenas a aparência da barra, sem bloquear rolagem. */
+@media screen {
+  :root, :root * {
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
+  }
+  :root::-webkit-scrollbar,
+  :root *::-webkit-scrollbar {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+  }
+}
