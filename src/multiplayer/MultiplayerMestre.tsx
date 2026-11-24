@@ -12,7 +12,7 @@ import HistoricoRolagens from './HistoricoRolagens';
 import Rolagem3DMultiplayer from './Rolagem3DMultiplayer';
 import './Multiplayer.css';
 import {atualizarOrigemServidorMultiplayer,origemServidorMultiplayer} from './configuracaoServidor.mjs';
-import {abrirAuxiliarInstalado,iniciarSessaoPeloAuxiliar,pararSessaoPeloAuxiliar,statusAuxiliarMestre,suportaAuxiliarMestre,explicarFalhaAuxiliar,type StatusAuxiliar} from './auxiliarMestre';
+import {abrirAuxiliarInstalado,encerrarAuxiliarMestre,iniciarSessaoPeloAuxiliar,pararSessaoPeloAuxiliar,statusAuxiliarMestre,suportaAuxiliarMestre,explicarFalhaAuxiliar,type StatusAuxiliar} from './auxiliarMestre';
 
 type Props={campanhaId:string;campanha:string;modo?:'cartao'|'cabecalho'};
 /** O mestre guarda a credencial na sessão da aba; ela acompanha a navegação entre as mesas. */
@@ -46,6 +46,7 @@ export default function MultiplayerMestre({campanhaId,campanha,modo='cabecalho'}
   const [detalheAuxiliar,setDetalheAuxiliar]=useState('');
   const [verificandoAuxiliar,setVerificandoAuxiliar]=useState(false);
   const [desligandoAuxiliar,setDesligandoAuxiliar]=useState(false);
+  const [auxiliarEncerrado,setAuxiliarEncerrado]=useState(false);
   const [copiado,setCopiado]=useState(false);
   const [pedidosItens,setPedidosItens]=useState(0);
   useEffect(()=>{
@@ -67,7 +68,7 @@ export default function MultiplayerMestre({campanhaId,campanha,modo='cabecalho'}
   },[aberto,credencial,processando]);
 
   async function verificarAuxiliar(){
-    setVerificandoAuxiliar(true);setDetalheAuxiliar('');
+    setAuxiliarEncerrado(false);setVerificandoAuxiliar(true);setDetalheAuxiliar('');
     try{
       const resposta=await statusAuxiliarMestre();
       setAuxiliar(resposta);setAuxiliarIndisponivel(false);
@@ -196,8 +197,19 @@ export default function MultiplayerMestre({campanhaId,campanha,modo='cabecalho'}
     setDesligandoAuxiliar(true);setErro('');
     try{
       const resposta=await pararSessaoPeloAuxiliar();
+      if(resposta.estado==='erro')throw new Error(resposta.mensagem);
       setAuxiliar(resposta);setAuxiliarIndisponivel(false);
     }catch(e){setErro(e instanceof Error?e.message:'Não foi possível desligar o servidor local.');}
+    finally{setDesligandoAuxiliar(false);}
+  }
+  async function desligarAuxiliarCompleto(){
+    if(credencial||!window.confirm('Encerrar o auxiliar, servidor e Cloudflare completamente? Outras salas deste servidor também serão desligadas.'))return;
+    setDesligandoAuxiliar(true);setErro('');
+    try{
+      if(!auxiliar?.encerramentoCompleto)throw new Error('Auxiliar antigo: atualize o ZIP e use ENCERRAR_AUXILIAR_DO_MESTRE.ps1 para encerrar a versão anterior.');
+      await encerrarAuxiliarMestre();
+      setAuxiliar(null);setAuxiliarIndisponivel(true);setAuxiliarEncerrado(true);setDetalheAuxiliar('');
+    }catch(e){setErro(e instanceof Error?e.message:'Não foi possível encerrar o auxiliar.');}
     finally{setDesligandoAuxiliar(false);}
   }
   async function encerrar(){
@@ -252,11 +264,12 @@ export default function MultiplayerMestre({campanhaId,campanha,modo='cabecalho'}
         {!credencial?<div className="pm-mp-vazio">
           {suportaAuxiliarMestre()&&<div className="pm-mp-auxiliar" role="status">
             <strong>Hospedagem no seu PC</strong>
-            <p>{auxiliar?.estado==='pronto'?'Servidor e Cloudflare conectados.':auxiliar?.estado==='iniciando'?auxiliar.mensagem:auxiliar?.estado==='erro'?auxiliar.mensagem:auxiliar?.estado==='parado'?'Auxiliar detectado no Windows e aguardando você iniciar a sala.':verificandoAuxiliar?'Verificando a conexão com o Windows…':auxiliarIndisponivel?'Não foi possível acessar o auxiliar local. Isso também pode ser uma permissão bloqueada no navegador.':'Ao abrir este painel, o Portal verifica se o auxiliar está acessível.'}</p>
+            <p>{auxiliarEncerrado?'Auxiliar encerrado. Abra-o novamente quando quiser hospedar.':auxiliar?.estado==='pronto'?'Servidor e Cloudflare conectados.':auxiliar?.estado==='iniciando'?auxiliar.mensagem:auxiliar?.estado==='erro'?auxiliar.mensagem:auxiliar?.estado==='parado'?'Auxiliar detectado no Windows e aguardando você iniciar a sala.':verificandoAuxiliar?'Verificando a conexão com o Windows…':auxiliarIndisponivel?'Não foi possível acessar o auxiliar local. Isso também pode ser uma permissão bloqueada no navegador.':'Ao abrir este painel, o Portal verifica se o auxiliar está acessível.'}</p>
             {detalheAuxiliar&&<p className="pm-mp-nota">{detalheAuxiliar}</p>}
             <button type="button" className="pm-mp-auxiliar-abrir" disabled={verificandoAuxiliar||processando} onClick={()=>void verificarAuxiliar()}>{verificandoAuxiliar?'Verificando…':'Verificar auxiliar'}</button>
-            {auxiliarIndisponivel&&<button type="button" className="pm-mp-auxiliar-abrir" onClick={abrirAuxiliarInstalado}>Abrir auxiliar instalado no Windows</button>}
-            {auxiliar?.estado==='pronto'&&<button type="button" className="pm-mp-auxiliar-desligar" disabled={desligandoAuxiliar||processando} onClick={()=>void desligarServidor()}>{desligandoAuxiliar?'Desligando…':'Desligar servidor e Tunnel'}</button>}
+            {auxiliarIndisponivel&&<button type="button" className="pm-mp-auxiliar-abrir" onClick={()=>{setAuxiliarEncerrado(false);abrirAuxiliarInstalado();}}>Abrir auxiliar instalado no Windows</button>}
+            {auxiliar&&auxiliar.estado!=='parado'&&<button type="button" className="pm-mp-auxiliar-desligar" disabled={desligandoAuxiliar||processando} onClick={()=>void desligarServidor()}>{desligandoAuxiliar?'Desligando…':'Desligar servidor e Tunnel'}</button>}
+            {auxiliar&&<button type="button" className="pm-mp-auxiliar-desligar" disabled={desligandoAuxiliar||processando} onClick={()=>void desligarAuxiliarCompleto()}>Encerrar auxiliar completamente</button>}
           </div>}
           <div className="pm-mp-instalar">
             <strong>Quer hospedar como mestre em outro computador?</strong>

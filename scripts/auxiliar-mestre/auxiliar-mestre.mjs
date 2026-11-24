@@ -102,15 +102,38 @@ export function criarAuxiliar({ raiz = RAIZ, portaAuxiliar = PORTA_AUXILIAR, por
   let interrompendo = false;
   let iniciando = null;
   let geracao = 0;
+  let parando = null;
+  let fechando = false;
+  let encerramento = null;
 
-  function status() { return { estado, tunnel, mensagem }; }
+  function status() { return { estado, tunnel, mensagem, encerramentoCompleto: true }; }
+  async function terminarFilho(processo) {
+    if (!processo || processo.exitCode !== null || processo.signalCode !== null || !processo.pid) return;
+    const aguardar = ms => new Promise(ok => {
+      if (processo.exitCode !== null || processo.signalCode !== null) { ok(true); return; }
+      const saiu = () => { clearTimeout(timer); processo.off('exit', saiu); ok(true); };
+      const timer = setTimeout(() => { processo.off('exit', saiu); ok(false); }, ms);
+      processo.once('exit', saiu);
+    });
+    try { processo.kill(); } catch {}
+    if (await aguardar(1500)) return;
+    // Somente o filho criado por este auxiliar, nunca todos os processos Node.
+    if (processo.exitCode === null && processo.signalCode === null) {
+      try { processo.kill('SIGKILL'); } catch {}
+    }
+    if (!(await aguardar(1500))) throw new Error('Não foi possível confirmar o encerramento de um processo da sessão.');
+  }
   function pararProcessos() {
     interrompendo = true;
-    for (const processo of [processoTunnel, servidor]) {
-      if (processo && !processo.killed) { try { processo.kill(); } catch { /* já fechado */ } }
-    }
-    processoTunnel = null;
-    servidor = null;
+    if (parando) return parando;
+    const filhos = [processoTunnel, servidor];
+    parando = Promise.allSettled(filhos.map(terminarFilho)).then(resultados => {
+      if(resultados[0].status==='fulfilled' && processoTunnel===filhos[0]) processoTunnel=null;
+      if(resultados[1].status==='fulfilled' && servidor===filhos[1]) servidor=null;
+      const falha=resultados.find(r=>r.status==='rejected');
+      if(falha)throw falha.reason;
+    }).finally(()=>{parando=null;});
+    return parando;
   }
   function falhaProcesso(nome, codigo, processo, versao) {
     if (versao !== geracao || interrompendo || estado === 'parado' || estado === 'erro') return;
@@ -118,10 +141,11 @@ export function criarAuxiliar({ raiz = RAIZ, portaAuxiliar = PORTA_AUXILIAR, por
     mensagem = `${nome} foi encerrado inesperadamente. Confira o auxiliar no PC.`;
     estado = 'erro';
     tunnel = '';
-    pararProcessos();
+    void pararProcessos().catch(e=>registrar(e.message));
   }
   async function iniciar() {
-    if (estado === 'pronto') return status();
+    if (fechando || parando || estado === 'pronto') return status();
+    if (servidor || processoTunnel) { if(!iniciando) { estado='erro';mensagem='Encerre os processos anteriores antes de iniciar.';return status(); } }
     if (iniciando) return iniciando;
     interrompendo = false;
     const versao = ++geracao;
@@ -131,6 +155,7 @@ export function criarAuxiliar({ raiz = RAIZ, portaAuxiliar = PORTA_AUXILIAR, por
     iniciando = (async () => {
       try {
         if (!(await portaLivre(portaMultiplayer))) throw new Error(`Porta ${portaMultiplayer} ocupada. Feche o servidor antigo (arquivo 02) antes de iniciar pelo site.`);
+        if (interrompendo || fechando || versao !== geracao) return status();
         const caminhoCloudflared = cloudflared(raiz);
         const ambiente = { ...process.env, PORTAL_ORIGENS_VERCEL: portal, PORTAL_MULTIPLAYER_PORT: String(portaMultiplayer), PORTAL_SERVIR_SITE: '0' };
         servidor = spawn(process.execPath, [join(raiz, 'scripts', 'multiplayer-server.mjs')], {
@@ -161,22 +186,23 @@ export function criarAuxiliar({ raiz = RAIZ, portaAuxiliar = PORTA_AUXILIAR, por
         mensagem = motivo;
         tunnel = '';
         registrar(`Falha ao iniciar: ${motivo}`);
-        pararProcessos();
+        try { await pararProcessos(); } catch(falha) { mensagem += ' '+falha.message; }
       } finally { if (versao === geracao) iniciando = null; }
       return status();
     })();
     return iniciando;
   }
   async function parar() {
-    if (estado === 'parado') return status();
     interrompendo = true;
     ++geracao;
     iniciando = null;
-    pararProcessos();
-    estado = 'parado';
     tunnel = '';
-    mensagem = 'Servidor e túnel desligados. Auxiliar disponível para outra sessão.';
-    registrar('Sessão parada manualmente.');
+    try {
+      await pararProcessos();
+      estado = 'parado';
+      mensagem = 'Servidor e túnel desligados. Auxiliar disponível para outra sessão.';
+      registrar('Sessão parada manualmente.');
+    } catch(e) { estado='erro'; mensagem=e.message; registrar(mensagem); }
     return status();
   }
 
@@ -207,8 +233,16 @@ export function criarAuxiliar({ raiz = RAIZ, portaAuxiliar = PORTA_AUXILIAR, por
         return;
       }
       if (caminho === '/v1/stop') {
-        void parar();
-        res.end(JSON.stringify(status()));
+        void parar().then(retorno=>res.end(JSON.stringify(retorno)));
+        return;
+      }
+      if (caminho === '/v1/shutdown') {
+        fechando = true;
+        void parar().then(retorno=>{
+          if(retorno.estado==='erro'){fechando=false;res.writeHead(500);res.end(JSON.stringify(retorno));return;}
+          res.setHeader('Connection','close');
+          res.end(JSON.stringify({...retorno,mensagem:'Auxiliar encerrado completamente.'}),()=>{void fechar().catch(e=>registrar(e.message));});
+        });
         return;
       }
     }
@@ -225,9 +259,16 @@ export function criarAuxiliar({ raiz = RAIZ, portaAuxiliar = PORTA_AUXILIAR, por
       });
     });
   }
-  async function fechar() {
-    await parar();
-    await new Promise(resolver => httpServer.close(() => resolver()));
+  function fechar() {
+    if(encerramento)return encerramento;
+    fechando=true;
+    encerramento=(async()=>{
+      const retorno=await parar();
+      if(retorno.estado==='erro'){fechando=false;throw new Error(retorno.mensagem);}
+      await new Promise(resolver => {httpServer.close(()=>resolver());httpServer.closeIdleConnections?.();});
+      registrar('Auxiliar encerrado completamente.');
+    })().catch(e=>{encerramento=null;throw e;});
+    return encerramento;
   }
   return { escutar, fechar, iniciar, parar, status, httpServer };
 }
@@ -239,7 +280,7 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
     await auxiliar.escutar();
     // Por padrão o processo fica apenas aguardando; iniciar sessão é uma ação do usuário no Portal.
     if (process.argv[2]?.toLowerCase().startsWith('portalmestre://iniciar')) void auxiliar.iniciar();
-    for (const sinal of ['SIGINT', 'SIGTERM']) process.once(sinal, () => void auxiliar.fechar().then(() => process.exit(0)));
+    for (const sinal of ['SIGINT', 'SIGTERM']) process.once(sinal, () => void auxiliar.fechar().then(() => process.exit(0)).catch(e=>registrar(e.message)));
   } catch (e) {
     registrar(`Falha no auxiliar: ${e instanceof Error ? e.message : String(e)}`);
     process.exitCode = 1;

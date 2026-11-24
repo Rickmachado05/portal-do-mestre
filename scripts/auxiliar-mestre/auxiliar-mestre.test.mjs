@@ -87,6 +87,7 @@ test('inicia Node + Cloudflare, detecta link e desliga tudo no mesmo auxiliar', 
     assert.equal((await stop.json()).estado, 'parado');
     const status = await pedir(`${url}/v1/status`);
     assert.equal((await status.json()).tunnel, '');
+    const testePorta=netServer();await new Promise((ok,reject)=>{testePorta.once('error',reject);testePorta.listen(multiplayer,'127.0.0.1',ok);});await new Promise(ok=>testePorta.close(ok));
   } finally {
     await agente.fechar();
     rmSync(diretorio, { recursive: true, force: true });
@@ -122,4 +123,18 @@ test('instalador verifica o processo e o Portal diferencia bloqueio local de ins
   assert.match(painel, /Verificar auxiliar/);
   assert.match(ponte, /targetAddressSpace:\s*'loopback'/);
   assert.match(ponte, /explicarFalhaAuxiliar/);
+});
+
+test('shutdown completo fecha a porta local, inclusive sem iniciar sessão',async()=>{
+ const porta=await portaAleatoria(),agente=criarAuxiliar({portaAuxiliar:porta,portal});
+ await agente.escutar();const url='http://127.0.0.1:'+porta;
+ try{
+ assert.equal((await pedir(url+'/v1/shutdown','POST','https://malicioso.example')).status,403);
+ assert.equal((await pedir(url+'/v1/shutdown')).status,404);
+ const resposta=await pedir(url+'/v1/shutdown','POST');assert.equal(resposta.status,200);
+ assert.equal((await resposta.json()).encerramentoCompleto,true);
+ for(let i=0;i<50&&agente.httpServer.listening;i++)await new Promise(r=>setTimeout(r,20));
+ assert.equal(agente.httpServer.listening,false);
+ await assert.rejects(()=>pedir(url+'/v1/status'));
+ }finally{await agente.fechar();}
 });

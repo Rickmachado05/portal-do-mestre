@@ -1,5 +1,5 @@
 # Instala SOMENTE para o usuário atual, sem privilégios de administrador.
-# Registra o protocolo portalmestre:// e inicia o agente local no login do Windows.
+# Registra o protocolo portalmestre://; a abertura é sob demanda.
 $ErrorActionPreference = 'Stop'
 $Raiz = Split-Path -Parent $MyInvocation.MyCommand.Path
 $Abrir = Join-Path $Raiz 'scripts\auxiliar-mestre\abrir-auxiliar.ps1'
@@ -21,10 +21,11 @@ New-Item -Path $Comando -Force | Out-Null
 $AbrirCmd = '"{0}" -NoProfile -WindowStyle Hidden -ExecutionPolicy RemoteSigned -File "{1}"' -f $PS, $Abrir
 Set-Item -Path $Comando -Value $AbrirCmd -Force
 
-# O auxiliar inicializa em repouso quando o usuário entra no Windows: não abre túnel sozinho.
-$Run = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Run'
-$RunCmd = '"{0}" -NoProfile -WindowStyle Hidden -ExecutionPolicy RemoteSigned -File "{1}"' -f $PS, $Abrir
-New-ItemProperty -Path $Run -Name 'PortalDoMestreAuxiliar' -Value $RunCmd -PropertyType String -Force | Out-Null
+# Remove a inicializacao automatica das instalacoes anteriores.
+Remove-ItemProperty 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Run' -Name 'PortalDoMestreAuxiliar' -ErrorAction SilentlyContinue
+# Encerra somente a instancia desta pasta antes de carregar a nova versao.
+$Encerrar = Join-Path $Raiz 'ENCERRAR_AUXILIAR_DO_MESTRE.ps1'
+if (Test-Path $Encerrar) { & $Encerrar }
 Start-Process -FilePath $PS -ArgumentList ('-NoProfile -WindowStyle Hidden -ExecutionPolicy RemoteSigned -File "{0}"' -f $Abrir) -WorkingDirectory $Raiz -WindowStyle Hidden
 
 # Registrar o protocolo nao comprova que o processo Node iniciou. Validar a API real.
@@ -53,6 +54,6 @@ if (-not $Detectado) {
 Write-Host ''
 Write-Host 'Auxiliar do Portal do Mestre instalado e DETECTADO em 127.0.0.1:8790.' -ForegroundColor Green
 Write-Host ('Node.js: {0}' -f $Node)
-Write-Host 'O auxiliar fica em repouso; o tunel so abre quando voce clicar em Iniciar sala multiplayer.'
+Write-Host 'O auxiliar abre sob demanda, sem iniciar junto com o Windows. Use Encerrar auxiliar completamente ao terminar.'
 Write-Host 'Se mover a pasta do Portal, execute este instalador novamente na nova pasta.'
 Write-Host 'Para remover a integracao, execute DESINSTALAR_AUXILIAR_DO_MESTRE.ps1.'

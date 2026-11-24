@@ -30,6 +30,15 @@ ATUALIZACAO PARA FICHAS IMPETO UNIVERSAL:
  Preserve cloudflared.exe na pasta principal. Se mudou de pasta, rode o instalador.
  Inicie uma nova sala. Servidores antigos nao reconhecem a ficha universal.
 
+ENCERRAMENTO COMPLETO:
+ Encerre a sala e clique em Encerrar auxiliar completamente no Multiplayer.
+ Para abrir novamente, use Abrir auxiliar instalado no Windows.
+ O auxiliar nao inicia mais junto com o Windows.
+ Se necessario, execute na pasta do auxiliar:
+ powershell -NoProfile -ExecutionPolicy Bypass -File .\ENCERRAR_AUXILIAR_DO_MESTRE.ps1
+ O script encerra somente os processos desta pasta, inclusive a versao antiga.
+ Encerre as salas antes de atualizar ou executar o instalador.
+
 DIAGNOSTICO (PowerShell):
  Test-NetConnection 127.0.0.1 -Port 8790
  Invoke-RestMethod http://127.0.0.1:8790/v1/status -Headers @{Origin='https://portal-do-mestre.vercel.app'}

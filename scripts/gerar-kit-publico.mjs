@@ -10,6 +10,7 @@ const raiz = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const mapa = {
   'INSTALAR_AUXILIAR_DO_MESTRE.ps1': 'INSTALAR_AUXILIAR_DO_MESTRE.ps1',
   'DESINSTALAR_AUXILIAR_DO_MESTRE.ps1': 'DESINSTALAR_AUXILIAR_DO_MESTRE.ps1',
+  'ENCERRAR_AUXILIAR_DO_MESTRE.ps1': 'ENCERRAR_AUXILIAR_DO_MESTRE.ps1',
   'BAIXAR_CLOUDFLARED.ps1': 'scripts/auxiliar-mestre/kit/BAIXAR_CLOUDFLARED.ps1',
   'LEIA-ME-PRIMEIRO.txt': 'scripts/auxiliar-mestre/kit/LEIA-ME-PRIMEIRO.txt',
   'scripts/auxiliar-mestre/abrir-auxiliar.ps1': 'scripts/auxiliar-mestre/abrir-auxiliar.ps1',

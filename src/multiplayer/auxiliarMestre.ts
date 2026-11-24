@@ -5,6 +5,7 @@ export type StatusAuxiliar = {
   estado: 'parado' | 'iniciando' | 'pronto' | 'erro';
   tunnel: string;
   mensagem: string;
+  encerramentoCompleto?: boolean;
 };
 
 export const URL_AUXILIAR = 'http://127.0.0.1:8790';
@@ -61,7 +62,11 @@ export async function iniciarSessaoPeloAuxiliar(atualizar?: (status: StatusAuxil
 }
 
 export function pararSessaoPeloAuxiliar() {
-  return chamarAuxiliar('/v1/stop', 'POST', 5000);
+  return chamarAuxiliar('/v1/stop', 'POST', 10000);
+}
+
+export function encerrarAuxiliarMestre() {
+  return chamarAuxiliar('/v1/shutdown', 'POST', 10000);
 }
 
 /** Abrir o protocolo é uma interação explícita do usuário; não o disparar em efeito automático. */
