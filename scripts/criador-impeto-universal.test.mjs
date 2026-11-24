@@ -24,3 +24,7 @@ test('JSON próprio, dados inválidos e orçamentos',()=>{
 test('alterar a escala de CA não concede PR negativos',()=>{
  const f=novaFicha();f.config.ca=10;assert.equal(totais(f).pr,0);assert(revisar(f).includes('CA Base fora da escala escolhida.'));
 });
+
+test('escala alta e recursos acima de 9999 sobrevivem exportação e importação',()=>{
+ const f=novaFicha();Object.assign(f.config,{hp:1000000,en:2500000,pr:100000,pc:200000,px:300000,ativas:25,tetoAtiva:100000,dadosAtaque:100,fixoAtaque:500,regen:1000});f.recursos.hp=15000;f.recursos.en=20000;f.ativas=[{...habilidade('ativa'),quantidade:200,fixo:500}];const copy=importar(JSON.parse(JSON.stringify(f)));assert.deepEqual(copy,f);assert.equal(recursosFinais(copy).hp,1045000);assert.equal(recursosFinais(copy).en,2600000);assert.equal(custoAtiva(copy.ativas[0]),2000);assert.equal(energiaAtiva(copy.ativas[0]),null);assert.throws(()=>importar({...f,config:{...f.config,hp:Number.MAX_SAFE_INTEGER+1}}));
+});

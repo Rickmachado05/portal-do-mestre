@@ -42,7 +42,9 @@ export const VANTAGENS = {
   'Explorador Preparado':'Prepare uma precaução prática perante perigo previsível.'
 };
 export const PADRAO = Object.freeze({ baseAtributo:8,tetoAtributo:14,pa:28,pr:20,pt:4,pc:80,px:25,hp:40,en:30,ca:8,tetoCa:13,dadosAtaque:2,fixoAtaque:2,regen:0,ativas:5,passivas:1,exploracao:3,tetoAtiva:24,tetoPassiva:20,tetoPX:16,vantagens:1,talento:true,derivacao:true,especialista:true });
-export const LIMITES = {baseAtributo:[8,20],tetoAtributo:[8,20],pa:[0,500],pr:[0,500],pt:[0,32],pc:[0,1000],px:[0,1000],hp:[1,9999],en:[0,9999],ca:[8,13],tetoCa:[8,13],dadosAtaque:[1,20],fixoAtaque:[0,100],regen:[0,100],ativas:[0,20],passivas:[0,20],exploracao:[0,20],tetoAtiva:[0,1000],tetoPassiva:[0,1000],tetoPX:[0,1000],vantagens:[0,8]};
+// Sem tetos artificiais nos valores de escala. Infinity significa ausência de máximo no campo;
+// a importação continua exigindo inteiros representáveis com precisão em JavaScript.
+export const LIMITES = {baseAtributo:[8,20],tetoAtributo:[8,20],pa:[0,Infinity],pr:[0,Infinity],pt:[0,Infinity],pc:[0,Infinity],px:[0,Infinity],hp:[1,Infinity],en:[0,Infinity],ca:[8,13],tetoCa:[8,13],dadosAtaque:[1,Infinity],fixoAtaque:[0,Infinity],regen:[0,Infinity],ativas:[0,Infinity],passivas:[0,Infinity],exploracao:[0,Infinity],tetoAtiva:[0,Infinity],tetoPassiva:[0,Infinity],tetoPX:[0,Infinity],vantagens:[0,8]};
 export const EFEITOS = {'dano':'Dano','cura':'Cura','escudo':'Escudo de absorção','mitigacao':'Mitigação','empurrao':'Empurrão','imobilizacao':'Imobilização','atordoamento':'Atordoamento C02','buffCa1':'Buff +1 CA efetiva','buffCa2':'Buff +2 CA efetiva'};
 export const CLASSES_PX = {pontual:4,especializada:8,complexa:12,ampla:18,extraordinaria:28};
 export const DADOS = {4:3,6:4,8:5,10:6,12:7};
@@ -51,7 +53,7 @@ export const habilidade = (tipo) => ({nome:'',descricao:'',limites:'',gatilho:''
 export function novaFicha(){
   return {formato:FORMATO,versao:1,config:{...PADRAO},nome:'',ambientacao:'',manifestacao:'',conceito:'',historia:'',objetivo:'',motivacoes:'',aprendizados:'',relacoes:'',desvantagens:'',equipamentos:'',foto:'',arquetipo:'',talento:'',vantagens:[],atributos:Object.fromEntries(ATRIBUTOS.map(n=>[n,8])),pericias:Object.fromEntries(PERICIAS.map(n=>[n,0])),recursos:{hp:0,en:0,ca:8,ataque:0,regen:0},derivacao:{tipo:'',atributo:'',justificativa:''},ataqueNome:'Ataque básico',ataqueDescricao:'',ativas:[],passivas:[],exploracao:[]};
 }
-const inteiro=(x,a,b)=>Number.isInteger(x)&&x>=a&&x<=b;
+const inteiro=(x,a,b)=>Number.isSafeInteger(x)&&x>=a&&x<=b;
 const objeto=x=>x!==null&&typeof x==='object'&&!Array.isArray(x);
 const str=x=>typeof x==='string'&&x.length<=16000;
 export function custoAtributo(valor,base=8){
@@ -86,6 +88,11 @@ function efeitoBase(h){
   }
 }
 export const custoAtiva=h=>Math.ceil(efeitoBase(h)*(1+0.5*(h.alvos-1))*(h.ativacao==='principal'?1:1.5)*(h.distante?1.25:1))+3*h.rodadasExtras;
+export function detalharCusto(h,tipo){
+  if(tipo==='ativas')return [['Efeito base',efeitoBase(h)+' PC'],['Alvos','×'+(1+0.5*(h.alvos-1))],['Ativação','×'+(h.ativacao==='principal'?1:1.5)],['Alcance','×'+(h.distante?1.25:1)],['Duração adicional','+'+3*h.rodadasExtras+' PC']];
+  if(tipo==='passivas')return [['Efeito base arredondado',Math.ceil(efeitoBase({...h,empurraoAdicional:false,impactos:1}))+' PC'],['Automatismo','×1,5'],['Frequência','×'+[0,1,1.8,2.5][h.usos]]];
+  return [['Classe do efeito',CLASSES_PX[h.classe]+' PX'],['Alvos','+'+(h.alvosPX===6?4:h.alvosPX===2?2:0)+' PX'],['Alcance','+'+(h.alcance==='remoto'?6:h.alcance==='distante'?2:0)+' PX'],['Duração','+'+(h.duracao==='dia'?8:h.duracao==='duasCenas'?4:0)+' PX'],['Repetição','+'+(h.automatica?0:3*(h.usos-1))+' PX'],['Automatismo','×'+(h.automatica?1.5:1)]];
+}
 export const custoPassiva=h=>Math.ceil(Math.ceil(efeitoBase({...h,empurraoAdicional:false,impactos:1}))*1.5*[0,1,1.8,2.5][h.usos]);
 export const custoExploracao=h=>{
   const subtotal=CLASSES_PX[h.classe]+(h.alvosPX===6?4:h.alvosPX===2?2:0)+(h.alcance==='remoto'?6:h.alcance==='distante'?2:0)+(h.duracao==='dia'?8:h.duracao==='duasCenas'?4:0)+(h.automatica?0:3*(h.usos-1));
@@ -112,6 +119,7 @@ export const totais=f=>({pa:custoPA(f),pr:custoPR(f),pt:custoPT(f),pc:f.ativas.r
 export function revisar(f){
   const c=f.config,t=totais(f),erros=[];
   if(!f.nome.trim())erros.push('Informe o nome do personagem.');
+  if([...Object.values(t),...Object.values(recursosFinais(f))].some(n=>!Number.isSafeInteger(n)))erros.push('Valores calculados ultrapassam a precisão numérica do navegador. Reduza a escala.');
   for(const k of ['pa','pr','pt','pc','px'])if(t[k]>c[k])erros.push(k.toUpperCase()+': orçamento excedido.');
   if(c.baseAtributo>c.tetoAtributo||c.ca>c.tetoCa)erros.push('Confira as bases e os tetos da campanha.');
   if(ATRIBUTOS.some(n=>f.atributos[n]<c.baseAtributo||f.atributos[n]>c.tetoAtributo))erros.push('Atributo fora da escala escolhida.');
@@ -162,7 +170,7 @@ export function importar(raw){
     f[k]=Object.fromEntries(nomes.map(n=>[n,raw[k][n]]));
   }
   if(!objeto(raw.recursos))throw Error('Recursos ausentes.');
-  for(const [k,min,max] of [['hp',0,500],['en',0,500],['ca',8,13],['ataque',0,2],['regen',0,2]]){
+  for(const [k,min,max] of [['hp',0,Infinity],['en',0,Infinity],['ca',8,13],['ataque',0,2],['regen',0,2]]){
     if(!inteiro(raw.recursos[k],min,max))throw Error('Recurso inválido: '+k);
     f.recursos[k]=raw.recursos[k];
   }
@@ -172,7 +180,7 @@ export function importar(raw){
   if(!Array.isArray(raw.vantagens)||raw.vantagens.length>8||!raw.vantagens.every(v=>Object.hasOwn(VANTAGENS,v))||new Set(raw.vantagens).size!==raw.vantagens.length)throw Error('Vantagens inválidas.');
   f.vantagens=raw.vantagens.slice();
   for(const k of ['ativas','passivas','exploracao']){
-    if(!Array.isArray(raw[k])||raw[k].length>20)throw Error('Lista inválida: '+k);
+    if(!Array.isArray(raw[k]))throw Error('Lista inválida: '+k);
     f[k]=raw[k].map(h=>{
       if(!objeto(h))throw Error('Habilidade inválida.');
       const out=habilidade(k==='passivas'?'passiva':'ativa');
@@ -182,7 +190,7 @@ export function importar(raw){
         if(typeof v==='number'&&!Number.isInteger(h[key]))throw Error('Habilidade: '+key);
         out[key]=h[key];
       }
-      if(!Object.hasOwn(EFEITOS,out.efeito)||!Object.hasOwn(DADOS,out.dado)||!Object.hasOwn(CLASSES_PX,out.classe)||!inteiro(out.quantidade,1,20)||!inteiro(out.fixo,0,100)||!inteiro(out.alvos,1,4)||!inteiro(out.impactos,1,2)||!inteiro(out.usos,1,3)||!inteiro(out.rodadasExtras,0,20)||![1,2,6].includes(out.alvosPX)||!['principal','buff','reacao'].includes(out.ativacao)||!['proximo','distante','remoto'].includes(out.alcance)||!['cena','duasCenas','dia'].includes(out.duracao)||(k==='passivas'&&!['dano','escudo','mitigacao'].includes(out.efeito)))throw Error('Parâmetros de habilidade inválidos.');
+      if(!Object.hasOwn(EFEITOS,out.efeito)||!Object.hasOwn(DADOS,out.dado)||!Object.hasOwn(CLASSES_PX,out.classe)||!inteiro(out.quantidade,1,Infinity)||!inteiro(out.fixo,0,Infinity)||!inteiro(out.alvos,1,4)||!inteiro(out.impactos,1,2)||!inteiro(out.usos,1,3)||!inteiro(out.rodadasExtras,0,Infinity)||![1,2,6].includes(out.alvosPX)||!['principal','buff','reacao'].includes(out.ativacao)||!['proximo','distante','remoto'].includes(out.alcance)||!['cena','duasCenas','dia'].includes(out.duracao)||(k==='passivas'&&!['dano','escudo','mitigacao'].includes(out.efeito)))throw Error('Parâmetros de habilidade inválidos.');
       return out;
     });
   }
