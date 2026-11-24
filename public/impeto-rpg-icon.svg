@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <title>Ímpeto RPG</title>
+  <rect x="1" y="1" width="62" height="62" rx="13" fill="#321b42" stroke="#d6b07e" stroke-width="2"/>
+  <rect x="5" y="5" width="54" height="54" rx="9" fill="none" stroke="#8e5a9d" stroke-width="1"/>
+  <path fill="#f7dfb8" d="M15 21h24v4c-6 0-7 1-7 6v16c0 5 1 6 7 6v4H15v-4c6 0 7-1 7-6V31c0-5-1-6-7-6zM20 17 32 7h9L28 17z"/>
+  <path fill="#e7a268" d="M47 15c1.8 10 3.2 11.4 13 13-9.8 1.6-11.2 3-13 13-1.8-10-3.2-11.4-13-13 9.8-1.6 11.2-3 13-13Z"/>
+  <circle cx="47" cy="28" r="1.5" fill="#fff0ce"/>
+</svg>
