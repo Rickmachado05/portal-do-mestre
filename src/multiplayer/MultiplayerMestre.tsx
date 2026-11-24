@@ -330,7 +330,7 @@ export default function MultiplayerMestre({campanhaId,campanha,modo='cabecalho'}
             <a href="/como-hospedar.html" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5zM4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5M8 7h8M8 11h6"/></svg><span><b>Como instalar</b><small>Guia passo a passo</small></span></a>
             <a href="/downloads/auxiliar-do-mestre-windows.zip" download="auxiliar-do-mestre-windows.zip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true"><path d="M12 3v12m-5-5 5 5 5-5M4 16v5h16v-5"/></svg><span><b>Baixar auxiliar</b><small>Windows · ZIP</small></span></a>
           </div>
-        </section>
+        </section>}
         {!credencial&&<details className="pm-mp-avancado">
           <summary>Opções avançadas e diagnóstico</summary>
           {suportaAuxiliarMestre()&&<div className="pm-mp-auxiliar">
