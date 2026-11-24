@@ -16,7 +16,9 @@ JOGADORES NAO INSTALAM NADA. Eles entram somente pelo convite.
 4. Confira os scripts e instale uma unica vez:
    powershell -NoProfile -ExecutionPolicy Bypass -File .\INSTALAR_AUXILIAR_DO_MESTRE.ps1
 5. No mesmo computador, abra https://portal-do-mestre.vercel.app,
-   abra uma campanha e clique em Multiplayer > Iniciar sala multiplayer.
+   abra uma campanha, abra o Multiplayer e, se o auxiliar estiver fechado,
+   clique em Abrir auxiliar instalado no Windows, depois Verificar auxiliar.
+   Clique em Iniciar sala multiplayer.
 6. Se necessario, permita acesso ao proprio PC (loopback) para o dominio oficial.
 7. Copie o LINK DE CONVITE e envie aos jogadores. Mantenha o PC ligado.
 
@@ -27,7 +29,7 @@ O auxiliar atende apenas 127.0.0.1:8790; o servidor fica em 127.0.0.1:8787.
 ATUALIZACAO PARA FICHAS IMPETO UNIVERSAL:
  Encerre a sala e desligue o servidor e Tunnel pelo painel Multiplayer.
  Baixe o ZIP atualizado e extraia na pasta atual, substituindo os arquivos.
- Preserve cloudflared.exe na pasta principal. Se mudou de pasta, rode o instalador.
+ Preserve cloudflared.exe na pasta principal. Rode novamente o instalador nesta atualizacao, para remover a inicializacao automatica e substituir o processo antigo.
  Inicie uma nova sala. Servidores antigos nao reconhecem a ficha universal.
 
 ENCERRAMENTO COMPLETO:

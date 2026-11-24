@@ -25,7 +25,7 @@ if ($Agentes.Count -gt 0) {
         }
     }
 }
-foreach ($P in @((ProcessosPortal $Agente) + (ProcessosPortal $Servidor))) {
+foreach ($P in (@(ProcessosPortal $Agente) + @(ProcessosPortal $Servidor))) {
     # Revalida o PID e a linha de comando antes de encerrar a arvore.
     $Atual = Get-CimInstance Win32_Process -Filter ("ProcessId="+$P.ProcessId) -ErrorAction SilentlyContinue
     if ($Atual -and $Atual.CommandLine -eq $P.CommandLine -and $Atual.CreationDate -eq $P.CreationDate) {
