@@ -27,13 +27,13 @@ do PC do mestre, da internet e dos limites do Cloudflare Quick Tunnel.
 O auxiliar atende apenas 127.0.0.1:8790; o servidor fica em 127.0.0.1:8787.
 
 ATUALIZACAO PARA FICHAS IMPETO UNIVERSAL:
- Encerre a sala e desligue o servidor e Tunnel pelo painel Multiplayer.
+ Encerre a sala e clique em Desligar servidor e auxiliar no painel Multiplayer.
  Baixe o ZIP atualizado e extraia na pasta atual, substituindo os arquivos.
  Preserve cloudflared.exe na pasta principal. Rode novamente o instalador nesta atualizacao, para remover a inicializacao automatica e substituir o processo antigo.
  Inicie uma nova sala. Servidores antigos nao reconhecem a ficha universal.
 
 ENCERRAMENTO COMPLETO:
- Encerre a sala e clique em Encerrar auxiliar completamente no Multiplayer.
+ Encerre a sala e clique em Desligar servidor e auxiliar no Multiplayer.
  Para abrir novamente, use Abrir auxiliar instalado no Windows.
  O auxiliar nao inicia mais junto com o Windows.
  Se necessario, execute na pasta do auxiliar:

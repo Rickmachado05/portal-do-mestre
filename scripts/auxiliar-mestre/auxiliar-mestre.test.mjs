@@ -58,7 +58,7 @@ test('não permite iniciar servidor por origem não autorizada ou via GET', asyn
   } finally { await agente.fechar(); }
 });
 
-test('inicia Node + Cloudflare, detecta link e desliga tudo no mesmo auxiliar', { skip: process.platform === 'win32' ? 'Fixture com shebang POSIX; instalação Windows requer homologação manual' : false }, async () => {
+test('inicia Node + Cloudflare, detecta link e encerra também o auxiliar ao desligar', { skip: process.platform === 'win32' ? 'Fixture com shebang POSIX; instalação Windows requer homologação manual' : false }, async () => {
   const diretorio = mkdtempSync(join(tmpdir(), 'portal-auxiliar-test-'));
   const fake = join(diretorio, 'cloudflared');
   const tunnel = 'https://abc-def-ghi.trycloudflare.com';
@@ -85,8 +85,10 @@ test('inicia Node + Cloudflare, detecta link e desliga tudo no mesmo auxiliar', 
     }
     const stop = await pedir(`${url}/v1/stop`, 'POST');
     assert.equal((await stop.json()).estado, 'parado');
-    const status = await pedir(`${url}/v1/status`);
-    assert.equal((await status.json()).tunnel, '');
+    for(let i=0;i<50&&agente.httpServer.listening;i++)await new Promise(r=>setTimeout(r,20));
+    assert.equal(agente.httpServer.listening,false);
+    await assert.rejects(()=>pedir(`${url}/v1/status`));
+    assert.equal(agente.status().tunnel,'');
     const testePorta=netServer();await new Promise((ok,reject)=>{testePorta.once('error',reject);testePorta.listen(multiplayer,'127.0.0.1',ok);});await new Promise(ok=>testePorta.close(ok));
   } finally {
     await agente.fechar();

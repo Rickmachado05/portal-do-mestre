@@ -12,7 +12,7 @@ import HistoricoRolagens from './HistoricoRolagens';
 import Rolagem3DMultiplayer from './Rolagem3DMultiplayer';
 import './Multiplayer.css';
 import {atualizarOrigemServidorMultiplayer,origemServidorMultiplayer} from './configuracaoServidor.mjs';
-import {abrirAuxiliarInstalado,encerrarAuxiliarMestre,iniciarSessaoPeloAuxiliar,pararSessaoPeloAuxiliar,statusAuxiliarMestre,suportaAuxiliarMestre,explicarFalhaAuxiliar,type StatusAuxiliar} from './auxiliarMestre';
+import {abrirAuxiliarInstalado,iniciarSessaoPeloAuxiliar,pararSessaoPeloAuxiliar,statusAuxiliarMestre,suportaAuxiliarMestre,explicarFalhaAuxiliar,type StatusAuxiliar} from './auxiliarMestre';
 
 type Props={campanhaId:string;campanha:string;modo?:'cartao'|'cabecalho'};
 /** O mestre guarda a credencial na sessão da aba; ela acompanha a navegação entre as mesas. */
@@ -193,21 +193,12 @@ export default function MultiplayerMestre({campanhaId,campanha,modo='cabecalho'}
     finally{setProcessando(false);}
   }
   async function desligarServidor(){
-    if(credencial||!window.confirm('Desligar o servidor e o Cloudflare? Encerre primeiro a sala e avise os convidados.'))return;
-    setDesligandoAuxiliar(true);setErro('');
-    try{
-      const resposta=await pararSessaoPeloAuxiliar();
-      if(resposta.estado==='erro')throw new Error(resposta.mensagem);
-      setAuxiliar(resposta);setAuxiliarIndisponivel(false);
-    }catch(e){setErro(e instanceof Error?e.message:'Não foi possível desligar o servidor local.');}
-    finally{setDesligandoAuxiliar(false);}
-  }
-  async function desligarAuxiliarCompleto(){
     if(credencial||!window.confirm('Encerrar o auxiliar, servidor e Cloudflare completamente? Outras salas deste servidor também serão desligadas.'))return;
     setDesligandoAuxiliar(true);setErro('');
     try{
       if(!auxiliar?.encerramentoCompleto)throw new Error('Auxiliar antigo: atualize o ZIP e use ENCERRAR_AUXILIAR_DO_MESTRE.ps1 para encerrar a versão anterior.');
-      await encerrarAuxiliarMestre();
+      const resposta=await pararSessaoPeloAuxiliar();
+      if(resposta.estado==='erro')throw new Error(resposta.mensagem);
       setAuxiliar(null);setAuxiliarIndisponivel(true);setAuxiliarEncerrado(true);setDetalheAuxiliar('');
     }catch(e){setErro(e instanceof Error?e.message:'Não foi possível encerrar o auxiliar.');}
     finally{setDesligandoAuxiliar(false);}
@@ -268,8 +259,7 @@ export default function MultiplayerMestre({campanhaId,campanha,modo='cabecalho'}
             {detalheAuxiliar&&<p className="pm-mp-nota">{detalheAuxiliar}</p>}
             <button type="button" className="pm-mp-auxiliar-abrir" disabled={verificandoAuxiliar||processando} onClick={()=>void verificarAuxiliar()}>{verificandoAuxiliar?'Verificando…':'Verificar auxiliar'}</button>
             {auxiliarIndisponivel&&<button type="button" className="pm-mp-auxiliar-abrir" onClick={()=>{setAuxiliarEncerrado(false);abrirAuxiliarInstalado();}}>Abrir auxiliar instalado no Windows</button>}
-            {auxiliar&&auxiliar.estado!=='parado'&&<button type="button" className="pm-mp-auxiliar-desligar" disabled={desligandoAuxiliar||processando} onClick={()=>void desligarServidor()}>{desligandoAuxiliar?'Desligando…':'Desligar servidor e Tunnel'}</button>}
-            {auxiliar&&<button type="button" className="pm-mp-auxiliar-desligar" disabled={desligandoAuxiliar||processando} onClick={()=>void desligarAuxiliarCompleto()}>Encerrar auxiliar completamente</button>}
+            {auxiliar&&<button type="button" className="pm-mp-auxiliar-desligar" disabled={desligandoAuxiliar||processando} onClick={()=>void desligarServidor()}>{desligandoAuxiliar?'Desligando…':'Desligar servidor e auxiliar'}</button>}
           </div>}
           <div className="pm-mp-instalar">
             <strong>Quer hospedar como mestre em outro computador?</strong>

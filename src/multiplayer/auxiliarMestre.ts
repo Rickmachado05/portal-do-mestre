@@ -62,10 +62,7 @@ export async function iniciarSessaoPeloAuxiliar(atualizar?: (status: StatusAuxil
 }
 
 export function pararSessaoPeloAuxiliar() {
-  return chamarAuxiliar('/v1/stop', 'POST', 10000);
-}
-
-export function encerrarAuxiliarMestre() {
+  // Desligar a hospedagem inclui fechar o agente local, mesmo quando está em repouso.
   return chamarAuxiliar('/v1/shutdown', 'POST', 10000);
 }
 

@@ -54,6 +54,6 @@ if (-not $Detectado) {
 Write-Host ''
 Write-Host 'Auxiliar do Portal do Mestre instalado e DETECTADO em 127.0.0.1:8790.' -ForegroundColor Green
 Write-Host ('Node.js: {0}' -f $Node)
-Write-Host 'O auxiliar abre sob demanda, sem iniciar junto com o Windows. Use Encerrar auxiliar completamente ao terminar.'
+Write-Host 'O auxiliar abre sob demanda, sem iniciar junto com o Windows. Use Desligar servidor e auxiliar ao terminar.'
 Write-Host 'Se mover a pasta do Portal, execute este instalador novamente na nova pasta.'
 Write-Host 'Para remover a integracao, execute DESINSTALAR_AUXILIAR_DO_MESTRE.ps1.'

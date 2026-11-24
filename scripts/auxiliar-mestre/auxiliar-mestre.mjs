@@ -232,11 +232,7 @@ export function criarAuxiliar({ raiz = RAIZ, portaAuxiliar = PORTA_AUXILIAR, por
         res.end(JSON.stringify(status()));
         return;
       }
-      if (caminho === '/v1/stop') {
-        void parar().then(retorno=>res.end(JSON.stringify(retorno)));
-        return;
-      }
-      if (caminho === '/v1/shutdown') {
+      if (caminho === '/v1/stop' || caminho === '/v1/shutdown') {
         fechando = true;
         void parar().then(retorno=>{
           if(retorno.estado==='erro'){fechando=false;res.writeHead(500);res.end(JSON.stringify(retorno));return;}
